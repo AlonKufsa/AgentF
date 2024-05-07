@@ -1,7 +1,7 @@
 package frc.robot.commands
 
 import edu.wpi.first.wpilibj2.command.Command
-import frc.robot.subsystems.shooter.ShooterConstants
+import frc.robot.subsystems.shooter.ShooterState
 import frc.robot.subsystems.shooter.ShooterSubsystem
 
 class ShooterDefaultCommand : Command() {
@@ -11,7 +11,7 @@ class ShooterDefaultCommand : Command() {
 	}
 
 	override fun initialize() {
-		ShooterSubsystem.updateAngleControl(ShooterConstants.LOAD_ANGLE)
+		//add
 	}
 
 	override fun execute() {
@@ -19,4 +19,17 @@ class ShooterDefaultCommand : Command() {
 	}
 }
 
-class setShooterAngle
+class maintainShooterState(val shooterState: ShooterState) : Command() {
+	init {
+		name = "Maintain shooter state"
+		addRequirements(ShooterSubsystem)
+	}
+
+	override fun initialize() {
+		ShooterSubsystem.setShooterState(shooterState)
+	}
+
+	override fun execute() {
+		ShooterSubsystem.maintainShooterState()
+	}
+}

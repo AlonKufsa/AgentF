@@ -10,7 +10,6 @@ object RobotMap {
 		const val MAX_SWITCH_ID = 1
 	}
 
-	//// git conflict example part 2
 	object IntakeMap {
 
 	}

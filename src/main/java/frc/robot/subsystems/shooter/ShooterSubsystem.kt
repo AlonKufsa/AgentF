@@ -94,7 +94,7 @@ object ShooterSubsystem : SubsystemBase("Shooter") {
 	   then updates the setpoint and FF, and induces safety operations before applying the
 	   updates to the motor controller.
 	 */
-	fun updateAngleControl(newSetpoint: Rotation2d = angleSetpoint) {
+	private fun updateAngleControl(newSetpoint: Rotation2d = angleSetpoint) {
 		if (newSetpoint.degrees in Constants.MIN_ANGLE.degrees..Constants.MAX_ANGLE.degrees) {
 			//In the case that the new setpoint the user had sent is not in the motion range of the shooter,
 			//it will clamp it and print an error to the driver station.
@@ -133,7 +133,6 @@ object ShooterSubsystem : SubsystemBase("Shooter") {
 	private fun isLimited(): Boolean {
 		return (isAtMinAngle && (calcError().degrees < 0.0)) || (isAtMaxAngle && (calcError().degrees > 0.0))
 	}
-/////
 
 	//Adds values and readings to the glass dashboard, attached to the shooter subsystem.
 	override fun initSendable(builder: SendableBuilder) {
@@ -150,13 +149,18 @@ object ShooterSubsystem : SubsystemBase("Shooter") {
 
 
 	//Updates the shooter motors PID controller that governs their angular velocity and updates FF
-	fun updateShootingControl(newVelocitySetpoint: AngularVelocity) {
+	private fun updateShootingControl(newVelocitySetpoint: AngularVelocity = velocitySetpoint) {
 		velocitySetpoint = newVelocitySetpoint
 		mainShootingMotor.pidController.setReference(velocitySetpoint.asRpm, ControlType.kVelocity)
 	}
 
-	fun setShooterState(angleSetpoint: Rotation2d, shooterVelocitySetpoint: AngularVelocity) {
-		updateShootingControl(shooterVelocitySetpoint)
-		updateAngleControl(angleSetpoint)
+	fun setShooterState(shooterState: ShooterState) {
+		updateShootingControl(shooterState.angularVelocity)
+		updateAngleControl(shooterState.angle)
+	}
+
+	fun maintainShooterState() {
+		updateShootingControl()
+		updateAngleControl()
 	}
 }

@@ -8,9 +8,28 @@ import com.ctre.phoenix6.signals.AbsoluteSensorRangeValue
 import com.ctre.phoenix6.signals.FeedbackSensorSourceValue.RemoteCANcoder
 import com.ctre.phoenix6.signals.SensorDirectionValue
 import com.hamosad1657.lib.math.PIDGains
+import com.hamosad1657.lib.units.AngularVelocity
 import com.hamosad1657.lib.units.degrees
 import com.hamosad1657.lib.units.minus
+import com.hamosad1657.lib.units.rpm
+import edu.wpi.first.math.geometry.Rotation2d
 import frc.robot.RobotMap
+
+data class ShooterState(val angle: Rotation2d, val angularVelocity: AngularVelocity) {
+	// --- Collection ---
+	val COLLECT = ShooterState(172.degrees, 0.0.rpm)
+
+	// --- Teleop Speaker ---
+	val AT_SPEAKER = ShooterState(200.degrees, 2600.rpm)
+	val REVERSE_AT_SPEAKER = ShooterState(270.degrees, 2600.rpm)
+	val AT_PODIUM = ShooterState(175.0.degrees, 3500.rpm)
+	var AT_STAGE = ShooterState(162.0.degrees, 4100.rpm)
+
+	// --- Teleop Misc. ---
+	val TO_AMP = ShooterState(5.degrees, 0.0.rpm)
+	val EJECT = ShooterState(168.degrees, 1000.rpm)
+}
+
 
 object ShooterConstants {
 	val ANGLE_FEEDBACK_CONFIGS = FeedbackConfigs().apply {
@@ -31,7 +50,7 @@ object ShooterConstants {
 		MagnetSensor.AbsoluteSensorRange = AbsoluteSensorRangeValue.Unsigned_0To1
 		MagnetSensor.SensorDirection = SensorDirectionValue.CounterClockwise_Positive
 	}
-///
+
 	/**
 	 * 1 degree should be the lowest possible angle.
 	 * It should be 1 degree and not 0 so that it doesn't wrap to 360 by accident.
