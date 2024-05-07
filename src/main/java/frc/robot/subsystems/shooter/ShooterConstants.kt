@@ -31,7 +31,7 @@ object ShooterConstants {
 		MagnetSensor.AbsoluteSensorRange = AbsoluteSensorRangeValue.Unsigned_0To1
 		MagnetSensor.SensorDirection = SensorDirectionValue.CounterClockwise_Positive
 	}
-
+///
 	/**
 	 * 1 degree should be the lowest possible angle.
 	 * It should be 1 degree and not 0 so that it doesn't wrap to 360 by accident.
