@@ -4,22 +4,23 @@ import edu.wpi.first.wpilibj2.command.Command
 import frc.robot.subsystems.shooter.ShooterState
 import frc.robot.subsystems.shooter.ShooterSubsystem
 
-class ShooterDefaultCommand : Command() {
+class DefaultShooterCommand : Command() {
 	init {
 		name = "Default shooter command"
 		addRequirements(ShooterSubsystem)
 	}
 
 	override fun initialize() {
-		//add
+		ShooterSubsystem.setShooterState(ShooterState.COLLECT)
 	}
 
 	override fun execute() {
-		ShooterSubsystem.updateAngleControl()
+		ShooterSubsystem.maintainShooterState()
 	}
 }
 
-class maintainShooterState(val shooterState: ShooterState) : Command() {
+class MaintainShooterStateCommand(val shooterState: ShooterState) : Command() {
+	//To stop this command, you must interrupt it, or manually stop it
 	init {
 		name = "Maintain shooter state"
 		addRequirements(ShooterSubsystem)
