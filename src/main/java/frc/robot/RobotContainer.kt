@@ -1,6 +1,13 @@
 package frc.robot
 
 import edu.wpi.first.wpilibj2.command.Command
+import edu.wpi.first.wpilibj2.command.button.CommandPS4Controller
+import frc.robot.commands.*
+import frc.robot.subsystems.intake.IntakeSubsystem
+import frc.robot.subsystems.loader.LoaderConstants
+import frc.robot.subsystems.loader.LoaderSubsystem
+import frc.robot.subsystems.shooter.ShooterState
+import frc.robot.subsystems.shooter.ShooterSubsystem
 
 /**
  * This class is where the bulk of the robot should be declared. Since Command-based is a
@@ -13,22 +20,33 @@ import edu.wpi.first.wpilibj2.command.Command
  * to the various subsystems in this container to pass into to commands. The commands can just
  * directly reference the (single instance of the) object.
  */
-object RobotContainer
-{
-    init
-    {
-        configureBindings()
-    }
+object RobotContainer {
+	val psController = CommandPS4Controller(0)
 
-    /** Use this method to define your `trigger->command` mappings. */
-    private fun configureBindings()
-    {
+	init {
+		configureBindings()
+		setDefaultCommands()
+	}
 
-    }
+	/** Use this method to define your `trigger->command` mappings. */
+	private fun configureBindings() {
+		psController.L1().whileTrue(MaintainShooterStateCommand(ShooterState.TO_AMP))
+		psController.R1().whileTrue(MaintainShooterStateCommand(ShooterState.AT_SPEAKER))
 
-    fun getAutonomousCommand(): Command?
-    {
-        // TODO: Implement properly
-        return null
-    }
+		psController.cross().onTrue(CollectAndLoadCommand())
+		psController.square()
+			.onTrue(TransferToShooterCommand().withTimeout(LoaderConstants.TRANSFER_TO_SHOOTER_DURATION))
+		psController.triangle().onTrue(LoaderEjectToAmpCommand().withTimeout(LoaderConstants.AMP_EJECT_DURATION))
+	}
+
+	private fun setDefaultCommands() {
+		IntakeSubsystem.defaultCommand = DefaultIntakeCommand()
+		LoaderSubsystem.defaultCommand = DefaultLoaderCommand()
+		ShooterSubsystem.defaultCommand = DefaultShooterCommand()
+	}
+
+	fun getAutonomousCommand(): Command? {
+		// TODO: Implement properly
+		return null
+	}
 }
