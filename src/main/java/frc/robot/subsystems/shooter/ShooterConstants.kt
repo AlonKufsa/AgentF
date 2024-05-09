@@ -16,18 +16,20 @@ import edu.wpi.first.math.geometry.Rotation2d
 import frc.robot.RobotMap
 
 data class ShooterState(val angle: Rotation2d, val angularVelocity: AngularVelocity) {
-	// --- Collection ---
-	val COLLECT = ShooterState(172.degrees, 0.0.rpm)
+	companion object {
+		// --- Collection ---
+		val COLLECT = ShooterState(172.degrees, 0.0.rpm)
 
-	// --- Teleop Speaker ---
-	val AT_SPEAKER = ShooterState(200.degrees, 2600.rpm)
-	val REVERSE_AT_SPEAKER = ShooterState(270.degrees, 2600.rpm)
-	val AT_PODIUM = ShooterState(175.0.degrees, 3500.rpm)
-	var AT_STAGE = ShooterState(162.0.degrees, 4100.rpm)
+		// --- Teleop Speaker ---
+		val AT_SPEAKER = ShooterState(200.degrees, 2600.rpm)
+		val REVERSE_AT_SPEAKER = ShooterState(270.degrees, 2600.rpm)
+		val AT_PODIUM = ShooterState(175.0.degrees, 3500.rpm)
+		var AT_STAGE = ShooterState(162.0.degrees, 4100.rpm)
 
-	// --- Teleop Misc. ---
-	val TO_AMP = ShooterState(5.degrees, 0.0.rpm)
-	val EJECT = ShooterState(168.degrees, 1000.rpm)
+		// --- Teleop Misc. ---
+		val TO_AMP = ShooterState(5.degrees, 0.0.rpm)
+		val EJECT = ShooterState(168.degrees, 1000.rpm)
+	}
 }
 
 
@@ -57,9 +59,6 @@ object ShooterConstants {
 	 */
 	val CANCODER_OFFSET = (-274).degrees
 
-	val LOAD_ANGLE = 0.degrees
-	val AMP_ANGLE = 0.degrees
-
 	val RESTING_ANGLE = 223.5.degrees
 	const val KEEP_PARALLEL_TO_FLOOR_OUTPUT = -0.0185
 	val FLOOR_RELATIVE_OFFSET = RESTING_ANGLE minus 90.0.degrees
@@ -67,6 +66,6 @@ object ShooterConstants {
 	val MIN_ANGLE = 0.0.degrees
 	val MAX_ANGLE = 360.0.degrees
 
-	val shooterAnglePIDGains = PIDGains(12.0, 0.5)
-	val shooterMotorPIDGains = PIDGains(0.0, 0.0, 0.0)
+	val ANGLE_PID_GAINS = PIDGains(12.0, 0.5)
+	val SHOOTING_PID_GAINS = PIDGains(0.0, 0.0, 0.0)
 }

@@ -28,9 +28,9 @@ object ShooterSubsystem : SubsystemBase("Shooter") {
 	//This is the leader motor, only this motor is given voltage and the other motor will be treated accordingly
 	private val mainShootingMotor = HaSparkFlex(RobotMap.ShooterMap.SHOOTER_TOP_SHOOTING_MOTOR_ID, kBrushless).apply {
 		pidController.apply {
-			p = Constants.shooterMotorPIDGains.kP
-			i = Constants.shooterMotorPIDGains.kI
-			d = Constants.shooterMotorPIDGains.kD
+			p = Constants.SHOOTING_PID_GAINS.kP
+			i = Constants.SHOOTING_PID_GAINS.kI
+			d = Constants.SHOOTING_PID_GAINS.kD
 		}
 	}
 
@@ -43,7 +43,7 @@ object ShooterSubsystem : SubsystemBase("Shooter") {
 	private val angleMotor = HaTalonFX(RobotMap.ShooterMap.SHOOTER_ANGLE_MOTOR_ID).apply {
 		restoreFactoryDefaults()
 		inverted = false
-		configPID(Constants.shooterAnglePIDGains)
+		configPID(Constants.ANGLE_PID_GAINS)
 		with(configurator) {
 			apply(Constants.ANGLE_CURRENT_LIMIT_CONFIGS)
 			apply(Constants.ANGLE_FEEDBACK_CONFIGS)
@@ -56,8 +56,8 @@ object ShooterSubsystem : SubsystemBase("Shooter") {
 		//and defines it's rotation direction as counterclockwise (which is flipped due to how the robot is built)
 		configurator.apply(Constants.CANCODER_CONFIGS)
 	}
-	private val minAngleSwitch = DigitalInput(RobotMap.ShooterMap.MIN_SWITCH_ID)
-	private val maxAngleSwitch = DigitalInput(RobotMap.ShooterMap.MAX_SWITCH_ID)
+	private val minAngleSwitch = DigitalInput(RobotMap.ShooterMap.MIN_SWITCH_CHANNEL)
+	private val maxAngleSwitch = DigitalInput(RobotMap.ShooterMap.MAX_SWITCH_CHANNEL)
 
 	//A shortcut for getting the current rotation from the cancoder
 	val currentAngle: Rotation2d get() = canCoder.absolutePosition.value.rotations
