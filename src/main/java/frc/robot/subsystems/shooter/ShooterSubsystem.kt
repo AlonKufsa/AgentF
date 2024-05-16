@@ -143,6 +143,10 @@ object ShooterSubsystem : SubsystemBase("Shooter") {
 		builder.addDoubleProperty("Angle error", { angleError.degrees }, null)
 		builder.addBooleanProperty("Is at max limit", { isAtMaxAngle }, null)
 		builder.addBooleanProperty("Is at min limit", { isAtMinAngle }, null)
+
+		builder.addDoubleProperty("Current velocity rpm", { currentVelocity.asRpm }, null)
+		builder.addDoubleProperty("Velocity setpoint rpm", { velocitySetpoint.asRpm }, null)
+		builder.addDoubleProperty("Velocity error rpm", { velocityError.asRpm }, null)
 	}
 
 
