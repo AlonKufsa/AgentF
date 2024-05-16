@@ -33,7 +33,7 @@ object RobotContainer {
 		psController.L1().whileTrue(MaintainShooterStateCommand(ShooterState.TO_AMP))
 		psController.R1().whileTrue(MaintainShooterStateCommand(ShooterState.AT_SPEAKER))
 
-		psController.cross().onTrue(CollectAndLoadCommand())
+		psController.cross().toggleOnTrue(CollectAndLoadCommand())
 		psController.square()
 			.onTrue(TransferToShooterCommand().withTimeout(LoaderConstants.TRANSFER_TO_SHOOTER_DURATION))
 		psController.triangle().onTrue(LoaderEjectToAmpCommand().withTimeout(LoaderConstants.AMP_EJECT_DURATION))
