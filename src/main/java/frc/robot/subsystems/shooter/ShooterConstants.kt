@@ -68,4 +68,7 @@ object ShooterConstants {
 
 	val ANGLE_PID_GAINS = PIDGains(12.0, 0.5)
 	val SHOOTING_PID_GAINS = PIDGains(0.0, 0.0, 0.0)
+
+	val ANGLE_TOLERANCE = 1.degrees
+	val VELOCITY_TOLERANCE = 50.rpm
 }

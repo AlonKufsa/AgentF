@@ -63,7 +63,7 @@ object ShooterSubsystem : SubsystemBase("Shooter") {
 	val currentAngle: Rotation2d get() = canCoder.absolutePosition.value.rotations
 
 	//A shortcut for getting the current speed of the shooter motors
-	val currentSpeed: AngularVelocity get() = AngularVelocity.fromRpm(mainShootingMotor.encoder.velocity)
+	val currentVelocity: AngularVelocity get() = AngularVelocity.fromRpm(mainShootingMotor.encoder.velocity)
 
 	//**Angle controller motor code**
 
@@ -77,9 +77,10 @@ object ShooterSubsystem : SubsystemBase("Shooter") {
 	private val controlRequestShooterAngle = MotionMagicVoltage(0.0).apply { EnableFOC = false }
 
 	//A variable storing the current setpoint for error calculations and such
-	private var angleSetpoint: Rotation2d = 0.0.rotations
+	var angleSetpoint: Rotation2d = 0.0.rotations
+		private set
 
-	val isWithinTolerance: Boolean get() = calcError().degrees.absoluteValue < 1.0
+	val isWithinAngleTolerance: Boolean get() = angleError.degrees.absoluteValue <= Constants.ANGLE_TOLERANCE.degrees
 
 	/*
 	* * F U N C T I O N  S U M M A R Y * *
@@ -128,17 +129,18 @@ object ShooterSubsystem : SubsystemBase("Shooter") {
 	}
 
 	//Calculates the error, needed to know what direction the shooter is moving to.
-	private fun calcError(): Rotation2d = angleSetpoint minus currentAngle
+	val angleError: Rotation2d get() = angleSetpoint minus currentAngle
+	val velocityError get() = velocitySetpoint - currentVelocity
 
 	private fun isLimited(): Boolean {
-		return (isAtMinAngle && (calcError().degrees < 0.0)) || (isAtMaxAngle && (calcError().degrees > 0.0))
+		return (isAtMinAngle && (angleError.degrees < 0.0)) || (isAtMaxAngle && (angleError.degrees > 0.0))
 	}
 
 	//Adds values and readings to the glass dashboard, attached to the shooter subsystem.
 	override fun initSendable(builder: SendableBuilder) {
 		builder.addDoubleProperty("Current angle deg", { currentAngle.degrees }, null)
 		builder.addDoubleProperty("angle setpoint deg", { angleSetpoint.degrees }, null)
-		builder.addDoubleProperty("Angle error", { calcError().degrees }, null)
+		builder.addDoubleProperty("Angle error", { angleError.degrees }, null)
 		builder.addBooleanProperty("Is at max limit", { isAtMaxAngle }, null)
 		builder.addBooleanProperty("Is at min limit", { isAtMinAngle }, null)
 	}
