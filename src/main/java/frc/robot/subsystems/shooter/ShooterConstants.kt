@@ -34,24 +34,6 @@ data class ShooterState(val angle: Rotation2d, val angularVelocity: AngularVeloc
 
 
 object ShooterConstants {
-	val ANGLE_FEEDBACK_CONFIGS = FeedbackConfigs().apply {
-		FeedbackSensorSource = RemoteCANcoder
-		FeedbackRemoteSensorID = RobotMap.ShooterMap.CANCODER_ID
-	}
-	val ANGLE_MOTION_MAGIC_CONFIGS = MotionMagicConfigs().apply {
-		MotionMagicAcceleration = 4.0
-		MotionMagicCruiseVelocity = 2.0
-	}
-	val ANGLE_CURRENT_LIMIT_CONFIGS = CurrentLimitsConfigs().apply {
-		SupplyCurrentLimitEnable = true
-		SupplyCurrentLimit = 30.0
-	}
-
-	val CANCODER_CONFIGS = CANcoderConfiguration().apply {
-		MagnetSensor.MagnetOffset = CANCODER_OFFSET.rotations
-		MagnetSensor.AbsoluteSensorRange = AbsoluteSensorRangeValue.Unsigned_0To1
-		MagnetSensor.SensorDirection = SensorDirectionValue.CounterClockwise_Positive
-	}
 
 	/**
 	 * 1 degree should be the lowest possible angle.
@@ -71,4 +53,23 @@ object ShooterConstants {
 
 	val ANGLE_TOLERANCE = 1.degrees
 	val VELOCITY_TOLERANCE = 50.rpm
+
+	val ANGLE_FEEDBACK_CONFIGS = FeedbackConfigs().apply {
+		FeedbackSensorSource = RemoteCANcoder
+		FeedbackRemoteSensorID = RobotMap.ShooterMap.CANCODER_ID
+	}
+	val ANGLE_MOTION_MAGIC_CONFIGS = MotionMagicConfigs().apply {
+		MotionMagicAcceleration = 4.0
+		MotionMagicCruiseVelocity = 2.0
+	}
+	val ANGLE_CURRENT_LIMIT_CONFIGS = CurrentLimitsConfigs().apply {
+		SupplyCurrentLimitEnable = true
+		SupplyCurrentLimit = 30.0
+	}
+
+	val CANCODER_CONFIGS = CANcoderConfiguration().apply {
+		MagnetSensor.MagnetOffset = CANCODER_OFFSET.rotations
+		MagnetSensor.AbsoluteSensorRange = AbsoluteSensorRangeValue.Unsigned_0To1
+		MagnetSensor.SensorDirection = SensorDirectionValue.CounterClockwise_Positive
+	}
 }
