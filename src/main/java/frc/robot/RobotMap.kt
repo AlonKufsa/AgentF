@@ -19,4 +19,8 @@ object RobotMap {
 		const val MOTOR_ID = 22
 		const val BEAMBREAK_CHANNEL = 0
 	}
+
+	object LedMap {
+		const val pwmPort = 0
+	}
 }

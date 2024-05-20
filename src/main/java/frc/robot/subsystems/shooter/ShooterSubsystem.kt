@@ -23,8 +23,6 @@ import kotlin.math.cos
 import frc.robot.subsystems.shooter.ShooterConstants as Constants
 
 object ShooterSubsystem : SubsystemBase("Shooter") {
-	//Needs to rotate counterclockwise, remember to check motor rotation direction is correct and invert if not
-	//This is the leader motor, only this motor is given voltage and the other motor will be treated accordingly
 	private val mainShootingMotor = HaSparkFlex(RobotMap.ShooterMap.SHOOTER_TOP_SHOOTING_MOTOR_ID, kBrushless).apply {
 		inverted = false
 		pidController.apply {

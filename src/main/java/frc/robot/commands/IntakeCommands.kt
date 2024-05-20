@@ -2,6 +2,7 @@ package frc.robot.commands
 
 import edu.wpi.first.wpilibj2.command.Command
 import frc.robot.subsystems.intake.IntakeSubsystem
+import frc.robot.subsystems.leds.LedSubsystem
 import frc.robot.subsystems.shooter.ShooterState
 import frc.robot.subsystems.shooter.ShooterSubsystem
 
@@ -21,7 +22,7 @@ class DefaultIntakeCommand : Command() {
 class RunIntakeCommand : Command() {
 	init {
 		name = "Run intake"
-		addRequirements(IntakeSubsystem)
+		addRequirements(IntakeSubsystem, LedSubsystem)
 	}
 
 	override fun execute() {
@@ -30,6 +31,7 @@ class RunIntakeCommand : Command() {
 		} else {
 			IntakeSubsystem.stopMotors()
 		}
+
 	}
 
 	override fun end(interrupted: Boolean) {

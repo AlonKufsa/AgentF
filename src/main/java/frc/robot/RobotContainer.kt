@@ -33,8 +33,8 @@ object RobotContainer {
 
 	/** Use this method to define your `trigger->command` mappings. */
 	private fun configureBindings() {
-		psController.L1().whileTrue(MaintainShooterStateCommand(ShooterState.TO_AMP))
-		psController.R1().whileTrue(MaintainShooterStateCommand(ShooterState.AT_SPEAKER))
+		psController.L1().whileTrue(MaintainShooterStateCommand(ShooterState.TO_AMP, true))
+		psController.R1().whileTrue(MaintainShooterStateCommand(ShooterState.AT_SPEAKER, true))
 
 		psController.cross().toggleOnTrue(CollectAndLoadCommand())
 		psController.square()

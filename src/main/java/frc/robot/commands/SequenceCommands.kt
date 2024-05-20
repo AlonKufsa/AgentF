@@ -7,7 +7,7 @@ class CollectAndLoadCommand : ParallelRaceGroup() {
 	init {
 		name = "Collect and load"
 		addCommands(
-			MaintainShooterStateCommand(ShooterState.COLLECT),
+			MaintainShooterStateCommand(ShooterState.COLLECT, false),
 			RunIntakeCommand(),
 			LoadNoteCommand(),
 		)
