@@ -1,8 +1,10 @@
 package frc.robot
 
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard
 import edu.wpi.first.wpilibj2.command.Command
 import edu.wpi.first.wpilibj2.command.button.CommandPS4Controller
 import frc.robot.commands.*
+import frc.robot.commands.MaintainShooterStateCommand.*
 import frc.robot.subsystems.intake.IntakeSubsystem
 import frc.robot.subsystems.loader.LoaderConstants
 import frc.robot.subsystems.loader.LoaderSubsystem
@@ -26,6 +28,7 @@ object RobotContainer {
 	init {
 		configureBindings()
 		setDefaultCommands()
+		sendSubsystemInfo()
 	}
 
 	/** Use this method to define your `trigger->command` mappings. */
@@ -35,14 +38,21 @@ object RobotContainer {
 
 		psController.cross().toggleOnTrue(CollectAndLoadCommand())
 		psController.square()
-			.onTrue(TransferToShooterCommand().withTimeout(LoaderConstants.TRANSFER_TO_SHOOTER_DURATION))
-		psController.triangle().onTrue(LoaderEjectToAmpCommand().withTimeout(LoaderConstants.AMP_EJECT_DURATION))
+			.toggleOnTrue(TransferToShooterCommand().withTimeout(LoaderConstants.TRANSFER_TO_SHOOTER_DURATION))
+		psController.triangle().toggleOnTrue(LoaderEjectToAmpCommand().withTimeout(LoaderConstants.AMP_EJECT_DURATION))
+
+		psController.circle().whileTrue(TestShooter())
 	}
 
 	private fun setDefaultCommands() {
 		IntakeSubsystem.defaultCommand = DefaultIntakeCommand()
 		LoaderSubsystem.defaultCommand = DefaultLoaderCommand()
 		ShooterSubsystem.defaultCommand = DefaultShooterCommand()
+	}
+
+	private fun sendSubsystemInfo() {
+		SmartDashboard.putData(ShooterSubsystem)
+		SmartDashboard.putData(LoaderSubsystem)
 	}
 
 	fun getAutonomousCommand(): Command? {
