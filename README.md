@@ -14,6 +14,7 @@ Circle -> Testing button for code testing purposes
 
 
 # LEDS
+Flashing green turns off after 1 second
 
 ## When intake is running
 
@@ -26,7 +27,7 @@ Flashing green -> A note reached the loader and the command is finished
 
 ## Shooting (To speaker or to amp)
 
-Yellow -> Cannon is not at the right angle yet
+Yellow -> Cannon is not at the right angle and speed yet
 
 Green -> Ready to fire
 
@@ -39,4 +40,4 @@ Blue -> Blue alliance
 
 Red -> Red alliance
 
-Yellow -> Communication error (cannot know alliance)
+Flashing orange -> Communication error (cannot know alliance)
