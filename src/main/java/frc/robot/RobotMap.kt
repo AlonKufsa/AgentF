@@ -17,6 +17,6 @@ object RobotMap {
 
 	object LoaderMap {
 		const val MOTOR_ID = 22
-		const val BEAMBREAK_CHANNEL = 6
+		const val BEAMBREAK_CHANNEL = 0
 	}
 }
