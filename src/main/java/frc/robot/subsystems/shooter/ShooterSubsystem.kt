@@ -7,10 +7,11 @@ import com.hamosad1657.lib.motors.HaSparkFlex
 import com.hamosad1657.lib.motors.HaTalonFX
 import com.hamosad1657.lib.units.AngularVelocity
 import com.hamosad1657.lib.units.Volts
+import com.hamosad1657.lib.units.degrees
 import com.hamosad1657.lib.units.minus
 import com.hamosad1657.lib.units.rotations
-import com.revrobotics.CANSparkBase.ControlType
 import com.revrobotics.CANSparkLowLevel.MotorType.kBrushless
+import edu.wpi.first.math.controller.PIDController
 import edu.wpi.first.math.geometry.Rotation2d
 import edu.wpi.first.util.sendable.SendableBuilder
 import edu.wpi.first.wpilibj.DigitalInput
@@ -22,16 +23,22 @@ import kotlin.math.cos
 import frc.robot.subsystems.shooter.ShooterConstants as Constants
 
 object ShooterSubsystem : SubsystemBase("Shooter") {
-
-
 	//Needs to rotate counterclockwise, remember to check motor rotation direction is correct and invert if not
 	//This is the leader motor, only this motor is given voltage and the other motor will be treated accordingly
 	private val mainShootingMotor = HaSparkFlex(RobotMap.ShooterMap.SHOOTER_TOP_SHOOTING_MOTOR_ID, kBrushless).apply {
+		inverted = false
 		pidController.apply {
 			p = Constants.SHOOTING_PID_GAINS.kP
 			i = Constants.SHOOTING_PID_GAINS.kI
 			d = Constants.SHOOTING_PID_GAINS.kD
 		}
+	}
+	private val shootingPIDController = PIDController(
+		Constants.SHOOTING_PID_GAINS.kP,
+		Constants.SHOOTING_PID_GAINS.kI,
+		Constants.SHOOTING_PID_GAINS.kD
+	).apply {
+		setTolerance(Constants.VELOCITY_TOLERANCE.asRpm)
 	}
 
 	//Needs to rotate clockwise
@@ -51,6 +58,8 @@ object ShooterSubsystem : SubsystemBase("Shooter") {
 		}
 	}
 
+	private val shootingEncoder = mainShootingMotor.encoder
+
 	private val canCoder = CANcoder(RobotMap.ShooterMap.CANCODER_ID).apply {
 		//Makes the CANCoder measure in a range between 0 and 1, gives it the correct offset
 		//and defines it's rotation direction as counterclockwise (which is flipped due to how the robot is built)
@@ -63,7 +72,7 @@ object ShooterSubsystem : SubsystemBase("Shooter") {
 	val currentAngle: Rotation2d get() = canCoder.absolutePosition.value.rotations
 
 	//A shortcut for getting the current speed of the shooter motors
-	val currentVelocity: AngularVelocity get() = AngularVelocity.fromRpm(mainShootingMotor.encoder.velocity)
+	val currentVelocity: AngularVelocity get() = AngularVelocity.fromRpm(shootingEncoder.velocity)
 
 	//**Angle controller motor code**
 
@@ -96,12 +105,12 @@ object ShooterSubsystem : SubsystemBase("Shooter") {
 	   updates to the motor controller.
 	 */
 	private fun updateAngleControl(newSetpoint: Rotation2d = angleSetpoint) {
-		if (newSetpoint.degrees in Constants.MIN_ANGLE.degrees..Constants.MAX_ANGLE.degrees) {
+		if (newSetpoint.degrees !in Constants.MIN_ANGLE.degrees..Constants.MAX_ANGLE.degrees) {
 			//In the case that the new setpoint the user had sent is not in the motion range of the shooter,
 			//it will clamp it and print an error to the driver station.
 			DriverStation.reportError("Setpoint is not in motion range!", true)
 			angleSetpoint =
-				clamp(newSetpoint.degrees, Constants.MIN_ANGLE.degrees, Constants.MAX_ANGLE.degrees).rotations
+				clamp(newSetpoint.degrees, Constants.MIN_ANGLE.degrees, Constants.MAX_ANGLE.degrees).degrees
 		} else angleSetpoint = newSetpoint
 
 		//Updates the changes that were made to the setpoint and calculates a new FF according to the current angle.
@@ -136,6 +145,39 @@ object ShooterSubsystem : SubsystemBase("Shooter") {
 		return (isAtMinAngle && (angleError.degrees < 0.0)) || (isAtMaxAngle && (angleError.degrees > 0.0))
 	}
 
+	//**Shooting motors code**
+	private var velocitySetpoint: AngularVelocity = AngularVelocity.fromRpm(0.0)
+
+	fun shooterMotorTest(output: Volts) = mainShootingMotor.setVoltage(output)
+	fun stopShootingMotors() = mainShootingMotor.stopMotor()
+
+	private var prevVoltage = 0.0
+
+	//Updates the shooter motor PID controller and runs the PID control loop
+	private fun updateShootingControl(newVelocitySetpoint: AngularVelocity = velocitySetpoint) {
+		velocitySetpoint = newVelocitySetpoint
+		val pidOutput = shootingPIDController.calculate(shootingEncoder.velocity, velocitySetpoint.asRpm)
+		if (velocitySetpoint.asRpm == 0.0)
+			mainShootingMotor.stopMotor()
+		else
+			mainShootingMotor.setVoltage(pidOutput + prevVoltage)
+
+		prevVoltage += pidOutput
+	}
+
+	fun setShooterState(shooterState: ShooterState) {
+		updateShootingControl(shooterState.angularVelocity)
+		updateAngleControl(shooterState.angle)
+	}
+
+	fun maintainShooterState() {
+		updateShootingControl()
+		updateAngleControl()
+	}
+
+	fun angleMotorTest() = angleMotor.setVoltage(1.0)
+	fun stopAngleMotor() = angleMotor.stopMotor()
+
 	//Adds values and readings to the glass dashboard, attached to the shooter subsystem.
 	override fun initSendable(builder: SendableBuilder) {
 		builder.addDoubleProperty("Current angle deg", { currentAngle.degrees }, null)
@@ -147,26 +189,5 @@ object ShooterSubsystem : SubsystemBase("Shooter") {
 		builder.addDoubleProperty("Current velocity rpm", { currentVelocity.asRpm }, null)
 		builder.addDoubleProperty("Velocity setpoint rpm", { velocitySetpoint.asRpm }, null)
 		builder.addDoubleProperty("Velocity error rpm", { velocityError.asRpm }, null)
-	}
-
-
-	//**Shooting motors code**
-	private var velocitySetpoint: AngularVelocity = AngularVelocity.fromRpm(0.0)
-
-
-	//Updates the shooter motors PID controller that governs their angular velocity and updates FF
-	private fun updateShootingControl(newVelocitySetpoint: AngularVelocity = velocitySetpoint) {
-		velocitySetpoint = newVelocitySetpoint
-		mainShootingMotor.pidController.setReference(velocitySetpoint.asRpm, ControlType.kVelocity)
-	}
-
-	fun setShooterState(shooterState: ShooterState) {
-		updateShootingControl(shooterState.angularVelocity)
-		updateAngleControl(shooterState.angle)
-	}
-
-	fun maintainShooterState() {
-		updateShootingControl()
-		updateAngleControl()
 	}
 }
