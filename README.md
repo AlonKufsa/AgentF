@@ -40,4 +40,4 @@ Blue -> Blue alliance
 
 Red -> Red alliance
 
-Yellow -> Communication error (cannot know alliance)
+Flashing orange -> Communication error (cannot know alliance)
