@@ -21,7 +21,7 @@ data class ShooterState(val angle: Rotation2d, val angularVelocity: AngularVeloc
 		val COLLECT = ShooterState(172.degrees, 0.0.rpm)
 
 		// --- Teleop Speaker ---
-		val AT_SPEAKER = ShooterState(200.degrees, 2600.rpm)
+		val AT_SPEAKER = ShooterState(200.degrees, (2600).rpm)
 		val REVERSE_AT_SPEAKER = ShooterState(270.degrees, 2600.rpm)
 		val AT_PODIUM = ShooterState(175.0.degrees, 3500.rpm)
 		var AT_STAGE = ShooterState(162.0.degrees, 4100.rpm)
@@ -46,12 +46,12 @@ object ShooterConstants {
 	val FLOOR_RELATIVE_OFFSET = RESTING_ANGLE minus 90.0.degrees
 
 	val MIN_ANGLE = 0.0.degrees
-	val MAX_ANGLE = 360.0.degrees
+	val MAX_ANGLE = 295.0.degrees
 
 	val ANGLE_PID_GAINS = PIDGains(12.0, 0.5)
-	val SHOOTING_PID_GAINS = PIDGains(0.0, 0.0, 0.0)
+	val SHOOTING_PID_GAINS = PIDGains(0.0001, 0.0, 0.0)
 
-	val ANGLE_TOLERANCE = 1.degrees
+	val ANGLE_TOLERANCE = 5.degrees
 	val VELOCITY_TOLERANCE = 50.rpm
 
 	val ANGLE_FEEDBACK_CONFIGS = FeedbackConfigs().apply {
