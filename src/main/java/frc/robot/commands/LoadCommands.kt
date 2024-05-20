@@ -68,3 +68,18 @@ class LoaderEjectToAmpCommand : Command() {
 		LoaderSubsystem.stopMotor()
 	}
 }
+
+class TestLoaderMotors : Command() {
+	init {
+		name = "Loader test"
+		addRequirements(LoaderSubsystem)
+	}
+
+	override fun execute() {
+		LoaderSubsystem.runMotor(1.0)
+	}
+
+	override fun end(interrupted: Boolean) {
+		LoaderSubsystem.stopMotor()
+	}
+}

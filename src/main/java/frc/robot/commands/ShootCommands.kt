@@ -33,4 +33,34 @@ class MaintainShooterStateCommand(val shooterState: ShooterState) : Command() {
 	override fun execute() {
 		ShooterSubsystem.maintainShooterState()
 	}
+
+	class TestShooter : Command() {
+		init {
+			name = "Test shooter"
+			addRequirements(ShooterSubsystem)
+		}
+
+		override fun initialize() {
+			ShooterSubsystem.shooterMotorTest(8.0)
+		}
+
+		override fun end(interrupted: Boolean) {
+			ShooterSubsystem.stopShootingMotors()
+		}
+	}
+
+	class TestAngleMotor() : Command() {
+		init {
+			name = "Test angle motor"
+			addRequirements(ShooterSubsystem)
+		}
+
+		override fun initialize() {
+			ShooterSubsystem.angleMotorTest()
+		}
+
+		override fun end(interrupted: Boolean) {
+			ShooterSubsystem.stopAngleMotor()
+		}
+	}
 }
