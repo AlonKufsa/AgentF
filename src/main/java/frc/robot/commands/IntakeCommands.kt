@@ -28,6 +28,7 @@ class RunIntakeCommand : Command() {
 	override fun execute() {
 		if (ShooterSubsystem.isWithinAngleTolerance && ShooterSubsystem.angleSetpoint == ShooterState.COLLECT.angle) {
 			IntakeSubsystem.runMotors()
+			LedSubsystem.intakeRunning()
 		} else {
 			IntakeSubsystem.stopMotors()
 		}
@@ -36,5 +37,6 @@ class RunIntakeCommand : Command() {
 
 	override fun end(interrupted: Boolean) {
 		IntakeSubsystem.stopMotors()
+		LedSubsystem.actionFinished()
 	}
 }

@@ -146,6 +146,9 @@ object ShooterSubsystem : SubsystemBase("Shooter") {
 	//**Shooting motors code**
 	private var velocitySetpoint: AngularVelocity = AngularVelocity.fromRpm(0.0)
 
+	val isWithinShootingTolerance: Boolean
+		get() = shootingPIDController.atSetpoint()
+
 	fun shooterMotorTest(output: Volts) = mainShootingMotor.setVoltage(output)
 	fun stopShootingMotors() = mainShootingMotor.stopMotor()
 

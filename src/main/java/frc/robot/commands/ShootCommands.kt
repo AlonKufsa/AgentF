@@ -34,37 +34,38 @@ class MaintainShooterStateCommand(val shooterState: ShooterState, val useLeds: B
 
 	override fun execute() {
 		ShooterSubsystem.maintainShooterState()
-		if (ShooterSubsystem.isWithinAngleTolerance && useLeds) LedSubsystem.shootingReady()
-		else if (useLeds) LedSubsystem.shootingNotReady()
+		if (useLeds)
+			LedSubsystem.shooting(ShooterSubsystem.isWithinAngleTolerance && ShooterSubsystem.isWithinShootingTolerance)
 	}
 
-	class TestShooter : Command() {
-		init {
-			name = "Test shooter"
-			addRequirements(ShooterSubsystem)
-		}
+	override fun end(interrupted: Boolean) {
+		ShooterSubsystem.stopAngleMotor()
+		LedSubsystem.actionFinished()
+	}
+}
 
-		override fun initialize() {
-			ShooterSubsystem.shooterMotorTest(8.0)
-		}
-
-		override fun end(interrupted: Boolean) {
-			ShooterSubsystem.stopShootingMotors()
-		}
+class TestShooter : Command() {
+	init {
+		name = "Test shooter"
+		addRequirements(ShooterSubsystem)
 	}
 
-	class TestAngleMotor() : Command() {
-		init {
-			name = "Test angle motor"
-			addRequirements(ShooterSubsystem)
-		}
+	override fun initialize() {
+		ShooterSubsystem.shooterMotorTest(8.0)
+	}
 
-		override fun initialize() {
-			ShooterSubsystem.angleMotorTest()
-		}
+	override fun end(interrupted: Boolean) {
+		ShooterSubsystem.stopShootingMotors()
+	}
+}
 
-		override fun end(interrupted: Boolean) {
-			ShooterSubsystem.stopAngleMotor()
-		}
+class TestAngleMotor() : Command() {
+	init {
+		name = "Test angle motor"
+		addRequirements(ShooterSubsystem)
+	}
+
+	override fun initialize() {
+		ShooterSubsystem.angleMotorTest()
 	}
 }

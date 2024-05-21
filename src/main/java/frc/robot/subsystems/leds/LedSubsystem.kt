@@ -9,12 +9,15 @@ import edu.wpi.first.wpilibj.Timer
 import edu.wpi.first.wpilibj2.command.SubsystemBase
 import frc.robot.Robot
 import frc.robot.RobotMap.LedMap
+import frc.robot.subsystems.intake.IntakeSubsystem
 import frc.robot.subsystems.leds.LedConstants as Constants
 
 object LedSubsystem : SubsystemBase("Led subsystem") {
 	private val led = LEDStrip(Constants.STRIP_LENGTH, LedMap.pwmPort)
+
 	private var flashing = false
 		set(value) {
+			timer.stop()
 			field = value
 			if (!value) setColor(RGBColor.BLACK)
 		}
@@ -49,40 +52,32 @@ object LedSubsystem : SubsystemBase("Led subsystem") {
 		if (flashing) blink(Constants.BLINK_TIME)
 		if (timer.hasElapsed(Constants.FLASHING_DURATION) && withTimeout) {
 			flashing = false
-			timer.stop()
 		}
 		if (Robot.isDisabled) disabled()
 	}
 
-	//Intake
-	fun intakeRunningNoNote() {
-		flashing = false
-		setColor(RGBColor.YELLOW)
+	fun intakeRunning() {
+		if (!IntakeSubsystem.isNoteInIntake) {
+			setColor(RGBColor.YELLOW)
+		} else {
+			setColor(RGBColor.GREEN)
+		}
 	}
 
-	fun intakeRunningHasNote() {
-		setColor(RGBColor.GREEN)
-	}
-
-	fun intakeFinished() {
+	fun actionFinished() {
 		startFlashing(RGBColor.GREEN, true)
 	}
 
 	//Shooting
-	fun shootingNotReady() {
-		setColor(RGBColor.YELLOW)
+	fun shooting(atState: Boolean) {
+		if (!atState) {
+			setColor(RGBColor.YELLOW)
+		} else {
+			setColor(RGBColor.GREEN)
+		}
 	}
 
-	fun shootingReady() {
-		flashing = false
-		setColor(RGBColor.GREEN)
-	}
-
-	fun shootingFinished() {
-		startFlashing(RGBColor.GREEN, true)
-	}
-
-	fun disabled() {
+	private fun disabled() {
 		DriverStation.getAlliance().ifPresentOrElse({
 			when (DriverStation.getAlliance().get()) {
 				Alliance.Blue -> setColor(RGBColor.BLUE)
