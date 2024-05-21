@@ -12,5 +12,5 @@ object IntakeConstants {
 			SupplyCurrentLimit = 40.0
 		}
 	const val MOTOR_VOLTAGE: Volts = 12.0
-	val MOTOR_RPM: AngularVelocity = 2600.rpm
+	val MOTOR_REGULAR_SPEED: AngularVelocity = 2600.rpm
 }
