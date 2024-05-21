@@ -3,6 +3,7 @@ package frc.robot.subsystems.leds
 import com.hamosad1657.lib.leds.LEDStrip
 import com.hamosad1657.lib.leds.RGBColor
 import com.hamosad1657.lib.units.Seconds
+import edu.wpi.first.util.sendable.SendableBuilder
 import edu.wpi.first.wpilibj.DriverStation
 import edu.wpi.first.wpilibj.DriverStation.Alliance
 import edu.wpi.first.wpilibj.Timer
@@ -10,53 +11,51 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase
 import frc.robot.Robot
 import frc.robot.RobotMap.LedMap
 import frc.robot.subsystems.intake.IntakeSubsystem
+import frc.robot.subsystems.leds.LedMode.*
+import frc.robot.subsystems.shooter.ShooterSubsystem
 import frc.robot.subsystems.leds.LedConstants as Constants
+
 
 object LedSubsystem : SubsystemBase("Led subsystem") {
 	private val led = LEDStrip(Constants.STRIP_LENGTH, LedMap.pwmPort)
-
-	private var flashing = false
+	private var atFirstLoop = true
+	var ledMode = LedMode.DEFAULT
 		set(value) {
-			timer.stop()
+			atFirstLoop = true
 			field = value
-			if (!value) setColor(RGBColor.BLACK)
 		}
 
-	private var withTimeout = false
-	private val timer = Timer()
 
-	fun setColor(color: RGBColor) {
-		flashing = false
+	private val actionFinishedTimer = Timer()
+
+	private fun setColor(color: RGBColor) {
 		led.setColor(color)
 	}
 
 	//Call periodically
-	fun blink(blinkTime: Seconds) {
+	private fun blink(blinkTime: Seconds) {
 		led.blink(blinkTime)
 	}
 
-	fun turnOff() {
+	private fun turnOff() {
 		led.setColor(RGBColor.BLACK)
-		flashing = false
-	}
-
-	fun startFlashing(color: RGBColor, timeout: Boolean) {
-		withTimeout = if (timeout) true
-		else false
-		setColor(color)
-		timer.restart()
-		flashing = true
 	}
 
 	override fun periodic() {
-		if (flashing) blink(Constants.BLINK_TIME)
-		if (timer.hasElapsed(Constants.FLASHING_DURATION) && withTimeout) {
-			flashing = false
-		}
-		if (Robot.isDisabled) disabled()
+		if (Robot.isDisabled) ledMode = DISABLED
+
+		if (ledMode == DEFAULT) default()
+		if (ledMode == DISABLED) disabled()
+		if (ledMode == SHOOTING) shooting()
+		if (ledMode == INTAKE) intake()
+		if (ledMode == ACTION_FINISHED_SUCCESSFULLY) actionFinished()
 	}
 
-	fun intakeRunning() {
+	private fun default() {
+		disabled()
+	}
+
+	private fun intake() {
 		if (!IntakeSubsystem.isNoteInIntake) {
 			setColor(RGBColor.YELLOW)
 		} else {
@@ -64,13 +63,22 @@ object LedSubsystem : SubsystemBase("Led subsystem") {
 		}
 	}
 
-	fun actionFinished() {
-		startFlashing(RGBColor.GREEN, true)
+	private fun actionFinished() {
+		if (atFirstLoop) {
+			actionFinishedTimer.restart()
+			setColor(RGBColor.GREEN)
+			atFirstLoop = false
+		}
+		blink(Constants.BLINK_TIME)
+		if (actionFinishedTimer.hasElapsed(Constants.ACTION_FINISHED_DURATION)) {
+			ledMode = DEFAULT
+			actionFinishedTimer.stop()
+		}
 	}
 
 	//Shooting
-	fun shooting(atState: Boolean) {
-		if (!atState) {
+	private fun shooting() {
+		if (!(ShooterSubsystem.isWithinShootingTolerance && ShooterSubsystem.isWithinAngleTolerance)) {
 			setColor(RGBColor.YELLOW)
 		} else {
 			setColor(RGBColor.GREEN)
@@ -84,8 +92,20 @@ object LedSubsystem : SubsystemBase("Led subsystem") {
 				Alliance.Red -> setColor(RGBColor.RED)
 			}
 		},
-			{ startFlashing(RGBColor.ORANGE, false) }
+			{
+				if (atFirstLoop) {
+					setColor(RGBColor.ORANGE)
+					atFirstLoop = false
+				}
+				blink(Constants.BLINK_TIME)
+			}
 		)
+	}
+
+	override fun initSendable(builder: SendableBuilder) {
+		builder.addStringProperty("LED color", { led.currentColor.toString() }, null)
+		builder.addStringProperty("Mode", { ledMode.toString() }, null)
+		builder.addDoubleProperty("Action finished timer reading seconds", { actionFinishedTimer.get() }, null)
 	}
 
 
