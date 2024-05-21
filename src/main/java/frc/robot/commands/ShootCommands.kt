@@ -1,6 +1,8 @@
 package frc.robot.commands
 
 import edu.wpi.first.wpilibj2.command.Command
+import frc.robot.subsystems.leds.LedMode.ACTION_FINISHED_SUCCESSFULLY
+import frc.robot.subsystems.leds.LedMode.SHOOTING
 import frc.robot.subsystems.leds.LedSubsystem
 import frc.robot.subsystems.shooter.ShooterState
 import frc.robot.subsystems.shooter.ShooterSubsystem
@@ -30,17 +32,18 @@ class MaintainShooterStateCommand(val shooterState: ShooterState, val useLeds: B
 
 	override fun initialize() {
 		ShooterSubsystem.setShooterState(shooterState)
+
 	}
 
 	override fun execute() {
 		ShooterSubsystem.maintainShooterState()
 		if (useLeds)
-			LedSubsystem.shooting(ShooterSubsystem.isWithinAngleTolerance && ShooterSubsystem.isWithinShootingTolerance)
+			LedSubsystem.ledMode = SHOOTING
 	}
 
 	override fun end(interrupted: Boolean) {
 		ShooterSubsystem.stopAngleMotor()
-		LedSubsystem.actionFinished()
+		if (useLeds) LedSubsystem.ledMode = ACTION_FINISHED_SUCCESSFULLY
 	}
 }
 

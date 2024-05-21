@@ -1,6 +1,9 @@
 package frc.robot.commands
 
 import edu.wpi.first.wpilibj2.command.Command
+import frc.robot.subsystems.leds.LedMode.ACTION_FINISHED_SUCCESSFULLY
+import frc.robot.subsystems.leds.LedMode.DEFAULT
+import frc.robot.subsystems.leds.LedSubsystem
 import frc.robot.subsystems.loader.LoaderConstants
 import frc.robot.subsystems.loader.LoaderSubsystem
 
@@ -50,6 +53,8 @@ class LoadNoteCommand : Command() {
 
 	override fun end(interrupted: Boolean) {
 		LoaderSubsystem.stopMotor()
+		if (!interrupted) LedSubsystem.ledMode = ACTION_FINISHED_SUCCESSFULLY
+		else LedSubsystem.ledMode = DEFAULT
 	}
 }
 
@@ -66,6 +71,7 @@ class LoaderEjectToAmpCommand : Command() {
 
 	override fun end(interrupted: Boolean) {
 		LoaderSubsystem.stopMotor()
+		LedSubsystem.ledMode = ACTION_FINISHED_SUCCESSFULLY
 	}
 }
 

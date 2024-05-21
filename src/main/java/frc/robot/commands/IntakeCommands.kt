@@ -2,6 +2,7 @@ package frc.robot.commands
 
 import edu.wpi.first.wpilibj2.command.Command
 import frc.robot.subsystems.intake.IntakeSubsystem
+import frc.robot.subsystems.leds.LedMode.INTAKE
 import frc.robot.subsystems.leds.LedSubsystem
 import frc.robot.subsystems.shooter.ShooterState
 import frc.robot.subsystems.shooter.ShooterSubsystem
@@ -28,7 +29,7 @@ class RunIntakeCommand : Command() {
 	override fun execute() {
 		if (ShooterSubsystem.isWithinAngleTolerance && ShooterSubsystem.angleSetpoint == ShooterState.COLLECT.angle) {
 			IntakeSubsystem.runMotors()
-			LedSubsystem.intakeRunning()
+			LedSubsystem.ledMode = INTAKE
 		} else {
 			IntakeSubsystem.stopMotors()
 		}
@@ -37,6 +38,5 @@ class RunIntakeCommand : Command() {
 
 	override fun end(interrupted: Boolean) {
 		IntakeSubsystem.stopMotors()
-		LedSubsystem.actionFinished()
 	}
 }
