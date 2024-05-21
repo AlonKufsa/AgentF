@@ -4,8 +4,8 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard
 import edu.wpi.first.wpilibj2.command.Command
 import edu.wpi.first.wpilibj2.command.button.CommandPS4Controller
 import frc.robot.commands.*
-import frc.robot.commands.MaintainShooterStateCommand.*
 import frc.robot.subsystems.intake.IntakeSubsystem
+import frc.robot.subsystems.leds.LedSubsystem
 import frc.robot.subsystems.loader.LoaderConstants
 import frc.robot.subsystems.loader.LoaderSubsystem
 import frc.robot.subsystems.shooter.ShooterState
@@ -53,6 +53,8 @@ object RobotContainer {
 	private fun sendSubsystemInfo() {
 		SmartDashboard.putData(ShooterSubsystem)
 		SmartDashboard.putData(LoaderSubsystem)
+		SmartDashboard.putData(IntakeSubsystem)
+		SmartDashboard.putData(LedSubsystem)
 	}
 
 	fun getAutonomousCommand(): Command? {
