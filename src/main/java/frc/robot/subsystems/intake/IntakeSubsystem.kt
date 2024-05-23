@@ -15,15 +15,22 @@ object IntakeSubsystem : SubsystemBase("Intake") {
 	}
 	private val timer = Timer()
 	private var areMotorsOn = false
+	private var hasStarted = false
 
 	private fun updateIsNoteInIntake() {
-		if (timer.hasElapsed(2.0)) {
-			if (!isNoteInIntake) timer.reset()
-			isNoteInIntake = ((topMotor.velocity.value < IntakeConstants.MOTOR_REGULAR_SPEED.asRps) && areMotorsOn)
-		} else if (isNoteInIntake) isNoteInIntake = true
-		else {
-			isNoteInIntake = (topMotor.velocity.value in 1.0..IntakeConstants.MOTOR_REGULAR_SPEED.asRps)
-			if (topMotor.velocity.value in 1.0..IntakeConstants.MOTOR_REGULAR_SPEED.asRps) timer.restart()
+		if (topMotor.velocity.value > IntakeConstants.MOTOR_REGULAR_SPEED.asRps)
+			hasStarted = true
+
+
+		if (hasStarted && areMotorsOn) {
+			if (timer.hasElapsed(2.0)) {
+				if (!isNoteInIntake) timer.reset()
+				isNoteInIntake = ((topMotor.velocity.value < IntakeConstants.MOTOR_REGULAR_SPEED.asRps) && areMotorsOn)
+			} else if (isNoteInIntake) isNoteInIntake = true
+			else {
+				isNoteInIntake = (topMotor.velocity.value < IntakeConstants.MOTOR_REGULAR_SPEED.asRps && areMotorsOn)
+				if (isNoteInIntake) timer.restart()
+			}
 		}
 	}
 
@@ -40,6 +47,8 @@ object IntakeSubsystem : SubsystemBase("Intake") {
 		bottomMotor.stopMotor()
 		topMotor.stopMotor()
 		areMotorsOn = false
+		hasStarted = false
+		isNoteInIntake = false
 	}
 
 	override fun periodic() {
