@@ -6,6 +6,8 @@ import edu.wpi.first.hal.HAL
 import edu.wpi.first.wpilibj.TimedRobot
 import edu.wpi.first.wpilibj.util.WPILibVersion
 import edu.wpi.first.wpilibj2.command.CommandScheduler
+import frc.robot.subsystems.leds.LedMode.DEFAULT
+import frc.robot.subsystems.leds.LedSubsystem
 
 /**
  * The VM is configured to automatically run this object (which basically functions as a singleton class),
@@ -50,7 +52,7 @@ object Robot : TimedRobot() {
 	}
 
 	override fun teleopInit() {
-
+		LedSubsystem.ledMode = DEFAULT
 	}
 
 	/** This method is called periodically during operator control.  */
