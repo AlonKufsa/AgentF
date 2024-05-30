@@ -41,7 +41,7 @@ object RobotContainer {
 			.toggleOnTrue(TransferToShooterCommand().withTimeout(LoaderConstants.TRANSFER_TO_SHOOTER_DURATION))
 		psController.triangle().toggleOnTrue(LoaderEjectToAmpCommand().withTimeout(LoaderConstants.AMP_EJECT_DURATION))
 
-		psController.circle().whileTrue(TestShooter())
+		psController.L3().toggleOnTrue(ManualShootingAngleControl({ psController.leftX }, { psController.leftY }))
 	}
 
 	private fun setDefaultCommands() {

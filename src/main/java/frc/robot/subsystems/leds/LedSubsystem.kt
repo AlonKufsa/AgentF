@@ -47,6 +47,7 @@ object LedSubsystem : SubsystemBase("Led subsystem") {
 		if (ledMode == DEFAULT) default()
 		if (ledMode == DISABLED) disabled()
 		if (ledMode == SHOOTING) shooting()
+		if (ledMode == MANUAL_ANGLE_CONTROL) manualShootingControl()
 		if (ledMode == INTAKE) intake()
 		if (ledMode == ACTION_FINISHED_SUCCESSFULLY) actionFinished()
 	}
@@ -76,7 +77,6 @@ object LedSubsystem : SubsystemBase("Led subsystem") {
 		}
 	}
 
-	//Shooting
 	private fun shooting() {
 		if (!(ShooterSubsystem.isWithinShootingTolerance && ShooterSubsystem.isWithinAngleTolerance)) {
 			setColor(RGBColor.YELLOW)
@@ -84,6 +84,11 @@ object LedSubsystem : SubsystemBase("Led subsystem") {
 			setColor(RGBColor.GREEN)
 		}
 	}
+
+	private fun manualShootingControl() {
+		setColor(RGBColor.MAGENTA)
+	}
+
 
 	private fun disabled() {
 		DriverStation.getAlliance().ifPresentOrElse({

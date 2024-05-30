@@ -20,6 +20,13 @@ object RobotMap {
 		const val BEAMBREAK_CHANNEL = 0
 	}
 
+	object ClimbingMap {
+		const val LEFT_MAIN_MOTOR_ID = 0
+		const val LEFT_SECONDARY_MOTOR_ID = 0
+		const val RIGHT_MAIN_MOTOR_ID = 0
+		const val RIGHT_SECONDARY_MOTOR_ID = 0
+	}
+
 	object LedMap {
 		const val pwmPort = 0
 	}
