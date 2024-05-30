@@ -3,7 +3,9 @@ package frc.robot
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard
 import edu.wpi.first.wpilibj2.command.Command
 import edu.wpi.first.wpilibj2.command.button.CommandPS4Controller
+import edu.wpi.first.wpilibj2.command.button.CommandPS5Controller
 import frc.robot.commands.*
+import frc.robot.subsystems.climbing.ClimbingSubsystem
 import frc.robot.subsystems.intake.IntakeSubsystem
 import frc.robot.subsystems.leds.LedSubsystem
 import frc.robot.subsystems.loader.LoaderConstants
@@ -23,7 +25,9 @@ import frc.robot.subsystems.shooter.ShooterSubsystem
  * directly reference the (single instance of the) object.
  */
 object RobotContainer {
-	val psController = CommandPS4Controller(0)
+	private val mainMotor = CommandPS5Controller(0)
+	private val secondaryController = CommandPS4Controller(1)
+	private val testController = CommandPS4Controller(5)
 
 	init {
 		configureBindings()
@@ -33,21 +37,29 @@ object RobotContainer {
 
 	/** Use this method to define your `trigger->command` mappings. */
 	private fun configureBindings() {
-		psController.L1().whileTrue(MaintainShooterStateCommand(ShooterState.TO_AMP, true))
-		psController.R1().whileTrue(MaintainShooterStateCommand(ShooterState.AT_SPEAKER, true))
+		//Driver 1
 
-		psController.cross().toggleOnTrue(CollectAndLoadCommand())
-		psController.square()
+
+		//Driver 2
+		secondaryController.L1().whileTrue(MaintainShooterStateCommand(ShooterState.TO_AMP, true))
+		secondaryController.R1().whileTrue(MaintainShooterStateCommand(ShooterState.AT_SPEAKER, true))
+
+		secondaryController.cross().toggleOnTrue(CollectAndLoadCommand())
+		secondaryController.square()
 			.toggleOnTrue(TransferToShooterCommand().withTimeout(LoaderConstants.TRANSFER_TO_SHOOTER_DURATION))
-		psController.triangle().toggleOnTrue(LoaderEjectToAmpCommand().withTimeout(LoaderConstants.AMP_EJECT_DURATION))
+		secondaryController.triangle()
+			.toggleOnTrue(LoaderEjectToAmpCommand().withTimeout(LoaderConstants.AMP_EJECT_DURATION))
 
-		psController.L3().toggleOnTrue(ManualShootingAngleControl({ psController.leftX }, { psController.leftY }))
+		secondaryController.L3()
+			.toggleOnTrue(ManualShootingAngleControl({ secondaryController.leftX }, { secondaryController.leftY }))
 	}
 
 	private fun setDefaultCommands() {
 		IntakeSubsystem.defaultCommand = DefaultIntakeCommand()
 		LoaderSubsystem.defaultCommand = DefaultLoaderCommand()
 		ShooterSubsystem.defaultCommand = DefaultShooterCommand()
+		ClimbingSubsystem.defaultCommand =
+			DefaultClimbingCommand({ secondaryController.leftY }, { secondaryController.rightY })
 	}
 
 	private fun sendSubsystemInfo() {

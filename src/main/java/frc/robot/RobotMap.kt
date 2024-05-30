@@ -21,10 +21,10 @@ object RobotMap {
 	}
 
 	object ClimbingMap {
-		const val LEFT_MAIN_MOTOR_ID = 0
-		const val LEFT_SECONDARY_MOTOR_ID = 0
-		const val RIGHT_MAIN_MOTOR_ID = 0
-		const val RIGHT_SECONDARY_MOTOR_ID = 0
+		const val LEFT_MAIN_MOTOR_ID = 25
+		const val LEFT_SECONDARY_MOTOR_ID = 26
+		const val RIGHT_MAIN_MOTOR_ID = 27
+		const val RIGHT_SECONDARY_MOTOR_ID = 28
 	}
 
 	object LedMap {

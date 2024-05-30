@@ -7,5 +7,5 @@ object ClimbingConstants {
 	const val SMART_CURRENT_LIMIT: Amps = 40
 
 	const val OPEN_CLIMBING_OUTPUT: PercentOutput = 0.8
-	const val CLOSE_CLIMBING_OUTPUT: PercentOutput = 0.5
+	const val CLOSE_CLIMBING_OUTPUT: PercentOutput = -0.5
 }
