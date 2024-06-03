@@ -23,6 +23,8 @@ import kotlin.math.cos
 import frc.robot.subsystems.shooter.ShooterConstants as Constants
 
 object ShooterSubsystem : SubsystemBase("Shooter") {
+	var isManualControlEnabled = false
+
 	private val mainShootingMotor = HaSparkFlex(RobotMap.ShooterMap.SHOOTER_TOP_SHOOTING_MOTOR_ID, kBrushless).apply {
 		inverted = false
 		pidController.apply {

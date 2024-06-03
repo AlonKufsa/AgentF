@@ -6,6 +6,7 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase
 import frc.robot.RobotMap
 
 object ClimbingSubsystem : SubsystemBase("Climbing") {
+
 	private val leftMainMotor = HaSparkFlex(RobotMap.ClimbingMap.LEFT_MAIN_MOTOR_ID).apply {
 		restoreFactoryDefaults()
 		inverted = true

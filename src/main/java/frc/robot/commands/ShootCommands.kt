@@ -57,6 +57,10 @@ class ManualShootingAngleControl(val xPos: () -> Double, val yPos: () -> Double)
 		addRequirements(ShooterSubsystem, LedSubsystem)
 	}
 
+	override fun initialize() {
+		ShooterSubsystem.isManualControlEnabled = true
+	}
+
 	override fun execute() {
 		val angle: Rotation2d = ShooterConstants.FLOOR_RELATIVE_OFFSET minus Rotation2d(xPos(), -yPos())
 		val length: Double = Translation2d(xPos(), yPos()).norm
@@ -67,5 +71,6 @@ class ManualShootingAngleControl(val xPos: () -> Double, val yPos: () -> Double)
 
 	override fun end(interrupted: Boolean) {
 		LedSubsystem.ledMode = DEFAULT
+		ShooterSubsystem.isManualControlEnabled = false
 	}
 }
