@@ -19,7 +19,7 @@ import com.revrobotics.CANSparkBase.IdleMode
  */
 const val FalconSafeTempC = 90
 
-class HaTalonFX(deviceNumber: Int) : TalonFX(deviceNumber) {
+class HaTalonFX(deviceNumber: Int, canbus: String) : TalonFX(deviceNumber, canbus) {
 	init {
 		isSafetyEnabled = true
 	}
@@ -34,10 +34,6 @@ class HaTalonFX(deviceNumber: Int) : TalonFX(deviceNumber) {
 	 * Use only as setter.
 	 */
 	var idleMode: IdleMode = IdleMode.kBrake
-		get() {
-			robotPrintError("Use [idleMode] field only as a setter", true)
-			return field
-		}
 		set(value) {
 			super.setNeutralMode(value.toNeutralModeValue())
 			field = value

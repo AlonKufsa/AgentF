@@ -47,7 +47,7 @@ object ShooterSubsystem : SubsystemBase("Shooter") {
 			follow(mainShootingMotor, true) //Follows the top motor, but inverts it's rotation direction
 		}
 
-	private val angleMotor = HaTalonFX(RobotMap.ShooterMap.SHOOTER_ANGLE_MOTOR_ID).apply {
+	private val angleMotor = HaTalonFX(RobotMap.ShooterMap.SHOOTER_ANGLE_MOTOR_ID, "").apply {
 		restoreFactoryDefaults()
 		inverted = false
 		configPID(Constants.ANGLE_PID_GAINS)
