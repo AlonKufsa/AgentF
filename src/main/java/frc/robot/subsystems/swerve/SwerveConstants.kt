@@ -42,6 +42,7 @@ object SwerveConstants {
 	const val BOTTOM_LEFT_OFFSET_DEG = 0.0
 	const val BOTTOM_RIGHT_OFFSET_DEG = 0.0
 
+	//Assuming that at 0 degrees a positive output will lead to a positive speed
 	val DRIVE_MOTOR_CONFIGS: TalonFXConfiguration = TalonFXConfiguration().apply {
 		//Current limits
 		CurrentLimits.SupplyCurrentLimit = 45.0
@@ -65,6 +66,7 @@ object SwerveConstants {
 		}
 	}
 
+	//Assuming positive output would rotate the module counterclockwise
 	fun steerMotorConfigs(canCoderID: Int, moduleName: String): TalonFXConfiguration = TalonFXConfiguration().apply {
 		CurrentLimits.SupplyCurrentLimit = 20.0
 		CurrentLimits.StatorCurrentLimitEnable = true
