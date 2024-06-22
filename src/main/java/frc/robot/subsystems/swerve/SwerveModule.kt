@@ -1,5 +1,7 @@
 package frc.robot.subsystems.swerve
 
+import com.ctre.phoenix6.controls.PositionVoltage
+import com.ctre.phoenix6.controls.VelocityVoltage
 import com.ctre.phoenix6.hardware.CANcoder
 import com.hamosad1657.lib.motors.HaTalonFX
 import com.hamosad1657.lib.units.AngularVelocity
@@ -15,23 +17,26 @@ class SwerveModule(
 	private val driveMotorID: Int,
 	private val steerMotorID: Int,
 	private val canCoderID: Int,
-	val moduleName: String,
+	private val moduleName: String,
 ) : Sendable {
 
 	//Motor for controlling the velocity of the wheel
-	val driveMotor = HaTalonFX(driveMotorID, Constants.SWERVE_CANBUS).apply {
+	private val driveMotor = HaTalonFX(driveMotorID, Constants.SWERVE_CANBUS).apply {
 		restoreFactoryDefaults()
 		configurator.apply(Constants.DRIVE_MOTOR_CONFIGS)
 	}
 
 	//Motor for controlling the angle of the wheel
-	val steerMotor = HaTalonFX(steerMotorID, Constants.SWERVE_CANBUS).apply {
+	private val steerMotor = HaTalonFX(steerMotorID, Constants.SWERVE_CANBUS).apply {
 		restoreFactoryDefaults()
-		configurator.apply(Constants.steerMotorConfigs(canCoderID, moduleName))
+		configurator.apply(Constants.steerMotorConfigs(canCoderID))
+		positionWrapEnabled = true
 	}
 
 
-	val canCoder = CANcoder(canCoderID, Constants.SWERVE_CANBUS)
+	private val canCoder = CANcoder(canCoderID, Constants.SWERVE_CANBUS).apply {
+		configurator.apply(Constants.canCoderConfigs(moduleName))
+	}
 
 
 	/** Change this to change the driving motor's idle state. kBrake by default */
@@ -49,26 +54,41 @@ class SwerveModule(
 		}
 
 
-	//The angle setpoint of the swerve module from 0.0 to 360.0 from the right side of the x axis counter clockwise
+	/**The angle setpoint of the swerve module from 0.0 to 360.0 from the right side of the x-axis, counterclockwise*/
 	private var angleSetpoint: Rotation2d = Rotation2d(0.0)
+		set(value) {
+			val controlRequestSteerAngle: PositionVoltage = PositionVoltage(value.rotations)
+			steerMotor.setControl(controlRequestSteerAngle)
+			field = value
+		}
 
 	//The angular velocity setpoint of the wheel in rps
 	private var wheelAngularVelocitySetpoint: AngularVelocity = AngularVelocity.fromRps(0.0)
+		set(value) {
+			val controlRequestDriveSpeed: VelocityVoltage = VelocityVoltage(value.asRps)
 
-	/** Function for setting the module state externally */
+			driveMotor.setControl(controlRequestDriveSpeed)
+			field = value
+		}
+
+	/** Function for setting the module state externally.
+	 * Angle is from 0.0 to 360.0 with the right side of the x-axis, counterclockwise
+	 * Speed is in meters per second, in the direction the wheel is facing
+	 */
 	fun setModuleState(swerveModuleState: SwerveModuleState) {
-		//TODO: continuous wrap the angle
-		angleSetpoint = swerveModuleState.angle
-		wheelAngularVelocitySetpoint = AngularVelocity.fromRps(
-			swerveModuleState.speedMetersPerSecond / Constants.WHEEL_CIRCUMFERENCE_METERS)
+		angleSetpoint = Rotation2d.fromDegrees(swerveModuleState.angle.degrees % 360)
 
-
+		wheelAngularVelocitySetpoint = AngularVelocity.fromRps(swerveModuleState.speedMetersPerSecond / Constants.WHEEL_CIRCUMFERENCE_METERS)
 	}
 
 
-	//Shortcuts for getting speed and rotation, and ways of accessing them outside of the class
+
+	
+	/** Current rotation of the module in degrees from 0 to 360 from the right side of the x-axis, counterclockwise */
 	val moduleRotationDeg: Double
 		get() = canCoder.position.value * 360.0
+
+	/** Current speed of the module in meters per second */
 	val moduleSpeedMPS: Double
 		get() = driveMotor.velocity.value * Constants.WHEEL_CIRCUMFERENCE_METERS
 
