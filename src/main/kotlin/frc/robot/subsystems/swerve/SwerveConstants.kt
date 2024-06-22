@@ -22,11 +22,17 @@ object SwerveConstants {
 	const val DRIVE_KV = 0.0
 	const val DRIVE_KS = 0.0
 
+	const val DRIVE_MOTION_MAGIC_ACCELERATION = 0.0
+	const val DRIVE_MOTION_MAGIC_CRUISE_VELOCITY = 0.0
+
 	// Steer pid and ff values
 	val STEER_PID_GAINS = PIDGains()
 	const val STEER_KA = 0.0
 	const val STEER_KV = 0.0
 	const val STEER_KS = 0.0
+
+	const val STEER_MOTION_MAGIC_ACCELERATION = 0.0
+	const val STEER_MOTION_MAGIC_CRUISE_VELOCITY = 0.0
 
 	const val WHEEL_CIRCUMFERENCE_METERS = 0.0
 
@@ -71,6 +77,13 @@ object SwerveConstants {
 			kV = DRIVE_KV
 			kS = DRIVE_KS
 		}
+
+		// MotionMagic configs
+		with(MotionMagic) {
+			MotionMagicAcceleration = DRIVE_MOTION_MAGIC_ACCELERATION
+			MotionMagicCruiseVelocity = DRIVE_MOTION_MAGIC_CRUISE_VELOCITY
+		}
+
 	}
 
 	fun steerMotorConfigs(canCoderID: Int): TalonFXConfiguration = TalonFXConfiguration().apply {
@@ -92,6 +105,13 @@ object SwerveConstants {
 			kV = STEER_KV
 			kS = STEER_KS
 		}
+
+		// Motion Magic configs
+		with(MotionMagic) {
+			MotionMagicAcceleration = STEER_MOTION_MAGIC_ACCELERATION
+			MotionMagicCruiseVelocity = STEER_MOTION_MAGIC_CRUISE_VELOCITY
+		}
+
 	}
 
 	fun canCoderConfigs(moduleName: String): CANcoderConfiguration = CANcoderConfiguration().apply {
