@@ -30,32 +30,36 @@ object SwerveConstants {
 
 	const val WHEEL_CIRCUMFERENCE_METERS = 0.0
 
-	// Theoretical free speed (m/s) at 12v applied output.
+	/** Theoretical free speed (m/s) at 12v applied output. */
 	const val MAX_SPEED_MPS = 9.0 // 9.46 according to CTRE ?
 
-	// Theoretical free rotation speed (rotations/s) at 12v applied output. (how fast it can steer)
+	/** Theoretical free rotation speed (rotations/s) at 12v applied output. (how fast it can steer) */
 	val MAX_ANGULAR_VELOCITY = 2.0.rps
 
-	// The distance from the center of the chassis to a center of a module.
-	private val DRIVEBASE_RADIUS = 0.417405.meters
+	/** The distance from the center of the chassis to a center of a module. */
+	val DRIVEBASE_RADIUS = 0.417405.meters
+
+	/** The amount of rotations the engine does for every rotation of the wheel */
+	const val DRIVE_TRANSMISSION = 6.746031746031747
 
 	// TODO: Find values
+	// The CANCoder offsets for each module
 	const val FRONT_RIGHT_OFFSET_DEG = 0.0
 	const val FRONT_LEFT_OFFSET_DEG = 0.0
 	const val BOTTOM_LEFT_OFFSET_DEG = 0.0
 	const val BOTTOM_RIGHT_OFFSET_DEG = 0.0
 
-	//Assuming that at 0 degrees a positive output will lead to a positive speed
+	// Assuming that at 0 degrees a positive output will lead to a positive speed
 	val DRIVE_MOTOR_CONFIGS: TalonFXConfiguration = TalonFXConfiguration().apply {
-		//Current limits
+		// Current limits
 		CurrentLimits.SupplyCurrentLimit = 45.0
 		CurrentLimits.SupplyCurrentLimitEnable = true
-		CurrentLimits.StatorCurrentLimitEnable = true
+		CurrentLimits.StatorCurrentLimitEnable = false
 
-		//Limits the speed in which the motors voltage consumption can change
+		// Limits the speed in which the motors voltage consumption can change
 		ClosedLoopRamps.VoltageClosedLoopRampPeriod = 0.25
 
-		//PID and FF
+		// PID and FF
 		with(Slot0) {
 			//PID
 			kP = DRIVE_PID_GAINS.kP
@@ -69,10 +73,10 @@ object SwerveConstants {
 		}
 	}
 
-	//Assuming positive output would rotate the module counterclockwise
 	fun steerMotorConfigs(canCoderID: Int): TalonFXConfiguration = TalonFXConfiguration().apply {
 		CurrentLimits.SupplyCurrentLimit = 20.0
-		CurrentLimits.StatorCurrentLimitEnable = true
+		CurrentLimits.SupplyCurrentLimitEnable = true
+		CurrentLimits.StatorCurrentLimitEnable = false
 
 		Feedback.FeedbackRemoteSensorID = canCoderID
 		Feedback.FeedbackSensorSource = RemoteCANcoder
@@ -92,13 +96,13 @@ object SwerveConstants {
 
 	fun canCoderConfigs(moduleName: String): CANcoderConfiguration = CANcoderConfiguration().apply {
 		with(MagnetSensor) {
-			//The offset added to the CANCoder for it to measure correctly for a wheel pointing right to be 0 degrees
+			// The offset added to the CANCoder for it to measure correctly for a wheel pointing right to be 0 degrees
 			MagnetOffset = when (moduleName) {
 				"FrontRight" -> FRONT_RIGHT_OFFSET_DEG
 				"FrontLeft" -> FRONT_LEFT_OFFSET_DEG
 				"BottomLeft" -> BOTTOM_LEFT_OFFSET_DEG
 				"BottomRight" -> BOTTOM_RIGHT_OFFSET_DEG
-				else -> 0.0.also { DriverStation.reportError("Illegal swerve module name: $moduleName", false) }
+				else -> 0.0.also { DriverStation.reportError("Invalid swerve module name: $moduleName", false) }
 			}
 
 			SensorDirection = CounterClockwise_Positive
