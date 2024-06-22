@@ -11,18 +11,18 @@ import com.hamosad1657.lib.units.rps
 import edu.wpi.first.wpilibj.DriverStation
 
 object SwerveConstants {
-	//Canbus network swerve is connected to
+	// Canbus network swerve is connected to
 	const val SWERVE_CANBUS = "SwerveBus"
 
 
-	//TODO: Tune PID
-	//Drive pid and ff values
+	// TODO: Tune PID
+	// Drive pid and ff values
 	val DRIVE_PID_GAINS = PIDGains()
 	const val DRIVE_KA = 0.0
 	const val DRIVE_KV = 0.0
 	const val DRIVE_KS = 0.0
 
-	//Steer pid and ff values
+	// Steer pid and ff values
 	val STEER_PID_GAINS = PIDGains()
 	const val STEER_KA = 0.0
 	const val STEER_KV = 0.0
@@ -61,12 +61,12 @@ object SwerveConstants {
 
 		// PID and FF
 		with(Slot0) {
-			//PID
+			// PID
 			kP = DRIVE_PID_GAINS.kP
 			kI = DRIVE_PID_GAINS.kI
 			kD = DRIVE_PID_GAINS.kD
 
-			//FF
+			// FF
 			kA = DRIVE_KA
 			kV = DRIVE_KV
 			kS = DRIVE_KS
@@ -82,12 +82,12 @@ object SwerveConstants {
 		Feedback.FeedbackSensorSource = RemoteCANcoder
 
 		with(Slot0) {
-			//PID
+			// PID
 			kP = STEER_PID_GAINS.kP
 			kI = STEER_PID_GAINS.kI
 			kD = STEER_PID_GAINS.kD
 
-			//FF
+			// FF
 			kA = STEER_KA
 			kV = STEER_KV
 			kS = STEER_KS
