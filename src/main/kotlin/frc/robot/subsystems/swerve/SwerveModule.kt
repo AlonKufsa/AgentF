@@ -61,7 +61,7 @@ class SwerveModule(
 	/** The angle setpoint of the swerve module from 0.0 to 360.0 from the right side of the x-axis, counterclockwise*/
 	private var angleSetpoint: Rotation2d = Rotation2d(0.0)
 		set(value) {
-			controlRequestSteerAngle = MotionMagicVoltage(value.rotations)
+			controlRequestSteerAngle.Position = value.rotations
 			steerMotor.setControl(controlRequestSteerAngle)
 			field = value
 		}
@@ -71,7 +71,7 @@ class SwerveModule(
 	/** The angular velocity setpoint of the wheel in rps */
 	private var wheelAngularVelocitySetpoint: AngularVelocity = AngularVelocity.fromRps(0.0)
 		set(value) {
-			controlRequestDriveVelocity = MotionMagicVelocityVoltage(value.asRps)
+			controlRequestDriveVelocity.Velocity = value.asRps
 
 			driveMotor.setControl(controlRequestDriveVelocity)
 			field = value
