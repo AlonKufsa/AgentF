@@ -14,6 +14,8 @@ object SwerveConstants {
 	//Canbus network swerve is connected to
 	const val SWERVE_CANBUS = "SwerveBus"
 
+
+	//TODO: Tune PID
 	//Drive pid and ff values
 	val DRIVE_PID_GAINS = PIDGains()
 	const val DRIVE_KA = 0.0
@@ -37,6 +39,7 @@ object SwerveConstants {
 	// The distance from the center of the chassis to a center of a module.
 	private val DRIVEBASE_RADIUS = 0.417405.meters
 
+	// TODO: Find values
 	const val FRONT_RIGHT_OFFSET_DEG = 0.0
 	const val FRONT_LEFT_OFFSET_DEG = 0.0
 	const val BOTTOM_LEFT_OFFSET_DEG = 0.0
@@ -67,7 +70,7 @@ object SwerveConstants {
 	}
 
 	//Assuming positive output would rotate the module counterclockwise
-	fun steerMotorConfigs(canCoderID: Int, moduleName: String): TalonFXConfiguration = TalonFXConfiguration().apply {
+	fun steerMotorConfigs(canCoderID: Int): TalonFXConfiguration = TalonFXConfiguration().apply {
 		CurrentLimits.SupplyCurrentLimit = 20.0
 		CurrentLimits.StatorCurrentLimitEnable = true
 
