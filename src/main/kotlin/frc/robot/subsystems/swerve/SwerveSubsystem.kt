@@ -29,5 +29,11 @@ object SwerveSubsystem : SubsystemBase("Swerve subsystem") {
 		"FrontRight"
 	)
 
+	private fun setModuleStates(moduleStates: ModuleStates) {
+		frontRight.setModuleState(moduleStates.frontRight)
+		frontLeft.setModuleState(moduleStates.frontLeft)
+		backLeft.setModuleState(moduleStates.backLeft)
+		backRight.setModuleState(moduleStates.backRight)
+	}
 
 }
