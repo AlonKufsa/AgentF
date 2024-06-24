@@ -163,8 +163,8 @@ object SwerveConstants {
 			MagnetOffset = when (moduleName) {
 				"FrontRight" -> FRONT_RIGHT_OFFSET_DEG
 				"FrontLeft" -> FRONT_LEFT_OFFSET_DEG
-				"BottomLeft" -> BOTTOM_LEFT_OFFSET_DEG
-				"BottomRight" -> BOTTOM_RIGHT_OFFSET_DEG
+				"BackLeft" -> BOTTOM_LEFT_OFFSET_DEG
+				"BackRight" -> BOTTOM_RIGHT_OFFSET_DEG
 				else -> 0.0.also { DriverStation.reportError("Invalid swerve module name: $moduleName", false) }
 			}
 
