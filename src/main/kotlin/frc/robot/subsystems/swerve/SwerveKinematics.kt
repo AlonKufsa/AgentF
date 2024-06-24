@@ -8,12 +8,13 @@ import edu.wpi.first.math.geometry.Translation2d
 import edu.wpi.first.math.kinematics.ChassisSpeeds
 import edu.wpi.first.math.kinematics.SwerveModuleState
 import kotlin.math.PI
+import frc.robot.subsystems.swerve.SwerveConstants as Constants
 
 object SwerveKinematics {
 	/** Converts between angular velocity of the robot to the module states needed to achieve it.
 	 * Positive angular velocity is counterclockwise, negative is clockwise */
 	fun angularVelocityToModuleStates(angularVelocity: AngularVelocity): ModuleStates {
-		val wheelSpeedMPS: Double = angularVelocity.asRps * 2 * PI * SwerveConstants.DRIVEBASE_RADIUS.asMeters
+		val wheelSpeedMPS: Double = angularVelocity.asRps * 2 * PI * Constants.DRIVEBASE_RADIUS.asMeters
 
 		val moduleStates = ModuleStates()
 		if (angularVelocity.asRps < 0) {
