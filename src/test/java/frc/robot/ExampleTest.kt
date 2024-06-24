@@ -1,8 +1,12 @@
 package frc.robot
 
+import com.hamosad1657.lib.units.radToDeg
+import edu.wpi.first.math.MathUtil
+import edu.wpi.first.math.geometry.Translation2d
 import org.junit.jupiter.api.Test
 
 import org.junit.jupiter.api.Assertions.*
+import kotlin.math.atan
 
 internal class ExampleTest
 {
@@ -10,9 +14,9 @@ internal class ExampleTest
     // JUnit 5 User Guide at https://junit.org/junit5/docs/current/user-guide/
 
     @Test
-    fun `2 plus 2 should equal 4`()
+    fun translation2DCoordinatesCheck()
     {
-        assertEquals(4, 2 + 2)
+        assertEquals(MathUtil.inputModulus(Translation2d(5.0, -7.0).angle.degrees, 0.0, 360.0), 360.0-(radToDeg(atan(7.0/5.0))), 1.0)
     }
 }
 
