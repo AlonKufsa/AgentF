@@ -51,7 +51,6 @@ class ModuleStates() {
 	fun setFrontLeft(state: SwerveModuleState) {frontLeft = state}
 	fun setBackLeft(state: SwerveModuleState) {backLeft = state}
 	fun setBackRight(state: SwerveModuleState) {backRight = state}
-
 }
 
 object SwerveConstants {
