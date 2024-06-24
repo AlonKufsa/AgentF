@@ -9,6 +9,7 @@ import com.hamosad1657.lib.motors.HaTalonFX
 import com.hamosad1657.lib.units.AngularVelocity
 import com.revrobotics.CANSparkBase.IdleMode
 import com.revrobotics.CANSparkBase.IdleMode.kBrake
+import edu.wpi.first.math.MathUtil
 import edu.wpi.first.math.geometry.Rotation2d
 import edu.wpi.first.math.kinematics.SwerveModuleState
 import edu.wpi.first.util.sendable.Sendable
@@ -82,7 +83,7 @@ class SwerveModule(
 	 * Speed is in meters per second, in the direction the wheel is facing.
 	 */
 	fun setModuleState(swerveModuleState: SwerveModuleState) {
-		angleSetpoint = Rotation2d.fromDegrees(swerveModuleState.angle.degrees % 360)
+		angleSetpoint = Rotation2d.fromDegrees(MathUtil.inputModulus(swerveModuleState.angle.degrees, 0.0, 360.0))
 
 		wheelAngularVelocitySetpoint = AngularVelocity.fromRps(
 			(swerveModuleState.speedMetersPerSecond / Constants.WHEEL_CIRCUMFERENCE_METERS) * Constants.DRIVE_TRANSMISSION)
