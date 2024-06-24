@@ -8,7 +8,51 @@ import com.ctre.phoenix6.signals.SensorDirectionValue.CounterClockwise_Positive
 import com.hamosad1657.lib.math.PIDGains
 import com.hamosad1657.lib.units.meters
 import com.hamosad1657.lib.units.rps
+import edu.wpi.first.math.kinematics.SwerveModuleState
+import edu.wpi.first.util.sendable.Sendable
 import edu.wpi.first.wpilibj.DriverStation
+
+class ModuleStates() {
+
+	constructor(
+		frontRightState: SwerveModuleState,
+		frontLeftState: SwerveModuleState,
+		backLeftState: SwerveModuleState,
+		backRightState: SwerveModuleState
+		): this() {
+		frontRight = frontRightState
+		frontLeft = frontLeftState
+		backLeft = backLeftState
+		backRight = backRightState
+	}
+
+	var frontRight: SwerveModuleState = SwerveModuleState()
+		private set
+	var frontLeft: SwerveModuleState = SwerveModuleState()
+		private set
+	var backLeft: SwerveModuleState = SwerveModuleState()
+		private set
+	var backRight: SwerveModuleState = SwerveModuleState()
+		private set
+
+	fun setStates(
+		frontRightState: SwerveModuleState,
+		frontLeftState: SwerveModuleState,
+		backLeftState: SwerveModuleState,
+		backRightState: SwerveModuleState
+	) {
+		frontRight = frontRightState
+		frontLeft = frontLeftState
+		backLeft = backLeftState
+		backRight = backRightState
+	}
+
+	fun setFrontRight(state: SwerveModuleState) {frontRight = state}
+	fun setFrontLeft(state: SwerveModuleState) {frontLeft = state}
+	fun setBackLeft(state: SwerveModuleState) {backLeft = state}
+	fun setBackRight(state: SwerveModuleState) {backRight = state}
+
+}
 
 object SwerveConstants {
 	// Canbus network swerve is connected to
