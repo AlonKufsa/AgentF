@@ -4,6 +4,7 @@ import com.ctre.phoenix6.configs.CANcoderConfiguration
 import com.ctre.phoenix6.configs.TalonFXConfiguration
 import com.ctre.phoenix6.signals.AbsoluteSensorRangeValue.Unsigned_0To1
 import com.ctre.phoenix6.signals.FeedbackSensorSourceValue.RemoteCANcoder
+import com.ctre.phoenix6.signals.SensorDirectionValue.Clockwise_Positive
 import com.ctre.phoenix6.signals.SensorDirectionValue.CounterClockwise_Positive
 import com.hamosad1657.lib.math.PIDGains
 import com.hamosad1657.lib.units.meters
@@ -97,10 +98,10 @@ object SwerveConstants {
 
 	// TODO: Find values
 	// The CANCoder offsets for each module
-	val FRONT_RIGHT_OFFSET =  Rotation2d.fromDegrees(89.91)
-	val FRONT_LEFT_OFFSET = Rotation2d.fromDegrees(-223.242)
-	val BACK_LEFT_OFFSET = Rotation2d.fromDegrees(-264.990)
-	val BACK_RIGHT_OFFSET = Rotation2d.fromDegrees(172.705)
+	val FRONT_RIGHT_OFFSET = Rotation2d.fromDegrees(-92.109375)
+	val FRONT_LEFT_OFFSET = Rotation2d.fromDegrees(-138.515625)
+	val BACK_LEFT_OFFSET = Rotation2d.fromDegrees(-95.537109)
+	val BACK_RIGHT_OFFSET = Rotation2d.fromDegrees(-175.781250)
 
 	// Assuming that at 0 degrees a positive output will lead to a positive speed
 	val DRIVE_MOTOR_CONFIGS: TalonFXConfiguration = TalonFXConfiguration().apply {
@@ -172,7 +173,8 @@ object SwerveConstants {
 				else -> 0.0.also { DriverStation.reportError("Invalid swerve module name: $moduleName", false) }
 			}
 
-			SensorDirection = CounterClockwise_Positive
+			// Direction is counterclockwise, but the mechanism is placed inverted
+			SensorDirection = Clockwise_Positive
 			AbsoluteSensorRange = Unsigned_0To1
 		}
 	}
