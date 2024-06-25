@@ -2,8 +2,7 @@ package frc.robot.subsystems.swerve
 
 import com.ctre.phoenix6.controls.MotionMagicVelocityVoltage
 import com.ctre.phoenix6.controls.MotionMagicVoltage
-import com.ctre.phoenix6.controls.PositionVoltage
-import com.ctre.phoenix6.controls.VelocityVoltage
+
 import com.ctre.phoenix6.hardware.CANcoder
 import com.hamosad1657.lib.motors.HaTalonFX
 import com.hamosad1657.lib.units.AngularVelocity
@@ -12,7 +11,6 @@ import com.revrobotics.CANSparkBase.IdleMode.kBrake
 import edu.wpi.first.math.MathUtil
 import edu.wpi.first.math.geometry.Rotation2d
 import edu.wpi.first.math.kinematics.SwerveModuleState
-import edu.wpi.first.util.sendable.Sendable
 import edu.wpi.first.util.sendable.SendableBuilder
 import frc.robot.subsystems.swerve.SwerveConstants as Constants
 
@@ -79,14 +77,22 @@ class SwerveModule(
 		}
 
 	/** Function for setting the module state externally.
-	 * Angle is from 0.0 to 360.0 with the right side of the x-axis, counterclockwise.
+	 * Angle is from 0.0 to 360.0 degrees with the right side of the x-axis, counterclockwise.
 	 * Speed is in meters per second, in the direction the wheel is facing.
 	 */
 	fun setModuleState(swerveModuleState: SwerveModuleState) {
-		angleSetpoint = Rotation2d.fromDegrees(MathUtil.inputModulus(swerveModuleState.angle.degrees, 0.0, 360.0))
+		setModuleRotation(swerveModuleState.angle)
+		setModuleSpeed(swerveModuleState.speedMetersPerSecond)
+	}
 
+	fun setModuleSpeed(speedMPS: Double) {
 		wheelAngularVelocitySetpoint = AngularVelocity.fromRps(
-			(swerveModuleState.speedMetersPerSecond / Constants.WHEEL_CIRCUMFERENCE_METERS) * Constants.DRIVE_TRANSMISSION)
+			(speedMPS / Constants.WHEEL_CIRCUMFERENCE_METERS) * Constants.DRIVE_TRANSMISSION)
+	}
+
+	/** Set the angle the module will be in from 0.0 to 360.0 degrees with the right side of the x-axis, counterclockwise */
+	fun setModuleRotation(rotation: Rotation2d) {
+		angleSetpoint = Rotation2d.fromDegrees(MathUtil.inputModulus(rotation.degrees, 0.0, 360.0))
 	}
 
 
