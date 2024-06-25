@@ -6,11 +6,10 @@ import com.ctre.phoenix6.signals.AbsoluteSensorRangeValue.Unsigned_0To1
 import com.ctre.phoenix6.signals.FeedbackSensorSourceValue.RemoteCANcoder
 import com.ctre.phoenix6.signals.SensorDirectionValue.CounterClockwise_Positive
 import com.hamosad1657.lib.math.PIDGains
-import com.hamosad1657.lib.math.clamp
 import com.hamosad1657.lib.units.meters
 import com.hamosad1657.lib.units.rps
+import edu.wpi.first.math.geometry.Rotation2d
 import edu.wpi.first.math.kinematics.SwerveModuleState
-import edu.wpi.first.util.sendable.Sendable
 import edu.wpi.first.wpilibj.DriverStation
 import kotlin.math.max
 
@@ -28,7 +27,8 @@ class ModuleStates() {
 		backRight = backRightState
 	}
 
-	var maxModuleSpeed = 0.0
+	/** The maximum speed modules are allowed to receive. */
+	var maxAllowedModuleSpeed = 0.0
 
 	var frontRight: SwerveModuleState = SwerveModuleState()
 	var frontLeft: SwerveModuleState = SwerveModuleState()
@@ -41,13 +41,18 @@ class ModuleStates() {
 		backLeftState: SwerveModuleState,
 		backRightState: SwerveModuleState
 	) {
-		if (max(max(frontRightState.speedMetersPerSecond, frontLeftState.speedMetersPerSecond), max(backRightState.speedMetersPerSecond, backLeftState.speedMetersPerSecond)) < maxModuleSpeed && maxModuleSpeed != 0.0) {
-			frontRight = frontRightState
-			frontLeft = frontLeftState
-			backLeft = backLeftState
-			backRight = backRightState
-		} else	{
-			// TODO: Add body
+		frontRight = frontRightState
+		frontLeft = frontLeftState
+		backLeft = backLeftState
+		backRight = backRightState
+		if (max(max(frontRightState.speedMetersPerSecond, frontLeftState.speedMetersPerSecond), max(backRightState.speedMetersPerSecond, backLeftState.speedMetersPerSecond)) > maxAllowedModuleSpeed && maxAllowedModuleSpeed != 0.0) {
+			val highestModuleSpeed = max(max(frontRightState.speedMetersPerSecond, frontLeftState.speedMetersPerSecond), max(backRightState.speedMetersPerSecond, backLeftState.speedMetersPerSecond))
+			val factor = maxAllowedModuleSpeed / highestModuleSpeed
+
+			frontRight.speedMetersPerSecond *= factor
+			frontLeft.speedMetersPerSecond *= factor
+			backLeft.speedMetersPerSecond *= factor
+			backRight.speedMetersPerSecond *= factor
 		}
 	}
 }
@@ -92,10 +97,10 @@ object SwerveConstants {
 
 	// TODO: Find values
 	// The CANCoder offsets for each module
-	const val FRONT_RIGHT_OFFSET_DEG = 0.0
-	const val FRONT_LEFT_OFFSET_DEG = 0.0
-	const val BOTTOM_LEFT_OFFSET_DEG = 0.0
-	const val BOTTOM_RIGHT_OFFSET_DEG = 0.0
+	val FRONT_RIGHT_OFFSET =  Rotation2d.fromDegrees(89.91)
+	val FRONT_LEFT_OFFSET = Rotation2d.fromDegrees(-223.242)
+	val BACK_LEFT_OFFSET = Rotation2d.fromDegrees(-264.990)
+	val BACK_RIGHT_OFFSET = Rotation2d.fromDegrees(172.705)
 
 	// Assuming that at 0 degrees a positive output will lead to a positive speed
 	val DRIVE_MOTOR_CONFIGS: TalonFXConfiguration = TalonFXConfiguration().apply {
@@ -160,10 +165,10 @@ object SwerveConstants {
 		with(MagnetSensor) {
 			// The offset added to the CANCoder for it to measure correctly for a wheel pointing right to be 0 degrees
 			MagnetOffset = when (moduleName) {
-				"FrontRight" -> FRONT_RIGHT_OFFSET_DEG
-				"FrontLeft" -> FRONT_LEFT_OFFSET_DEG
-				"BackLeft" -> BOTTOM_LEFT_OFFSET_DEG
-				"BackRight" -> BOTTOM_RIGHT_OFFSET_DEG
+				"FrontRight" -> FRONT_RIGHT_OFFSET.rotations
+				"FrontLeft" -> FRONT_LEFT_OFFSET.rotations
+				"BackLeft" -> BACK_LEFT_OFFSET.rotations
+				"BackRight" -> BACK_RIGHT_OFFSET.rotations
 				else -> 0.0.also { DriverStation.reportError("Invalid swerve module name: $moduleName", false) }
 			}
 
