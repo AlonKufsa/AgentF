@@ -17,19 +17,19 @@ object SwerveSubsystem : SubsystemBase("Swerve subsystem") {
 		SwerveMap.FrontLeft.DRIVE_MOTOR_ID,
 		SwerveMap.FrontLeft.STEER_MOTOR_ID,
 		SwerveMap.FrontLeft.CANCODER_ID,
-		"FrontRight"
+		"FrontLeft"
 	)
 	private val backLeft = SwerveModule(
 		SwerveMap.BackLeft.DRIVE_MOTOR_ID,
 		SwerveMap.BackLeft.STEER_MOTOR_ID,
 		SwerveMap.BackLeft.CANCODER_ID,
-		"FrontRight"
+		"BackLeft"
 	)
 	private val backRight = SwerveModule(
 		SwerveMap.BackRight.DRIVE_MOTOR_ID,
 		SwerveMap.BackRight.STEER_MOTOR_ID,
 		SwerveMap.BackRight.CANCODER_ID,
-		"FrontRight"
+		"BackRight"
 	)
 
 	private fun setModuleStates(moduleStates: ModuleStates) {
