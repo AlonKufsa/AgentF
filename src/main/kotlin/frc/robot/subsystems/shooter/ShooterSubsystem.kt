@@ -180,6 +180,10 @@ object ShooterSubsystem : SubsystemBase("Shooter") {
 
 	fun angleMotorTest() = angleMotor.setVoltage(1.0)
 	fun stopAngleMotor() = angleMotor.stopMotor()
+	fun stopMotors() {
+		stopAngleMotor()
+		stopShootingMotors()
+	}
 
 	//Adds values and readings to the glass dashboard, attached to the shooter subsystem.
 	override fun initSendable(builder: SendableBuilder) {

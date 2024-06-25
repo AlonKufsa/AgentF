@@ -10,25 +10,33 @@ object SwerveSubsystem : SubsystemBase("Swerve subsystem") {
 		SwerveMap.FrontRight.DRIVE_MOTOR_ID,
 		SwerveMap.FrontRight.STEER_MOTOR_ID,
 		SwerveMap.FrontRight.CANCODER_ID,
-		"FrontRight"
+		"FrontRight",
+		invertedDrive = true,
+		invertedSteer = true
 	)
 	private val frontLeft = SwerveModule(
 		SwerveMap.FrontLeft.DRIVE_MOTOR_ID,
 		SwerveMap.FrontLeft.STEER_MOTOR_ID,
 		SwerveMap.FrontLeft.CANCODER_ID,
-		"FrontLeft"
+		"FrontLeft",
+		invertedDrive = true,
+		invertedSteer = true
 	)
 	private val backLeft = SwerveModule(
 		SwerveMap.BackLeft.DRIVE_MOTOR_ID,
 		SwerveMap.BackLeft.STEER_MOTOR_ID,
 		SwerveMap.BackLeft.CANCODER_ID,
-		"BackLeft"
+		"BackLeft",
+		invertedDrive = true,
+		invertedSteer = true
 	)
 	private val backRight = SwerveModule(
 		SwerveMap.BackRight.DRIVE_MOTOR_ID,
 		SwerveMap.BackRight.STEER_MOTOR_ID,
 		SwerveMap.BackRight.CANCODER_ID,
-		"BackRight"
+		"BackRight",
+		invertedDrive = true,
+		invertedSteer = true
 	)
 
 	private fun setModuleStates(moduleStates: ModuleStates) {
@@ -42,6 +50,10 @@ object SwerveSubsystem : SubsystemBase("Swerve subsystem") {
 		val moduleStates = SwerveKinematics.robotRelativeChassisSpeedsToModuleStates(chassisSpeeds)
 
 		setModuleStates(moduleStates)
+	}
+
+	fun testMotor() {
+		backRight.setSteerVoltage(2.0)
 	}
 
 

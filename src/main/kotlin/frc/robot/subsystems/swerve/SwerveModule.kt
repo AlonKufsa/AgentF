@@ -6,6 +6,7 @@ import com.ctre.phoenix6.controls.MotionMagicVoltage
 import com.ctre.phoenix6.hardware.CANcoder
 import com.hamosad1657.lib.motors.HaTalonFX
 import com.hamosad1657.lib.units.AngularVelocity
+import com.hamosad1657.lib.units.Volts
 import com.revrobotics.CANSparkBase.IdleMode
 import com.revrobotics.CANSparkBase.IdleMode.kBrake
 import edu.wpi.first.math.MathUtil
@@ -19,12 +20,15 @@ class SwerveModule(
 	private val steerMotorID: Int,
 	private val canCoderID: Int,
 	private val moduleName: String,
+	private val invertedDrive: Boolean = false,
+	private val invertedSteer: Boolean = false
 ) {
 
 	/** Motor for controlling the velocity of the wheel */
 	private val driveMotor = HaTalonFX(driveMotorID, Constants.SWERVE_CANBUS).apply {
 		restoreFactoryDefaults()
 		configurator.apply(Constants.DRIVE_MOTOR_CONFIGS)
+		inverted = invertedDrive
 	}
 
 	/** Motor for controlling the angle of the wheel */
@@ -32,6 +36,7 @@ class SwerveModule(
 		restoreFactoryDefaults()
 		configurator.apply(Constants.steerMotorConfigs(canCoderID))
 		positionWrapEnabled = true
+		inverted = invertedSteer
 	}
 
 
@@ -99,16 +104,16 @@ class SwerveModule(
 
 	
 	/** Current rotation of the module in degrees from 0 to 360 from the right side of the x-axis, counterclockwise */
-	val moduleRotation: Rotation2d
-		get() = Rotation2d.fromRotations(canCoder.position.value)
+	val currentRotation: Rotation2d
+		get() = Rotation2d.fromRotations(canCoder.absolutePosition.value)
 
 	/** Current speed of the module in meters per second */
-	val moduleSpeedMPS: Double
+	val currentSpeedMPS: Double
 		get() = (driveMotor.velocity.value / Constants.DRIVE_TRANSMISSION) * Constants.WHEEL_CIRCUMFERENCE_METERS
 
 	/** Current measured module state */
 	val currentModuleState: SwerveModuleState
-		get() = SwerveModuleState(moduleSpeedMPS, moduleRotation)
+		get() = SwerveModuleState(currentSpeedMPS, currentRotation)
 
 
 	/** Current setpoint of the module */
@@ -118,13 +123,20 @@ class SwerveModule(
 			angleSetpoint
 		)
 
+	/** Use for testing */
+	fun setDriveVoltage(voltage: Volts) {
+		driveMotor.setVoltage(voltage)
+	}
 
+	fun setSteerVoltage(voltage: Volts) {
+		steerMotor.setVoltage(voltage)
+	}
 
 
 	// Logging
 	fun addModuleInfo(builder: SendableBuilder) {
-		builder.addDoubleProperty("$moduleName rotation deg", { moduleRotation.degrees }, null)
-		builder.addDoubleProperty("$moduleName speed MPS", { moduleSpeedMPS }, null)
+		builder.addDoubleProperty("$moduleName rotation deg", { currentRotation.degrees }, null)
+		builder.addDoubleProperty("$moduleName speed MPS", { currentSpeedMPS }, null)
 
 		builder.addDoubleProperty("$moduleName rotation setpoint deg", { currentModuleStateSetpoint.angle.degrees }, null)
 		builder.addDoubleProperty("$moduleName speed setpoint MPS", { currentModuleStateSetpoint.speedMetersPerSecond }, null)
