@@ -63,6 +63,7 @@ object RobotContainer {
 		//ClimbingSubsystem.defaultCommand = DefaultClimbingCommand({ secondaryController.leftY}, { secondaryController.leftX})
 		with(ShooterSubsystem) { defaultCommand = run { stopMotors() }}
 		with(ClimbingSubsystem) { defaultCommand = run { stopMotors() }}
+		SwerveSubsystem.defaultCommand = SwerveTestCommand()
 	}
 
 	private fun sendSubsystemInfo() {
