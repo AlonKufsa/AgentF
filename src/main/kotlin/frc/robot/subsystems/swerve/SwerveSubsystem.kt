@@ -2,7 +2,6 @@ package frc.robot.subsystems.swerve
 
 import edu.wpi.first.math.kinematics.ChassisSpeeds
 import edu.wpi.first.util.sendable.SendableBuilder
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard
 import edu.wpi.first.wpilibj2.command.SubsystemBase
 import frc.robot.RobotMap.SwerveMap
 
@@ -46,10 +45,10 @@ object SwerveSubsystem : SubsystemBase("Swerve subsystem") {
 	}
 
 
-	override fun initSendable(builder: SendableBuilder?) {
-		SmartDashboard.putData(frontRight)
-		SmartDashboard.putData(frontLeft)
-		SmartDashboard.putData(backLeft)
-		SmartDashboard.putData(backRight)
+	override fun initSendable(builder: SendableBuilder) {
+		frontRight.addModuleInfo(builder)
+		frontLeft.addModuleInfo(builder)
+		backLeft.addModuleInfo(builder)
+		backRight.addModuleInfo(builder)
 	}
 }

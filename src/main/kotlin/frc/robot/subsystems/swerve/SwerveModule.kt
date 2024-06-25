@@ -19,7 +19,7 @@ class SwerveModule(
 	private val steerMotorID: Int,
 	private val canCoderID: Int,
 	private val moduleName: String,
-) : Sendable {
+) {
 
 	/** Motor for controlling the velocity of the wheel */
 	private val driveMotor = HaTalonFX(driveMotorID, Constants.SWERVE_CANBUS).apply {
@@ -122,7 +122,7 @@ class SwerveModule(
 
 
 	// Logging
-	override fun initSendable(builder: SendableBuilder) {
+	fun addModuleInfo(builder: SendableBuilder) {
 		builder.addDoubleProperty("$moduleName rotation deg", { moduleRotation.degrees }, null)
 		builder.addDoubleProperty("$moduleName speed MPS", { moduleSpeedMPS }, null)
 
