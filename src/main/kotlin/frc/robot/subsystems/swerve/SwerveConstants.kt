@@ -2,6 +2,7 @@ package frc.robot.subsystems.swerve
 
 import com.ctre.phoenix6.configs.CANcoderConfiguration
 import com.ctre.phoenix6.configs.TalonFXConfiguration
+import com.ctre.phoenix6.signals.AbsoluteSensorRangeValue.Signed_PlusMinusHalf
 import com.ctre.phoenix6.signals.AbsoluteSensorRangeValue.Unsigned_0To1
 import com.ctre.phoenix6.signals.FeedbackSensorSourceValue.RemoteCANcoder
 import com.ctre.phoenix6.signals.SensorDirectionValue.Clockwise_Positive
@@ -96,12 +97,11 @@ object SwerveConstants {
 	/** The amount of rotations the engine does for every rotation of the wheel */
 	const val DRIVE_TRANSMISSION = 6.746031746031747
 
-	// TODO: Find values
 	// The CANCoder offsets for each module
-	val FRONT_RIGHT_OFFSET = Rotation2d.fromDegrees(-268.066406)
-	val FRONT_LEFT_OFFSET = Rotation2d.fromDegrees(-222.539062)
-	val BACK_LEFT_OFFSET = Rotation2d.fromDegrees(95.537)
-	val BACK_RIGHT_OFFSET = Rotation2d.fromDegrees(-185.888672)
+	val FRONT_RIGHT_OFFSET = Rotation2d.fromDegrees(-268.066406 - 90.0)
+	val FRONT_LEFT_OFFSET = Rotation2d.fromDegrees(-222.539062 - 90.0)
+	val BACK_LEFT_OFFSET = Rotation2d.fromDegrees(95.537 - 90.0)
+	val BACK_RIGHT_OFFSET = Rotation2d.fromDegrees(-185.888672 - 90.0)
 
 	// Assuming that at 0 degrees a positive output will lead to a positive speed
 	val DRIVE_MOTOR_CONFIGS: TalonFXConfiguration = TalonFXConfiguration().apply {
@@ -174,7 +174,7 @@ object SwerveConstants {
 			}
 
 			SensorDirection = CounterClockwise_Positive
-			AbsoluteSensorRange = Unsigned_0To1
+			AbsoluteSensorRange = Signed_PlusMinusHalf
 		}
 	}
 

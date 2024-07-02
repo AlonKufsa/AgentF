@@ -50,7 +50,6 @@ object RobotContainer {
 			.toggleOnTrue(TransferToShooterCommand().withTimeout(LoaderConstants.TRANSFER_TO_SHOOTER_DURATION))
 		secondaryController.triangle()
 			.toggleOnTrue(LoaderEjectToAmpCommand().withTimeout(LoaderConstants.AMP_EJECT_DURATION))
-		secondaryController.circle().toggleOnTrue(SwerveTestCommand())
 
 		secondaryController.L3()
 			.toggleOnTrue(ManualShootingAngleControl({ secondaryController.leftX }, { secondaryController.leftY }))
@@ -63,7 +62,7 @@ object RobotContainer {
 		//ClimbingSubsystem.defaultCommand = DefaultClimbingCommand({ secondaryController.leftY}, { secondaryController.leftX})
 		with(ShooterSubsystem) { defaultCommand = run { stopMotors() }}
 		with(ClimbingSubsystem) { defaultCommand = run { stopMotors() }}
-		SwerveSubsystem.defaultCommand = SwerveTestCommand()
+		SwerveSubsystem.defaultCommand = SwerveTestCommand(secondaryController)
 	}
 
 	private fun sendSubsystemInfo() {

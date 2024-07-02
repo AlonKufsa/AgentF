@@ -82,7 +82,7 @@ class SwerveModule(
 		}
 
 	/** Function for setting the module state externally.
-	 * Angle is from 0.0 to 360.0 degrees with the right side of the x-axis, counterclockwise.
+	 * Angle is in WPILib standards for swerve.
 	 * Speed is in meters per second, in the direction the wheel is facing.
 	 */
 	fun setModuleState(swerveModuleState: SwerveModuleState) {
@@ -95,15 +95,15 @@ class SwerveModule(
 			(speedMPS / Constants.WHEEL_CIRCUMFERENCE_METERS) * Constants.DRIVE_TRANSMISSION)
 	}
 
-	/** Set the angle the module will be in from 0.0 to 360.0 degrees with the right side of the x-axis, counterclockwise */
+	/** Set the angle the module will be in, using WPILib standards for swerve */
 	fun setModuleRotation(rotation: Rotation2d) {
-		angleSetpoint = Rotation2d.fromDegrees(MathUtil.inputModulus(rotation.degrees, 0.0, 360.0))
+		angleSetpoint = rotation //Rotation2d.fromDegrees(MathUtil.inputModulus(rotation.degrees, -180.0, 180.0))
 	}
 
 
 
 	
-	/** Current rotation of the module in degrees from 0 to 360 from the right side of the x-axis, counterclockwise */
+	/** Current rotation of the module in WPLib standards */
 	val currentRotation: Rotation2d
 		get() = Rotation2d.fromRotations(canCoder.absolutePosition.value)
 

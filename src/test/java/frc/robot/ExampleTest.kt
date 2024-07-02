@@ -17,6 +17,8 @@ internal class ExampleTest
     fun translation2DCoordinatesCheck()
     {
         assertEquals(MathUtil.inputModulus(Translation2d(5.0, -7.0).angle.degrees, 0.0, 360.0), 360.0-(radToDeg(atan(7.0/5.0))), 1.0)
+        println(Translation2d(5.0, -7.0).angle.degrees)
+        println(360.0-(radToDeg(atan(7.0/5.0))))
     }
 }
 

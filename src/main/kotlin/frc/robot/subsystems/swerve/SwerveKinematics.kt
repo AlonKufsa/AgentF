@@ -1,11 +1,13 @@
 package frc.robot.subsystems.swerve
 
+import com.hamosad1657.lib.math.mapRange
 import com.hamosad1657.lib.units.AngularVelocity
 import edu.wpi.first.math.MathUtil
 import edu.wpi.first.math.geometry.Rotation2d
 import edu.wpi.first.math.geometry.Translation2d
 import edu.wpi.first.math.kinematics.ChassisSpeeds
 import edu.wpi.first.math.kinematics.SwerveModuleState
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard
 import kotlin.math.PI
 import frc.robot.subsystems.swerve.SwerveConstants as Constants
 
@@ -19,33 +21,23 @@ object SwerveKinematics {
 		val wheelSpeedMPS: Double = angularVelocity.asRps * 2 * PI * Constants.DRIVEBASE_RADIUS.asMeters
 
 		val moduleStates = ModuleStates()
-		if (angularVelocity.asRps < 0) {
+
 			moduleStates.setStates(
-				SwerveModuleState(wheelSpeedMPS, Rotation2d.fromDegrees(315.0)),
+				SwerveModuleState(wheelSpeedMPS, Rotation2d.fromDegrees(-135.0)),
+				SwerveModuleState(wheelSpeedMPS, Rotation2d.fromDegrees(-45.0)),
 				SwerveModuleState(wheelSpeedMPS, Rotation2d.fromDegrees(45.0)),
 				SwerveModuleState(wheelSpeedMPS, Rotation2d.fromDegrees(135.0)),
-				SwerveModuleState(wheelSpeedMPS, Rotation2d.fromDegrees(225.0)),
 			)
-		} else {
-			moduleStates.setStates(
-				SwerveModuleState(wheelSpeedMPS, Rotation2d.fromDegrees(135.0)),
-				SwerveModuleState(wheelSpeedMPS, Rotation2d.fromDegrees(225.0)),
-				SwerveModuleState(wheelSpeedMPS, Rotation2d.fromDegrees(315.0)),
-				SwerveModuleState(wheelSpeedMPS, Rotation2d.fromDegrees(45.0)),
-			)
-		}
 		return moduleStates
 	}
 
 	/** Converts between a velocity in some direction to the module states needed to achieve it. */
 	fun robotRelativeVelocityToModuleStates(velocity: Translation2d): ModuleStates {
-		// The Translation2d.angle sometimes gives negative angles.
-		val modulatedAngle = Rotation2d.fromDegrees(MathUtil.inputModulus(velocity.angle.degrees, 0.0, 360.0))
 		return ModuleStates(
-			SwerveModuleState(velocity.norm, modulatedAngle),
-			SwerveModuleState(velocity.norm, modulatedAngle),
-			SwerveModuleState(velocity.norm, modulatedAngle),
-			SwerveModuleState(velocity.norm, modulatedAngle),
+			SwerveModuleState(velocity.norm, velocity.angle),
+			SwerveModuleState(velocity.norm, velocity.angle),
+			SwerveModuleState(velocity.norm, velocity.angle),
+			SwerveModuleState(velocity.norm, velocity.angle),
 		)
 	}
 
@@ -69,6 +61,13 @@ object SwerveKinematics {
 			moduleStateToTranslation2d(velocityModuleStates.backLeft) + moduleStateToTranslation2d(rotationModuleStates.backLeft)
 		val backRightCombined: Translation2d =
 			moduleStateToTranslation2d(velocityModuleStates.backRight) + moduleStateToTranslation2d(rotationModuleStates.backRight)
+
+		SmartDashboard.putNumberArray("Wanted module states", arrayOf(
+			frontRightCombined.angle.degrees, frontRightCombined.norm,
+			frontLeftCombined.angle.degrees, frontLeftCombined.norm,
+			backLeftCombined.angle.degrees, backLeftCombined.norm,
+			backRightCombined.angle.degrees, backRightCombined.norm
+		))
 
 		return ModuleStates(
 			SwerveModuleState(frontRightCombined.norm, frontRightCombined.angle),
