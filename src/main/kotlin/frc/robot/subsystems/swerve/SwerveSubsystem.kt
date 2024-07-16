@@ -1,8 +1,13 @@
 package frc.robot.subsystems.swerve
 
 import edu.wpi.first.math.kinematics.ChassisSpeeds
+import edu.wpi.first.units.Measure
+import edu.wpi.first.units.Units.*
+import edu.wpi.first.units.Voltage
 import edu.wpi.first.util.sendable.SendableBuilder
+import edu.wpi.first.wpilibj.sysid.SysIdRoutineLog
 import edu.wpi.first.wpilibj2.command.SubsystemBase
+import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine
 import frc.robot.RobotMap.SwerveMap
 
 object SwerveSubsystem : SubsystemBase("Swerve subsystem") {
@@ -59,11 +64,34 @@ object SwerveSubsystem : SubsystemBase("Swerve subsystem") {
 		backRight.setSteerVoltage(2.0)
 	}
 
-
+	// Logging
 	override fun initSendable(builder: SendableBuilder) {
 		frontRight.addModuleInfo(builder)
 		frontLeft.addModuleInfo(builder)
 		backLeft.addModuleInfo(builder)
 		backRight.addModuleInfo(builder)
 	}
+
+	// SysID
+	private fun voltageDrive(voltage: Measure<Voltage>) {
+		val modules = listOf(frontRight, frontLeft, backLeft, backRight)
+		for (module in modules) {
+			module.voltageDrive(voltage)
+		}
+	}
+
+	private fun logMotors(log: SysIdRoutineLog) {
+		val modules = listOf(frontRight, frontLeft, backLeft, backRight)
+		for (module in modules) {
+			log.motor(module.moduleName).angularPosition(Degrees.of(module.currentRotationNotWrapped.degrees))
+				.angularVelocity(DegreesPerSecond.of(module.currentAngularVelocity.asDegPs))
+				.voltage(Volt.of(module.currentAppliedVoltage))
+
+		}
+	}
+
+	val routine = SysIdRoutine(
+		SysIdRoutine.Config(),
+		SysIdRoutine.Mechanism(this::voltageDrive, this::logMotors, this)
+	)
 }

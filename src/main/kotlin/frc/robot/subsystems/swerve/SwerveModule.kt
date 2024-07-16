@@ -2,16 +2,16 @@ package frc.robot.subsystems.swerve
 
 import com.ctre.phoenix6.controls.MotionMagicVelocityVoltage
 import com.ctre.phoenix6.controls.MotionMagicVoltage
-
 import com.ctre.phoenix6.hardware.CANcoder
 import com.hamosad1657.lib.motors.HaTalonFX
 import com.hamosad1657.lib.units.AngularVelocity
 import com.hamosad1657.lib.units.Volts
 import com.revrobotics.CANSparkBase.IdleMode
 import com.revrobotics.CANSparkBase.IdleMode.kBrake
-import edu.wpi.first.math.MathUtil
 import edu.wpi.first.math.geometry.Rotation2d
 import edu.wpi.first.math.kinematics.SwerveModuleState
+import edu.wpi.first.units.Measure
+import edu.wpi.first.units.Voltage
 import edu.wpi.first.util.sendable.SendableBuilder
 import frc.robot.subsystems.swerve.SwerveConstants as Constants
 
@@ -19,9 +19,9 @@ class SwerveModule(
 	private val driveMotorID: Int,
 	private val steerMotorID: Int,
 	private val canCoderID: Int,
-	private val moduleName: String,
+	val moduleName: String,
 	private val invertedDrive: Boolean = false,
-	private val invertedSteer: Boolean = false
+	private val invertedSteer: Boolean = false,
 ) {
 
 	/** Motor for controlling the velocity of the wheel */
@@ -62,6 +62,7 @@ class SwerveModule(
 
 
 	private var controlRequestSteerAngle: MotionMagicVoltage = MotionMagicVoltage(0.0)
+
 	/** The angle setpoint of the swerve module from 0.0 to 360.0 from the right side of the x-axis, counterclockwise*/
 	private var angleSetpoint: Rotation2d = Rotation2d(0.0)
 		set(value) {
@@ -72,6 +73,7 @@ class SwerveModule(
 
 
 	private var controlRequestDriveVelocity: MotionMagicVelocityVoltage = MotionMagicVelocityVoltage(0.0)
+
 	/** The angular velocity setpoint of the wheel in rps */
 	private var wheelAngularVelocitySetpoint: AngularVelocity = AngularVelocity.fromRps(0.0)
 		set(value) {
@@ -101,11 +103,15 @@ class SwerveModule(
 	}
 
 
-
-	
 	/** Current rotation of the module in WPLib standards */
 	val currentRotation: Rotation2d
 		get() = Rotation2d.fromRotations(canCoder.absolutePosition.value)
+
+	val currentRotationNotWrapped: Rotation2d
+		get() = Rotation2d.fromRotations(canCoder.position.value)
+
+	val currentAngularVelocity: AngularVelocity
+		get() = AngularVelocity.fromRps(canCoder.velocity.value)
 
 	/** Current speed of the module in meters per second */
 	val currentSpeedMPS: Double
@@ -114,6 +120,9 @@ class SwerveModule(
 	/** Current measured module state */
 	val currentModuleState: SwerveModuleState
 		get() = SwerveModuleState(currentSpeedMPS, currentRotation)
+
+	val currentAppliedVoltage: Volts
+		get() = steerMotor.motorVoltage.value
 
 
 	/** Current setpoint of the module */
@@ -138,7 +147,16 @@ class SwerveModule(
 		builder.addDoubleProperty("$moduleName rotation deg", { currentRotation.degrees }, null)
 		builder.addDoubleProperty("$moduleName speed MPS", { currentSpeedMPS }, null)
 
-		builder.addDoubleProperty("$moduleName rotation setpoint deg", { currentModuleStateSetpoint.angle.degrees }, null)
-		builder.addDoubleProperty("$moduleName speed setpoint MPS", { currentModuleStateSetpoint.speedMetersPerSecond }, null)
+		builder.addDoubleProperty("$moduleName rotation setpoint deg",
+			{ currentModuleStateSetpoint.angle.degrees },
+			null)
+		builder.addDoubleProperty("$moduleName speed setpoint MPS",
+			{ currentModuleStateSetpoint.speedMetersPerSecond },
+			null)
+	}
+
+	// SysID
+	fun voltageDrive(voltage: Measure<Voltage>) {
+		setSteerVoltage(voltage.baseUnitMagnitude())
 	}
 }

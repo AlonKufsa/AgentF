@@ -3,9 +3,7 @@ package frc.robot.subsystems.swerve
 import com.ctre.phoenix6.configs.CANcoderConfiguration
 import com.ctre.phoenix6.configs.TalonFXConfiguration
 import com.ctre.phoenix6.signals.AbsoluteSensorRangeValue.Signed_PlusMinusHalf
-import com.ctre.phoenix6.signals.AbsoluteSensorRangeValue.Unsigned_0To1
 import com.ctre.phoenix6.signals.FeedbackSensorSourceValue.RemoteCANcoder
-import com.ctre.phoenix6.signals.SensorDirectionValue.Clockwise_Positive
 import com.ctre.phoenix6.signals.SensorDirectionValue.CounterClockwise_Positive
 import com.hamosad1657.lib.math.PIDGains
 import com.hamosad1657.lib.units.meters
@@ -21,8 +19,8 @@ class ModuleStates() {
 		frontRightState: SwerveModuleState,
 		frontLeftState: SwerveModuleState,
 		backLeftState: SwerveModuleState,
-		backRightState: SwerveModuleState
-		): this() {
+		backRightState: SwerveModuleState,
+	) : this() {
 		frontRight = frontRightState
 		frontLeft = frontLeftState
 		backLeft = backLeftState
@@ -30,7 +28,7 @@ class ModuleStates() {
 	}
 
 	/** The maximum speed modules are allowed to receive. */
-	var maxAllowedModuleSpeed = 0.0
+	var maxAllowedModuleSpeed = SwerveConstants.MAX_SPEED_MPS
 
 	var frontRight: SwerveModuleState = SwerveModuleState()
 	var frontLeft: SwerveModuleState = SwerveModuleState()
@@ -41,14 +39,18 @@ class ModuleStates() {
 		frontRightState: SwerveModuleState,
 		frontLeftState: SwerveModuleState,
 		backLeftState: SwerveModuleState,
-		backRightState: SwerveModuleState
+		backRightState: SwerveModuleState,
 	) {
 		frontRight = frontRightState
 		frontLeft = frontLeftState
 		backLeft = backLeftState
 		backRight = backRightState
-		if (max(max(frontRightState.speedMetersPerSecond, frontLeftState.speedMetersPerSecond), max(backRightState.speedMetersPerSecond, backLeftState.speedMetersPerSecond)) > maxAllowedModuleSpeed && maxAllowedModuleSpeed != 0.0) {
-			val highestModuleSpeed = max(max(frontRightState.speedMetersPerSecond, frontLeftState.speedMetersPerSecond), max(backRightState.speedMetersPerSecond, backLeftState.speedMetersPerSecond))
+		if (max(max(frontRightState.speedMetersPerSecond, frontLeftState.speedMetersPerSecond),
+				max(backRightState.speedMetersPerSecond,
+					backLeftState.speedMetersPerSecond)) > maxAllowedModuleSpeed && maxAllowedModuleSpeed != 0.0
+		) {
+			val highestModuleSpeed = max(max(frontRightState.speedMetersPerSecond, frontLeftState.speedMetersPerSecond),
+				max(backRightState.speedMetersPerSecond, backLeftState.speedMetersPerSecond))
 			val factor = maxAllowedModuleSpeed / highestModuleSpeed
 
 			frontRight.speedMetersPerSecond *= factor
