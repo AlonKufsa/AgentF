@@ -21,10 +21,13 @@ class ModuleStates() {
 		backLeftState: SwerveModuleState,
 		backRightState: SwerveModuleState,
 	) : this() {
-		frontRight = frontRightState
-		frontLeft = frontLeftState
-		backLeft = backLeftState
-		backRight = backRightState
+		setStates(frontRightState, frontLeftState, backLeftState, backRightState)
+	}
+
+	constructor(
+		state: SwerveModuleState,
+	) : this() {
+		setStates(state, state, state, state)
 	}
 
 	/** The maximum speed modules are allowed to receive. */
@@ -77,7 +80,7 @@ object SwerveConstants {
 	const val DRIVE_MOTION_MAGIC_CRUISE_VELOCITY = 0.0
 
 	// Steer pid and ff values
-	val STEER_PID_GAINS = PIDGains()
+	val STEER_PID_GAINS = PIDGains(30.0)
 	const val STEER_KA = 0.0
 	const val STEER_KV = 0.0
 	const val STEER_KS = 0.0
@@ -141,8 +144,8 @@ object SwerveConstants {
 		CurrentLimits.SupplyCurrentLimitEnable = true
 		CurrentLimits.StatorCurrentLimitEnable = false
 
-		Feedback.FeedbackRemoteSensorID = canCoderID
 		Feedback.FeedbackSensorSource = RemoteCANcoder
+		Feedback.FeedbackRemoteSensorID = canCoderID
 
 		with(Slot0) {
 			// PID

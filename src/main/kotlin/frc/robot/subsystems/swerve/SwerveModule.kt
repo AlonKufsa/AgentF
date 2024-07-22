@@ -63,7 +63,7 @@ class SwerveModule(
 
 	private var controlRequestSteerAngle: MotionMagicVoltage = MotionMagicVoltage(0.0)
 
-	/** The angle setpoint of the swerve module from 0.0 to 360.0 from the right side of the x-axis, counterclockwise*/
+	/** The angle setpoint of the swerve module in wpilib standards*/
 	private var angleSetpoint: Rotation2d = Rotation2d(0.0)
 		set(value) {
 			controlRequestSteerAngle.Position = value.rotations
@@ -71,6 +71,10 @@ class SwerveModule(
 			field = value
 		}
 
+	//TODO: remove
+	fun setAngleSetpoint() {
+		controlRequestSteerAngle.Position = 0.0
+	}
 
 	private var controlRequestDriveVelocity: MotionMagicVelocityVoltage = MotionMagicVelocityVoltage(0.0)
 
@@ -137,6 +141,7 @@ class SwerveModule(
 		driveMotor.setVoltage(voltage)
 	}
 
+	/** Use for testing */
 	fun setSteerVoltage(voltage: Volts) {
 		steerMotor.setVoltage(voltage)
 	}
@@ -153,10 +158,17 @@ class SwerveModule(
 		builder.addDoubleProperty("$moduleName speed setpoint MPS",
 			{ currentModuleStateSetpoint.speedMetersPerSecond },
 			null)
+		builder.addDoubleProperty("$moduleName steer motor setpoint",
+			{ angleSetpoint.degrees },
+			null)
 	}
 
 	// SysID
 	fun voltageDrive(voltage: Measure<Voltage>) {
 		setSteerVoltage(voltage.baseUnitMagnitude())
+	}
+
+	fun setRotation(setpoint: Rotation2d) {
+		angleSetpoint = setpoint
 	}
 }

@@ -60,11 +60,10 @@ object RobotContainer {
 	private fun setDefaultCommands() {
 		IntakeSubsystem.defaultCommand = DefaultIntakeCommand()
 		LoaderSubsystem.defaultCommand = DefaultLoaderCommand()
-		ShooterSubsystem.defaultCommand = DefaultShooterCommand()
+		//ShooterSubsystem.defaultCommand = DefaultShooterCommand()
 		ClimbingSubsystem.defaultCommand =
 			DefaultClimbingCommand({ secondaryController.leftY }, { secondaryController.leftX })
-		//with(ShooterSubsystem) { defaultCommand = run { stopMotors() } }
-		with(ClimbingSubsystem) { defaultCommand = run { stopMotors() } }
+		SwerveSubsystem.defaultCommand = SwerveSubsystem.resetSwerveSetpoints()
 	}
 
 	private fun sendSubsystemInfo() {

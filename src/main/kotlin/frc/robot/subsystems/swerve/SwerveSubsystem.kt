@@ -1,5 +1,6 @@
 package frc.robot.subsystems.swerve
 
+import edu.wpi.first.math.geometry.Rotation2d
 import edu.wpi.first.math.kinematics.ChassisSpeeds
 import edu.wpi.first.units.Measure
 import edu.wpi.first.units.Units.*
@@ -44,11 +45,19 @@ object SwerveSubsystem : SubsystemBase("Swerve subsystem") {
 		invertedSteer = false
 	)
 
-	private fun setModuleStates(moduleStates: ModuleStates) {
+	/** Use externally only for testing */
+	fun setModuleStates(moduleStates: ModuleStates) {
 		frontRight.setModuleState(moduleStates.frontRight)
 		frontLeft.setModuleState(moduleStates.frontLeft)
 		backLeft.setModuleState(moduleStates.backLeft)
 		backRight.setModuleState(moduleStates.backRight)
+	}
+
+	fun setRotation(setpoint: Rotation2d) {
+		frontRight.setRotation(setpoint)
+		frontLeft.setRotation(setpoint)
+		backLeft.setRotation(setpoint)
+		backRight.setRotation(setpoint)
 	}
 
 	fun robotRelativeDrive(chassisSpeeds: ChassisSpeeds) {
