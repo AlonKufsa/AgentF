@@ -53,11 +53,11 @@ object SwerveSubsystem : SubsystemBase("Swerve subsystem") {
 		backRight.setModuleState(moduleStates.backRight)
 	}
 
-	fun setRotation(setpoint: Rotation2d) {
-		frontRight.setRotation(setpoint)
-		frontLeft.setRotation(setpoint)
-		backLeft.setRotation(setpoint)
-		backRight.setRotation(setpoint)
+	fun setRotation() {
+		frontRight.setAngleSetpoint()
+		frontLeft.setAngleSetpoint()
+		backLeft.setAngleSetpoint()
+		backRight.setAngleSetpoint()
 	}
 
 	fun robotRelativeDrive(chassisSpeeds: ChassisSpeeds) {

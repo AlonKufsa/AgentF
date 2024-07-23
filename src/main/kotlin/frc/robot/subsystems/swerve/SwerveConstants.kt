@@ -80,7 +80,7 @@ object SwerveConstants {
 	const val DRIVE_MOTION_MAGIC_CRUISE_VELOCITY = 0.0
 
 	// Steer pid and ff values
-	val STEER_PID_GAINS = PIDGains(30.0)
+	val STEER_PID_GAINS = PIDGains(5.0)
 	const val STEER_KA = 0.0
 	const val STEER_KV = 0.0
 	const val STEER_KS = 0.0

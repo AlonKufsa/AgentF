@@ -74,6 +74,7 @@ class SwerveModule(
 	//TODO: remove
 	fun setAngleSetpoint() {
 		controlRequestSteerAngle.Position = 0.0
+		steerMotor.setControl(controlRequestSteerAngle)
 	}
 
 	private var controlRequestDriveVelocity: MotionMagicVelocityVoltage = MotionMagicVelocityVoltage(0.0)

@@ -30,6 +30,6 @@ fun SwerveSubsystem.resetSwerveSetpoints(): Command {
 	return run {
 		//setModuleStates(
 		//ModuleStates(SwerveModuleState(0.0, Rotation2d())))
-		setRotation(Rotation2d(0.0))
+		setRotation()
 	}
 }
