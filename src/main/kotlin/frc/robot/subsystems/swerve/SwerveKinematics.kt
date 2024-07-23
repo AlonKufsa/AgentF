@@ -1,14 +1,13 @@
 package frc.robot.subsystems.swerve
 
-import com.hamosad1657.lib.math.mapRange
 import com.hamosad1657.lib.units.AngularVelocity
-import edu.wpi.first.math.MathUtil
 import edu.wpi.first.math.geometry.Rotation2d
 import edu.wpi.first.math.geometry.Translation2d
 import edu.wpi.first.math.kinematics.ChassisSpeeds
 import edu.wpi.first.math.kinematics.SwerveModuleState
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard
 import kotlin.math.PI
+import kotlin.math.max
 import frc.robot.subsystems.swerve.SwerveConstants as Constants
 
 object SwerveKinematics {
@@ -34,10 +33,7 @@ object SwerveKinematics {
 	/** Converts between a velocity in some direction to the module states needed to achieve it. */
 	fun robotRelativeVelocityToModuleStates(velocity: Translation2d): ModuleStates {
 		return ModuleStates(
-			SwerveModuleState(velocity.norm, velocity.angle),
-			SwerveModuleState(velocity.norm, velocity.angle),
-			SwerveModuleState(velocity.norm, velocity.angle),
-			SwerveModuleState(velocity.norm, velocity.angle),
+			SwerveModuleState(velocity.norm, velocity.angle)
 		)
 	}
 
@@ -47,7 +43,7 @@ object SwerveKinematics {
 
 	/** Converts between chassis speeds and module states.
 	 * Positive chassis speeds omega results in counterclockwise rotation.*/
-	fun robotRelativeChassisSpeedsToModuleStates(chassisSpeeds: ChassisSpeeds): ModuleStates {
+	fun robotRelativeChassisSpeedsToModuleStates(chassisSpeeds: ChassisSpeeds, maxSpeedMPS: Double): ModuleStates {
 		val velocity = Translation2d(chassisSpeeds.vxMetersPerSecond, chassisSpeeds.vyMetersPerSecond)
 
 		val velocityModuleStates = robotRelativeVelocityToModuleStates(velocity)
@@ -69,11 +65,29 @@ object SwerveKinematics {
 			backRightCombined.angle.degrees, backRightCombined.norm
 		))
 
-		return ModuleStates(
+		val moduleStates = ModuleStates(
 			SwerveModuleState(frontRightCombined.norm, frontRightCombined.angle),
 			SwerveModuleState(frontLeftCombined.norm, frontLeftCombined.angle),
 			SwerveModuleState(backLeftCombined.norm, backLeftCombined.angle),
 			SwerveModuleState(backRightCombined.norm, backRightCombined.angle),
 		)
+		return factorModuleStates(maxSpeedMPS, moduleStates)
+	}
+
+	fun factorModuleStates(maxSpeedMPS: Double, moduleStates: ModuleStates): ModuleStates {
+		if (max(max(moduleStates.frontRight.speedMetersPerSecond, moduleStates.frontLeft.speedMetersPerSecond),
+				max(moduleStates.backRight.speedMetersPerSecond,
+					moduleStates.backLeft.speedMetersPerSecond)) > maxSpeedMPS && maxSpeedMPS != 0.0
+		) {
+			val highestModuleSpeed = max(max(moduleStates.frontRight.speedMetersPerSecond, moduleStates.frontLeft.speedMetersPerSecond),
+				max(moduleStates.backRight.speedMetersPerSecond, moduleStates.backLeft.speedMetersPerSecond))
+			val factor = maxSpeedMPS / highestModuleSpeed
+
+			moduleStates.frontRight.speedMetersPerSecond *= factor
+			moduleStates.frontLeft.speedMetersPerSecond *= factor
+			moduleStates.backLeft.speedMetersPerSecond *= factor
+			moduleStates.backRight.speedMetersPerSecond *= factor
+		}
+		return moduleStates
 	}
 }

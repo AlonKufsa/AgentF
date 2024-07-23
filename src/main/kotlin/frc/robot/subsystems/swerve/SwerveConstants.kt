@@ -48,26 +48,12 @@ class ModuleStates() {
 		frontLeft = frontLeftState
 		backLeft = backLeftState
 		backRight = backRightState
-		if (max(max(frontRightState.speedMetersPerSecond, frontLeftState.speedMetersPerSecond),
-				max(backRightState.speedMetersPerSecond,
-					backLeftState.speedMetersPerSecond)) > maxAllowedModuleSpeed && maxAllowedModuleSpeed != 0.0
-		) {
-			val highestModuleSpeed = max(max(frontRightState.speedMetersPerSecond, frontLeftState.speedMetersPerSecond),
-				max(backRightState.speedMetersPerSecond, backLeftState.speedMetersPerSecond))
-			val factor = maxAllowedModuleSpeed / highestModuleSpeed
-
-			frontRight.speedMetersPerSecond *= factor
-			frontLeft.speedMetersPerSecond *= factor
-			backLeft.speedMetersPerSecond *= factor
-			backRight.speedMetersPerSecond *= factor
-		}
 	}
 }
 
 object SwerveConstants {
 	// Canbus network swerve is connected to
 	const val SWERVE_CANBUS = "SwerveBus"
-
 
 	// TODO: Tune PID
 	// Drive pid and ff values
@@ -85,10 +71,10 @@ object SwerveConstants {
 	const val STEER_KV = 0.0
 	const val STEER_KS = 0.0
 
-	const val STEER_MOTION_MAGIC_ACCELERATION = 0.0
-	const val STEER_MOTION_MAGIC_CRUISE_VELOCITY = 0.0
+	const val STEER_MOTION_MAGIC_ACCELERATION = 100.0
+	const val STEER_MOTION_MAGIC_CRUISE_VELOCITY = 100.0
 
-	const val WHEEL_CIRCUMFERENCE_METERS = 0.0
+	const val WHEEL_CIRCUMFERENCE_METERS = 0.0508
 
 	/** Theoretical free speed (m/s) at 12v applied output. */
 	const val MAX_SPEED_MPS = 9.0 // 9.46 according to CTRE ?
@@ -143,6 +129,8 @@ object SwerveConstants {
 		CurrentLimits.SupplyCurrentLimit = 20.0
 		CurrentLimits.SupplyCurrentLimitEnable = true
 		CurrentLimits.StatorCurrentLimitEnable = false
+
+		ClosedLoopGeneral.ContinuousWrap = true
 
 		Feedback.FeedbackSensorSource = RemoteCANcoder
 		Feedback.FeedbackRemoteSensorID = canCoderID

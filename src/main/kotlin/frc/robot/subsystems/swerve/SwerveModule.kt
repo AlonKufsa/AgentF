@@ -1,9 +1,12 @@
 package frc.robot.subsystems.swerve
 
+import com.ctre.phoenix6.configs.TalonFXConfiguration
 import com.ctre.phoenix6.controls.MotionMagicVelocityVoltage
 import com.ctre.phoenix6.controls.MotionMagicVoltage
 import com.ctre.phoenix6.hardware.CANcoder
+import com.ctre.phoenix6.hardware.TalonFX
 import com.hamosad1657.lib.motors.HaTalonFX
+import com.hamosad1657.lib.robotPrint
 import com.hamosad1657.lib.units.AngularVelocity
 import com.hamosad1657.lib.units.Volts
 import com.revrobotics.CANSparkBase.IdleMode
@@ -35,7 +38,6 @@ class SwerveModule(
 	private val steerMotor = HaTalonFX(steerMotorID, Constants.SWERVE_CANBUS).apply {
 		restoreFactoryDefaults()
 		configurator.apply(Constants.steerMotorConfigs(canCoderID))
-		positionWrapEnabled = true
 		inverted = invertedSteer
 	}
 
@@ -61,7 +63,12 @@ class SwerveModule(
 		}
 
 
-	private var controlRequestSteerAngle: MotionMagicVoltage = MotionMagicVoltage(0.0)
+	private var controlRequestSteerAngle: MotionMagicVoltage = MotionMagicVoltage(0.0).apply {
+		EnableFOC = false
+		Slot = 0
+		LimitForwardMotion = false
+		LimitReverseMotion = false
+	}
 
 	/** The angle setpoint of the swerve module in wpilib standards*/
 	private var angleSetpoint: Rotation2d = Rotation2d(0.0)
@@ -70,12 +77,6 @@ class SwerveModule(
 			steerMotor.setControl(controlRequestSteerAngle)
 			field = value
 		}
-
-	//TODO: remove
-	fun setAngleSetpoint() {
-		controlRequestSteerAngle.Position = 0.0
-		steerMotor.setControl(controlRequestSteerAngle)
-	}
 
 	private var controlRequestDriveVelocity: MotionMagicVelocityVoltage = MotionMagicVelocityVoltage(0.0)
 
@@ -97,15 +98,18 @@ class SwerveModule(
 		setModuleSpeed(swerveModuleState.speedMetersPerSecond)
 	}
 
+	/** Set only the speed of the module, in MPS*/
 	fun setModuleSpeed(speedMPS: Double) {
 		driveMotorAngularVelocitySetpoint = AngularVelocity.fromRps(
 			(speedMPS / Constants.WHEEL_CIRCUMFERENCE_METERS) * Constants.DRIVE_TRANSMISSION)
 	}
 
-	/** Set the angle the module will be in, using WPILib standards for swerve */
+	/** Set only the angle the module will be in, using WPILib standards for swerve */
 	fun setModuleRotation(rotation: Rotation2d) {
 		angleSetpoint = rotation
 	}
+
+	// *Logging and module statistics*
 
 
 	/** Current rotation of the module in WPLib standards */
@@ -115,6 +119,7 @@ class SwerveModule(
 	val currentRotationNotWrapped: Rotation2d
 		get() = Rotation2d.fromRotations(canCoder.position.value)
 
+	/** Current angular velocity of the module (across its steering axis) */
 	val currentAngularVelocity: AngularVelocity
 		get() = AngularVelocity.fromRps(canCoder.velocity.value)
 
@@ -126,7 +131,7 @@ class SwerveModule(
 	val currentModuleState: SwerveModuleState
 		get() = SwerveModuleState(currentSpeedMPS, currentRotation)
 
-	val currentAppliedVoltage: Volts
+	val currentAppliedSteerVoltage: Volts
 		get() = steerMotor.motorVoltage.value
 
 
@@ -162,14 +167,5 @@ class SwerveModule(
 		builder.addDoubleProperty("$moduleName steer motor setpoint",
 			{ angleSetpoint.degrees },
 			null)
-	}
-
-	// SysID
-	fun voltageDrive(voltage: Measure<Voltage>) {
-		setSteerVoltage(voltage.baseUnitMagnitude())
-	}
-
-	fun setRotation(setpoint: Rotation2d) {
-		angleSetpoint = setpoint
 	}
 }

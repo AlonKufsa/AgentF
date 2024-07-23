@@ -1,5 +1,6 @@
 package frc.robot
 
+import com.hamosad1657.lib.units.rotations
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard
 import edu.wpi.first.wpilibj2.command.Command
 import edu.wpi.first.wpilibj2.command.button.CommandPS4Controller
@@ -55,6 +56,8 @@ object RobotContainer {
 		secondaryController.square().whileTrue(sysIdQuasistatic(kReverse))
 		secondaryController.cross().whileTrue(sysIdDynamic(kForward))
 		secondaryController.triangle().whileTrue(sysIdDynamic(kReverse))
+
+		secondaryController.options().toggleOnTrue(SwerveSubsystem.resetSwerveSetpoints())
 	}
 
 	private fun setDefaultCommands() {
@@ -63,7 +66,6 @@ object RobotContainer {
 		//ShooterSubsystem.defaultCommand = DefaultShooterCommand()
 		ClimbingSubsystem.defaultCommand =
 			DefaultClimbingCommand({ secondaryController.leftY }, { secondaryController.leftX })
-		SwerveSubsystem.defaultCommand = SwerveSubsystem.resetSwerveSetpoints()
 	}
 
 	private fun sendSubsystemInfo() {

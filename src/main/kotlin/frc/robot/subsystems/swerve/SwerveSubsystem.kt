@@ -10,6 +10,7 @@ import edu.wpi.first.wpilibj.sysid.SysIdRoutineLog
 import edu.wpi.first.wpilibj2.command.SubsystemBase
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine
 import frc.robot.RobotMap.SwerveMap
+import frc.robot.subsystems.swerve.SwerveConstants as Constants
 
 object SwerveSubsystem : SubsystemBase("Swerve subsystem") {
 	private val frontRight = SwerveModule(
@@ -45,6 +46,9 @@ object SwerveSubsystem : SubsystemBase("Swerve subsystem") {
 		invertedSteer = false
 	)
 
+	/** FR, FL, BL, BR*/
+	private val modules = listOf(frontRight, frontLeft, backLeft, backRight)
+
 	/** Use externally only for testing */
 	fun setModuleStates(moduleStates: ModuleStates) {
 		frontRight.setModuleState(moduleStates.frontRight)
@@ -53,54 +57,26 @@ object SwerveSubsystem : SubsystemBase("Swerve subsystem") {
 		backRight.setModuleState(moduleStates.backRight)
 	}
 
-	fun setRotation() {
-		frontRight.setAngleSetpoint()
-		frontLeft.setAngleSetpoint()
-		backLeft.setAngleSetpoint()
-		backRight.setAngleSetpoint()
-	}
-
 	fun robotRelativeDrive(chassisSpeeds: ChassisSpeeds) {
-		val moduleStates = SwerveKinematics.robotRelativeChassisSpeedsToModuleStates(chassisSpeeds)
+		val moduleStates = SwerveKinematics.robotRelativeChassisSpeedsToModuleStates(chassisSpeeds, Constants.MAX_SPEED_MPS)
 
 		setModuleStates(moduleStates)
 	}
 
-	fun testMotor() {
-		frontRight.setSteerVoltage(2.0)
-		frontLeft.setSteerVoltage(2.0)
-		backLeft.setSteerVoltage(2.0)
-		backRight.setSteerVoltage(2.0)
+	fun testSteerMotor() {
+		for (module in modules) {
+			module.setSteerVoltage(2.0)
+		}
+	}
+
+	fun resetAllModules() {
+
 	}
 
 	// Logging
 	override fun initSendable(builder: SendableBuilder) {
-		frontRight.addModuleInfo(builder)
-		frontLeft.addModuleInfo(builder)
-		backLeft.addModuleInfo(builder)
-		backRight.addModuleInfo(builder)
-	}
-
-	// SysID
-	private fun voltageDrive(voltage: Measure<Voltage>) {
-		val modules = listOf(frontRight, frontLeft, backLeft, backRight)
 		for (module in modules) {
-			module.voltageDrive(voltage)
+			module.addModuleInfo(builder)
 		}
 	}
-
-	private fun logMotors(log: SysIdRoutineLog) {
-		val modules = listOf(frontRight, frontLeft, backLeft, backRight)
-		for (module in modules) {
-			log.motor(module.moduleName).angularPosition(Degrees.of(module.currentRotationNotWrapped.degrees))
-				.angularVelocity(DegreesPerSecond.of(module.currentAngularVelocity.asDegPs))
-				.voltage(Volt.of(module.currentAppliedVoltage))
-
-		}
-	}
-
-	val routine = SysIdRoutine(
-		SysIdRoutine.Config(),
-		SysIdRoutine.Mechanism(this::voltageDrive, this::logMotors, this)
-	)
 }
