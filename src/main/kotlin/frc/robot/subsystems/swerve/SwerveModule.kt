@@ -79,7 +79,7 @@ class SwerveModule(
 	private var controlRequestDriveVelocity: MotionMagicVelocityVoltage = MotionMagicVelocityVoltage(0.0)
 
 	/** The angular velocity setpoint of the wheel in rps */
-	private var wheelAngularVelocitySetpoint: AngularVelocity = AngularVelocity.fromRps(0.0)
+	private var driveMotorAngularVelocitySetpoint: AngularVelocity = AngularVelocity.fromRps(0.0)
 		set(value) {
 			controlRequestDriveVelocity.Velocity = value.asRps
 
@@ -97,13 +97,13 @@ class SwerveModule(
 	}
 
 	fun setModuleSpeed(speedMPS: Double) {
-		wheelAngularVelocitySetpoint = AngularVelocity.fromRps(
+		driveMotorAngularVelocitySetpoint = AngularVelocity.fromRps(
 			(speedMPS / Constants.WHEEL_CIRCUMFERENCE_METERS) * Constants.DRIVE_TRANSMISSION)
 	}
 
 	/** Set the angle the module will be in, using WPILib standards for swerve */
 	fun setModuleRotation(rotation: Rotation2d) {
-		angleSetpoint = rotation //Rotation2d.fromDegrees(MathUtil.inputModulus(rotation.degrees, -180.0, 180.0))
+		angleSetpoint = rotation
 	}
 
 
@@ -132,7 +132,7 @@ class SwerveModule(
 	/** Current setpoint of the module */
 	val currentModuleStateSetpoint: SwerveModuleState
 		get() = SwerveModuleState(
-			wheelAngularVelocitySetpoint.asRps * Constants.WHEEL_CIRCUMFERENCE_METERS,
+			driveMotorAngularVelocitySetpoint.asRps * Constants.WHEEL_CIRCUMFERENCE_METERS,
 			angleSetpoint
 		)
 
