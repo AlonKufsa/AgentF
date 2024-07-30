@@ -11,7 +11,9 @@ import frc.robot.commands.*
 import frc.robot.subsystems.climbing.ClimbingSubsystem
 import frc.robot.subsystems.intake.IntakeSubsystem
 import frc.robot.subsystems.leds.LedSubsystem
+import frc.robot.subsystems.loader.LoaderConstants
 import frc.robot.subsystems.loader.LoaderSubsystem
+import frc.robot.subsystems.shooter.ShooterState
 import frc.robot.subsystems.shooter.ShooterSubsystem
 import frc.robot.subsystems.swerve.SwerveSubsystem
 
@@ -40,30 +42,23 @@ object RobotContainer {
 	/** Use this method to define your `trigger->command` mappings. */
 	private fun configureBindings() {
 
-//		secondaryController.L1().whileTrue(MaintainShooterStateCommand(ShooterState.TO_AMP, true))
-//		secondaryController.R1().whileTrue(MaintainShooterStateCommand(ShooterState.AT_SPEAKER, true))
-//
-//		secondaryController.cross().toggleOnTrue(CollectAndLoadCommand())
-//		secondaryController.square()
-//			.toggleOnTrue(TransferToShooterCommand().withTimeout(LoaderConstants.TRANSFER_TO_SHOOTER_DURATION))
-//		secondaryController.triangle()
-//			.toggleOnTrue(LoaderEjectToAmpCommand().withTimeout(LoaderConstants.AMP_EJECT_DURATION))
-//
-//		secondaryController.L3()
-//			.toggleOnTrue(ManualShootingAngleControl({ secondaryController.leftX }, { secondaryController.leftY }))
+		secondaryController.L1().whileTrue(MaintainShooterStateCommand(ShooterState.TO_AMP, true))
+		secondaryController.R1().whileTrue(MaintainShooterStateCommand(ShooterState.AT_SPEAKER, true))
 
-		secondaryController.circle().whileTrue(sysIdQuasistatic(kForward))
-		secondaryController.square().whileTrue(sysIdQuasistatic(kReverse))
-		secondaryController.cross().whileTrue(sysIdDynamic(kForward))
-		secondaryController.triangle().whileTrue(sysIdDynamic(kReverse))
+		secondaryController.cross().toggleOnTrue(CollectAndLoadCommand())
+		secondaryController.square()
+			.toggleOnTrue(TransferToShooterCommand().withTimeout(LoaderConstants.TRANSFER_TO_SHOOTER_DURATION))
+		secondaryController.triangle()
+			.toggleOnTrue(LoaderEjectToAmpCommand().withTimeout(LoaderConstants.AMP_EJECT_DURATION))
 
-		secondaryController.options().toggleOnTrue(SwerveSubsystem.resetSwerveSetpoints())
+		secondaryController.L3()
+			.toggleOnTrue(ManualShootingAngleControl({ secondaryController.leftX }, { secondaryController.leftY }))
 	}
 
 	private fun setDefaultCommands() {
 		IntakeSubsystem.defaultCommand = DefaultIntakeCommand()
 		LoaderSubsystem.defaultCommand = DefaultLoaderCommand()
-		//ShooterSubsystem.defaultCommand = DefaultShooterCommand()
+		ShooterSubsystem.defaultCommand = DefaultShooterCommand()
 		ClimbingSubsystem.defaultCommand =
 			DefaultClimbingCommand({ secondaryController.leftY }, { secondaryController.leftX })
 	}

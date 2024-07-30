@@ -2,6 +2,7 @@ package frc.robot.subsystems.swerve
 
 import edu.wpi.first.math.geometry.Rotation2d
 import edu.wpi.first.math.kinematics.ChassisSpeeds
+import edu.wpi.first.math.kinematics.SwerveModuleState
 import edu.wpi.first.units.Measure
 import edu.wpi.first.units.Units.*
 import edu.wpi.first.units.Voltage
@@ -70,7 +71,9 @@ object SwerveSubsystem : SubsystemBase("Swerve subsystem") {
 	}
 
 	fun resetAllModules() {
-
+		for (module in modules) {
+			module.setModuleState(SwerveModuleState(0.0,Rotation2d(0.0)))
+		}
 	}
 
 	// Logging

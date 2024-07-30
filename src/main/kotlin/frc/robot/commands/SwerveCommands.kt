@@ -9,8 +9,3 @@ import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Direction
 import frc.robot.subsystems.swerve.SwerveKinematics
 import frc.robot.subsystems.swerve.SwerveSubsystem
 
-fun SwerveSubsystem.resetSwerveSetpoints(): Command {
-	return run {
-
-	}
-}
