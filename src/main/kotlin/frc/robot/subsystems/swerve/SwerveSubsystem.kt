@@ -57,6 +57,11 @@ object SwerveSubsystem : SubsystemBase("Swerve subsystem") {
 		backLeft.setModuleState(moduleStates.backLeft)
 		backRight.setModuleState(moduleStates.backRight)
 	}
+	fun setRotation(rotation: Rotation2d) {
+		for (module in modules) {
+			module.setModuleRotation(rotation)
+		}
+	}
 
 	fun robotRelativeDrive(chassisSpeeds: ChassisSpeeds) {
 		val moduleStates = SwerveKinematics.robotRelativeChassisSpeedsToModuleStates(chassisSpeeds, Constants.MAX_SPEED_MPS)

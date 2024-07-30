@@ -167,5 +167,6 @@ class SwerveModule(
 		builder.addDoubleProperty("$moduleName steer motor setpoint",
 			{ angleSetpoint.degrees },
 			null)
+		builder.addDoubleProperty("$moduleName steer error deg", {angleSetpoint.degrees - currentRotation.degrees}, null)
 	}
 }

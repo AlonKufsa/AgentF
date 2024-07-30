@@ -1,6 +1,8 @@
 package frc.robot
 
 import com.hamosad1657.lib.units.rotations
+import edu.wpi.first.math.geometry.Rotation2d
+import edu.wpi.first.math.geometry.Translation2d
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard
 import edu.wpi.first.wpilibj2.command.Command
 import edu.wpi.first.wpilibj2.command.button.CommandPS4Controller
@@ -53,14 +55,19 @@ object RobotContainer {
 
 		secondaryController.L3()
 			.toggleOnTrue(ManualShootingAngleControl({ secondaryController.leftX }, { secondaryController.leftY }))
+
+		secondaryController.povUp().onTrue(SwerveSubsystem.setSwerveRotation { Rotation2d.fromDegrees(0.0) })
+		secondaryController.povLeft().onTrue(SwerveSubsystem.setSwerveRotation { Rotation2d.fromDegrees(90.0) })
+		secondaryController.povDown().onTrue(SwerveSubsystem.setSwerveRotation { Rotation2d.fromDegrees(180.0) })
+		secondaryController.povRight().onTrue(SwerveSubsystem.setSwerveRotation { Rotation2d.fromDegrees(-90.0) })
 	}
 
 	private fun setDefaultCommands() {
 		IntakeSubsystem.defaultCommand = DefaultIntakeCommand()
 		LoaderSubsystem.defaultCommand = DefaultLoaderCommand()
-		ShooterSubsystem.defaultCommand = DefaultShooterCommand()
+		//ShooterSubsystem.defaultCommand = DefaultShooterCommand()
 		ClimbingSubsystem.defaultCommand =
-			DefaultClimbingCommand({ secondaryController.leftY }, { secondaryController.leftX })
+			DefaultClimbingCommand({ secondaryController.leftY }, { secondaryController.rightX })
 	}
 
 	private fun sendSubsystemInfo() {
