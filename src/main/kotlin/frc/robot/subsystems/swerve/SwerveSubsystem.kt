@@ -3,13 +3,8 @@ package frc.robot.subsystems.swerve
 import edu.wpi.first.math.geometry.Rotation2d
 import edu.wpi.first.math.kinematics.ChassisSpeeds
 import edu.wpi.first.math.kinematics.SwerveModuleState
-import edu.wpi.first.units.Measure
-import edu.wpi.first.units.Units.*
-import edu.wpi.first.units.Voltage
 import edu.wpi.first.util.sendable.SendableBuilder
-import edu.wpi.first.wpilibj.sysid.SysIdRoutineLog
 import edu.wpi.first.wpilibj2.command.SubsystemBase
-import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine
 import frc.robot.RobotMap.SwerveMap
 import frc.robot.subsystems.swerve.SwerveConstants as Constants
 
@@ -57,14 +52,22 @@ object SwerveSubsystem : SubsystemBase("Swerve subsystem") {
 		backLeft.setModuleState(moduleStates.backLeft)
 		backRight.setModuleState(moduleStates.backRight)
 	}
+
 	fun setRotation(rotation: Rotation2d) {
 		for (module in modules) {
 			module.setModuleRotation(rotation)
 		}
 	}
 
+	fun setSpeed(speedMPS: Double) {
+		for (module in modules) {
+			module.setModuleSpeed(speedMPS)
+		}
+	}
+
 	fun robotRelativeDrive(chassisSpeeds: ChassisSpeeds) {
-		val moduleStates = SwerveKinematics.robotRelativeChassisSpeedsToModuleStates(chassisSpeeds, Constants.MAX_SPEED_MPS)
+		val moduleStates =
+			SwerveKinematics.robotRelativeChassisSpeedsToModuleStates(chassisSpeeds, Constants.MAX_SPEED_MPS)
 
 		setModuleStates(moduleStates)
 	}
@@ -77,7 +80,7 @@ object SwerveSubsystem : SubsystemBase("Swerve subsystem") {
 
 	fun resetAllModules() {
 		for (module in modules) {
-			module.setModuleState(SwerveModuleState(0.0,Rotation2d(0.0)))
+			module.setModuleState(SwerveModuleState(0.0, Rotation2d(0.0)))
 		}
 	}
 

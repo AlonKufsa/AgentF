@@ -11,7 +11,6 @@ import com.hamosad1657.lib.units.rps
 import edu.wpi.first.math.geometry.Rotation2d
 import edu.wpi.first.math.kinematics.SwerveModuleState
 import edu.wpi.first.wpilibj.DriverStation
-import kotlin.math.max
 
 class ModuleStates() {
 
@@ -66,7 +65,7 @@ object SwerveConstants {
 	const val DRIVE_MOTION_MAGIC_CRUISE_VELOCITY = 0.0
 
 	// Steer pid and ff values
-	val STEER_PID_GAINS = PIDGains(48.0)
+	val STEER_PID_GAINS = PIDGains(50.0)
 	const val STEER_KA = 0.0
 	const val STEER_KV = 0.0
 	const val STEER_KS = 0.0

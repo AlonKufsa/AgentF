@@ -1,14 +1,9 @@
 package frc.robot
 
-import com.hamosad1657.lib.units.rotations
 import edu.wpi.first.math.geometry.Rotation2d
-import edu.wpi.first.math.geometry.Translation2d
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard
 import edu.wpi.first.wpilibj2.command.Command
 import edu.wpi.first.wpilibj2.command.button.CommandPS4Controller
-import edu.wpi.first.wpilibj2.command.button.CommandPS5Controller
-import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Direction.kForward
-import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Direction.kReverse
 import frc.robot.commands.*
 import frc.robot.subsystems.climbing.ClimbingSubsystem
 import frc.robot.subsystems.intake.IntakeSubsystem
@@ -31,9 +26,7 @@ import frc.robot.subsystems.swerve.SwerveSubsystem
  * directly reference the (single instance of the) object.
  */
 object RobotContainer {
-	private val mainMotor = CommandPS5Controller(0)
-	private val secondaryController = CommandPS4Controller(1)
-	private val testController = CommandPS4Controller(5)
+	private val mainController = CommandPS4Controller(1)
 
 	init {
 		configureBindings()
@@ -44,22 +37,26 @@ object RobotContainer {
 	/** Use this method to define your `trigger->command` mappings. */
 	private fun configureBindings() {
 
-		secondaryController.L1().whileTrue(MaintainShooterStateCommand(ShooterState.TO_AMP, true))
-		secondaryController.R1().whileTrue(MaintainShooterStateCommand(ShooterState.AT_SPEAKER, true))
+		mainController.L1().whileTrue(MaintainShooterStateCommand(ShooterState.TO_AMP, true))
+		mainController.R1().whileTrue(MaintainShooterStateCommand(ShooterState.AT_SPEAKER, true))
 
-		secondaryController.cross().toggleOnTrue(CollectAndLoadCommand())
-		secondaryController.square()
+		mainController.cross().toggleOnTrue(CollectAndLoadCommand())
+		mainController.square()
 			.toggleOnTrue(TransferToShooterCommand().withTimeout(LoaderConstants.TRANSFER_TO_SHOOTER_DURATION))
-		secondaryController.triangle()
+		mainController.triangle()
 			.toggleOnTrue(LoaderEjectToAmpCommand().withTimeout(LoaderConstants.AMP_EJECT_DURATION))
 
-		secondaryController.L3()
-			.toggleOnTrue(ManualShootingAngleControl({ secondaryController.leftX }, { secondaryController.leftY }))
+		mainController.L3()
+			.toggleOnTrue(ManualShootingAngleControl({ mainController.leftX }, { mainController.leftY }))
 
-		secondaryController.povUp().onTrue(SwerveSubsystem.setSwerveRotation { Rotation2d.fromDegrees(0.0) })
-		secondaryController.povLeft().onTrue(SwerveSubsystem.setSwerveRotation { Rotation2d.fromDegrees(90.0) })
-		secondaryController.povDown().onTrue(SwerveSubsystem.setSwerveRotation { Rotation2d.fromDegrees(180.0) })
-		secondaryController.povRight().onTrue(SwerveSubsystem.setSwerveRotation { Rotation2d.fromDegrees(-90.0) })
+		// Testing
+		mainController.povUp().onTrue(SwerveSubsystem.setSwerveRotation { Rotation2d.fromDegrees(0.0) })
+		mainController.povLeft().onTrue(SwerveSubsystem.setSwerveRotation { Rotation2d.fromDegrees(90.0) })
+		mainController.povDown().onTrue(SwerveSubsystem.setSwerveRotation { Rotation2d.fromDegrees(180.0) })
+		mainController.povRight().onTrue(SwerveSubsystem.setSwerveRotation { Rotation2d.fromDegrees(-90.0) })
+
+		mainController.R2().whileTrue(SwerveSubsystem.setSwerveSpeedMPS { mainController.r2Axis })
+		mainController.L2().whileTrue(SwerveSubsystem.setSwerveSpeedMPS { -mainController.l2Axis })
 	}
 
 	private fun setDefaultCommands() {
@@ -67,7 +64,7 @@ object RobotContainer {
 		LoaderSubsystem.defaultCommand = DefaultLoaderCommand()
 		//ShooterSubsystem.defaultCommand = DefaultShooterCommand()
 		ClimbingSubsystem.defaultCommand =
-			DefaultClimbingCommand({ secondaryController.leftY }, { secondaryController.rightX })
+			DefaultClimbingCommand({ mainController.leftY }, { mainController.rightX })
 	}
 
 	private fun sendSubsystemInfo() {
