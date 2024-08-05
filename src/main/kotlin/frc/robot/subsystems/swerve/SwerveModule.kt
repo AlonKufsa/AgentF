@@ -1,21 +1,18 @@
 package frc.robot.subsystems.swerve
 
-import com.ctre.phoenix6.configs.TalonFXConfiguration
 import com.ctre.phoenix6.controls.MotionMagicVelocityVoltage
 import com.ctre.phoenix6.controls.MotionMagicVoltage
 import com.ctre.phoenix6.hardware.CANcoder
-import com.ctre.phoenix6.hardware.TalonFX
 import com.hamosad1657.lib.motors.HaTalonFX
-import com.hamosad1657.lib.robotPrint
 import com.hamosad1657.lib.units.AngularVelocity
 import com.hamosad1657.lib.units.Volts
 import com.revrobotics.CANSparkBase.IdleMode
 import com.revrobotics.CANSparkBase.IdleMode.kBrake
 import edu.wpi.first.math.geometry.Rotation2d
 import edu.wpi.first.math.kinematics.SwerveModuleState
-import edu.wpi.first.units.Measure
-import edu.wpi.first.units.Voltage
 import edu.wpi.first.util.sendable.SendableBuilder
+import frc.robot.subsystems.swerve.SwerveConstants.DRIVE_GEAR_RATIO
+import frc.robot.subsystems.swerve.SwerveConstants.WHEEL_CIRCUMFERENCE_METERS
 import frc.robot.subsystems.swerve.SwerveConstants as Constants
 
 class SwerveModule(
@@ -101,7 +98,7 @@ class SwerveModule(
 	/** Set only the speed of the module, in MPS*/
 	fun setModuleSpeed(speedMPS: Double) {
 		driveMotorAngularVelocitySetpoint = AngularVelocity.fromRps(
-			(speedMPS / Constants.WHEEL_CIRCUMFERENCE_METERS) * Constants.DRIVE_TRANSMISSION)
+			(speedMPS / Constants.WHEEL_CIRCUMFERENCE_METERS) * Constants.DRIVE_GEAR_RATIO)
 	}
 
 	/** Set only the angle the module will be in, using WPILib standards for swerve */
@@ -125,7 +122,7 @@ class SwerveModule(
 
 	/** Current speed of the module in meters per second */
 	val currentSpeedMPS: Double
-		get() = (driveMotor.velocity.value / Constants.DRIVE_TRANSMISSION) * Constants.WHEEL_CIRCUMFERENCE_METERS
+		get() = (driveMotor.velocity.value / DRIVE_GEAR_RATIO) * WHEEL_CIRCUMFERENCE_METERS
 
 	/** Current measured module state */
 	val currentModuleState: SwerveModuleState
@@ -167,6 +164,10 @@ class SwerveModule(
 		builder.addDoubleProperty("$moduleName steer motor setpoint",
 			{ angleSetpoint.degrees },
 			null)
-		builder.addDoubleProperty("$moduleName steer error deg", {angleSetpoint.degrees - currentRotation.degrees}, null)
+		builder.addDoubleProperty("$moduleName steer error deg",
+			{ angleSetpoint.degrees - currentRotation.degrees },
+			null)
+
+		builder.addDoubleProperty("$moduleName drive voltage", { driveMotor.motorVoltage.value }, null)
 	}
 }

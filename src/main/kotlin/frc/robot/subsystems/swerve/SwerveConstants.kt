@@ -58,11 +58,11 @@ object SwerveConstants {
 	// Drive pid and ff values
 	val DRIVE_PID_GAINS = PIDGains()
 	const val DRIVE_KA = 0.0
-	const val DRIVE_KV = 0.0
-	const val DRIVE_KS = 0.0
+	const val DRIVE_KV = 2.1942
+	const val DRIVE_KS = 0.338964
 
-	const val DRIVE_MOTION_MAGIC_ACCELERATION = 0.0
-	const val DRIVE_MOTION_MAGIC_CRUISE_VELOCITY = 0.0
+	const val DRIVE_MOTION_MAGIC_ACCELERATION = 100.0
+	const val DRIVE_MOTION_MAGIC_CRUISE_VELOCITY = 100.0
 
 	// Steer pid and ff values
 	val STEER_PID_GAINS = PIDGains(50.0)
@@ -73,10 +73,10 @@ object SwerveConstants {
 	const val STEER_MOTION_MAGIC_ACCELERATION = 100.0
 	const val STEER_MOTION_MAGIC_CRUISE_VELOCITY = 100.0
 
-	const val WHEEL_CIRCUMFERENCE_METERS = 0.0508
+	const val WHEEL_CIRCUMFERENCE_METERS = 0.31818645
 
 	/** Theoretical free speed (m/s) at 12v applied output. */
-	const val MAX_SPEED_MPS = 9.0 // 9.46 according to CTRE ?
+	const val MAX_SPEED_MPS = 5.0 // 9.46 according to CTRE ?
 
 	/** Theoretical free rotation speed (rotations/s) at 12v applied output. (how fast it can steer) */
 	val MAX_ANGULAR_VELOCITY = 2.0.rps
@@ -84,8 +84,8 @@ object SwerveConstants {
 	/** The distance from the center of the chassis to a center of a module. */
 	val DRIVEBASE_RADIUS = 0.417405.meters
 
-	/** The amount of rotations the engine does for every rotation of the wheel */
-	const val DRIVE_TRANSMISSION = 6.746031746031747
+	/** The amount of rotations the motor does for every rotation of the wheel */
+	const val DRIVE_GEAR_RATIO = 6.746031746031747
 
 	// The CANCoder offsets for each module
 	val FRONT_RIGHT_OFFSET = Rotation2d.fromDegrees(-268.066406 - 90.0)

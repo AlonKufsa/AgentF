@@ -1,5 +1,6 @@
 package frc.robot.subsystems.swerve
 
+import com.hamosad1657.lib.units.Volts
 import edu.wpi.first.math.geometry.Rotation2d
 import edu.wpi.first.math.kinematics.ChassisSpeeds
 import edu.wpi.first.math.kinematics.SwerveModuleState
@@ -72,9 +73,15 @@ object SwerveSubsystem : SubsystemBase("Swerve subsystem") {
 		setModuleStates(moduleStates)
 	}
 
-	fun testSteerMotor() {
+	fun setSteerVoltage(voltage: Volts) {
 		for (module in modules) {
-			module.setSteerVoltage(2.0)
+			module.setSteerVoltage(voltage)
+		}
+	}
+
+	fun setDriveVoltage(voltage: Volts) {
+		for (module in modules) {
+			module.setDriveVoltage(voltage)
 		}
 	}
 

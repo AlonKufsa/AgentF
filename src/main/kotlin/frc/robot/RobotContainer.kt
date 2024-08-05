@@ -5,7 +5,6 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard
 import edu.wpi.first.wpilibj2.command.Command
 import edu.wpi.first.wpilibj2.command.button.CommandPS4Controller
 import frc.robot.commands.*
-import frc.robot.subsystems.climbing.ClimbingSubsystem
 import frc.robot.subsystems.intake.IntakeSubsystem
 import frc.robot.subsystems.leds.LedSubsystem
 import frc.robot.subsystems.loader.LoaderConstants
@@ -55,16 +54,17 @@ object RobotContainer {
 		mainController.povDown().onTrue(SwerveSubsystem.setSwerveRotation { Rotation2d.fromDegrees(180.0) })
 		mainController.povRight().onTrue(SwerveSubsystem.setSwerveRotation { Rotation2d.fromDegrees(-90.0) })
 
-		mainController.R2().whileTrue(SwerveSubsystem.setSwerveSpeedMPS { mainController.r2Axis })
-		mainController.L2().whileTrue(SwerveSubsystem.setSwerveSpeedMPS { -mainController.l2Axis })
+
+		//mainController.L2().whileTrue(SwerveSubsystem.setSwerveDriveVoltage { -mainController.l2Axis * 12.0 })
 	}
 
 	private fun setDefaultCommands() {
 		IntakeSubsystem.defaultCommand = DefaultIntakeCommand()
 		LoaderSubsystem.defaultCommand = DefaultLoaderCommand()
+		SwerveSubsystem.defaultCommand = SwerveSubsystem.setSwerveDriveVoltage { mainController.leftY * 6.0 }
 		//ShooterSubsystem.defaultCommand = DefaultShooterCommand()
-		ClimbingSubsystem.defaultCommand =
-			DefaultClimbingCommand({ mainController.leftY }, { mainController.rightX })
+//		ClimbingSubsystem.defaultCommand =
+//			DefaultClimbingCommand({ mainController.leftY }, { mainController.rightX })
 	}
 
 	private fun sendSubsystemInfo() {
