@@ -56,7 +56,7 @@ object SwerveConstants {
 
 	// TODO: Tune PID
 	// Drive pid and ff values
-	val DRIVE_PID_GAINS = PIDGains()
+	val DRIVE_PID_GAINS = PIDGains(30.0)
 	const val DRIVE_KA = 0.0
 	const val DRIVE_KV = 2.1942
 	const val DRIVE_KS = 0.338964
@@ -88,10 +88,10 @@ object SwerveConstants {
 	const val DRIVE_GEAR_RATIO = 6.746031746031747
 
 	// The CANCoder offsets for each module
-	val FRONT_RIGHT_OFFSET = Rotation2d.fromDegrees(-268.066406 - 90.0)
-	val FRONT_LEFT_OFFSET = Rotation2d.fromDegrees(-222.539062 - 90.0)
-	val BACK_LEFT_OFFSET = Rotation2d.fromDegrees(95.537 - 90.0)
-	val BACK_RIGHT_OFFSET = Rotation2d.fromDegrees(-185.888672 - 90.0)
+	val FRONT_RIGHT_OFFSET = Rotation2d.fromDegrees(-268.066406)
+	val FRONT_LEFT_OFFSET = Rotation2d.fromDegrees(-222.539062)
+	val BACK_LEFT_OFFSET = Rotation2d.fromDegrees(95.537)
+	val BACK_RIGHT_OFFSET = Rotation2d.fromDegrees(-185.888672)
 
 	// Assuming that at 0 degrees a positive output will lead to a positive speed
 	val DRIVE_MOTOR_CONFIGS: TalonFXConfiguration = TalonFXConfiguration().apply {

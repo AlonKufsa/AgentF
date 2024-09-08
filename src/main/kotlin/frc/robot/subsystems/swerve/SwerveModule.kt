@@ -135,7 +135,7 @@ class SwerveModule(
 	/** Current setpoint of the module */
 	val currentModuleStateSetpoint: SwerveModuleState
 		get() = SwerveModuleState(
-			driveMotorAngularVelocitySetpoint.asRps * Constants.WHEEL_CIRCUMFERENCE_METERS,
+			driveMotorAngularVelocitySetpoint.asRps / Constants.DRIVE_GEAR_RATIO * Constants.WHEEL_CIRCUMFERENCE_METERS,
 			angleSetpoint
 		)
 

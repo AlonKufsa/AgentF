@@ -1,6 +1,5 @@
 package frc.robot
 
-import edu.wpi.first.math.geometry.Rotation2d
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard
 import edu.wpi.first.wpilibj2.command.Command
 import edu.wpi.first.wpilibj2.command.button.CommandPS4Controller
@@ -49,10 +48,14 @@ object RobotContainer {
 			.toggleOnTrue(ManualShootingAngleControl({ mainController.leftX }, { mainController.leftY }))
 
 		// Testing
-		mainController.povUp().onTrue(SwerveSubsystem.setSwerveRotation { Rotation2d.fromDegrees(0.0) })
-		mainController.povLeft().onTrue(SwerveSubsystem.setSwerveRotation { Rotation2d.fromDegrees(90.0) })
-		mainController.povDown().onTrue(SwerveSubsystem.setSwerveRotation { Rotation2d.fromDegrees(180.0) })
-		mainController.povRight().onTrue(SwerveSubsystem.setSwerveRotation { Rotation2d.fromDegrees(-90.0) })
+//		mainController.povUp().onTrue(SwerveSubsystem.setSwerveRotation { Rotation2d.fromDegrees(0.0) })
+//		mainController.povLeft().onTrue(SwerveSubsystem.setSwerveRotation { Rotation2d.fromDegrees(90.0) })
+//		mainController.povDown().onTrue(SwerveSubsystem.setSwerveRotation { Rotation2d.fromDegrees(180.0) })
+//		mainController.povRight().onTrue(SwerveSubsystem.setSwerveRotation { Rotation2d.fromDegrees(-90.0) })
+		mainController.povUp().whileTrue(SwerveSubsystem.povDriveCommand("Up"))
+		mainController.povLeft().whileTrue(SwerveSubsystem.povDriveCommand("Left"))
+		mainController.povDown().whileTrue(SwerveSubsystem.povDriveCommand("Down"))
+		mainController.povRight().whileTrue(SwerveSubsystem.povDriveCommand("Right"))
 
 
 		//mainController.L2().whileTrue(SwerveSubsystem.setSwerveDriveVoltage { -mainController.l2Axis * 12.0 })
@@ -61,8 +64,11 @@ object RobotContainer {
 	private fun setDefaultCommands() {
 		IntakeSubsystem.defaultCommand = DefaultIntakeCommand()
 		LoaderSubsystem.defaultCommand = DefaultLoaderCommand()
-		SwerveSubsystem.defaultCommand = SwerveSubsystem.setSwerveDriveVoltage { mainController.leftY * 6.0 }
-		//ShooterSubsystem.defaultCommand = DefaultShooterCommand()
+		//SwerveSubsystem.defaultCommand =
+		//RobotRelativeSwerveDrive({ mainController.leftX }, { -mainController.leftY }, { mainController.rightX })
+		//SwerveSubsystem.defaultCommand = SwerveSubsystem.setSwerveSpeedMPS { mainController.leftY * 3.0 }
+		//SwerveSubsystem.defaultCommand = SwerveSubsystem.setSwerveDriveVoltage { mainController.leftY * 6.0 }
+		ShooterSubsystem.defaultCommand = DefaultShooterCommand()
 //		ClimbingSubsystem.defaultCommand =
 //			DefaultClimbingCommand({ mainController.leftY }, { mainController.rightX })
 	}

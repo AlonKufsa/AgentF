@@ -21,12 +21,12 @@ object SwerveKinematics {
 
 		val moduleStates = ModuleStates()
 
-			moduleStates.setStates(
-				SwerveModuleState(wheelSpeedMPS, Rotation2d.fromDegrees(-135.0)),
-				SwerveModuleState(wheelSpeedMPS, Rotation2d.fromDegrees(-45.0)),
-				SwerveModuleState(wheelSpeedMPS, Rotation2d.fromDegrees(45.0)),
-				SwerveModuleState(wheelSpeedMPS, Rotation2d.fromDegrees(135.0)),
-			)
+		moduleStates.setStates(
+			SwerveModuleState(wheelSpeedMPS, Rotation2d.fromDegrees(135.0)),
+			SwerveModuleState(wheelSpeedMPS, Rotation2d.fromDegrees(-135.0)),
+			SwerveModuleState(wheelSpeedMPS, Rotation2d.fromDegrees(-45.0)),
+			SwerveModuleState(wheelSpeedMPS, Rotation2d.fromDegrees(45.0)),
+		)
 		return moduleStates
 	}
 
@@ -47,10 +47,12 @@ object SwerveKinematics {
 		val velocity = Translation2d(chassisSpeeds.vxMetersPerSecond, chassisSpeeds.vyMetersPerSecond)
 
 		val velocityModuleStates = robotRelativeVelocityToModuleStates(velocity)
-		val rotationModuleStates = angularVelocityToModuleStates(AngularVelocity.fromRadPs(chassisSpeeds.omegaRadiansPerSecond))
+		val rotationModuleStates =
+			angularVelocityToModuleStates(AngularVelocity.fromRadPs(chassisSpeeds.omegaRadiansPerSecond))
 
 		val frontRightCombined: Translation2d =
-			moduleStateToTranslation2d(velocityModuleStates.frontRight) + moduleStateToTranslation2d(rotationModuleStates.frontRight)
+			moduleStateToTranslation2d(velocityModuleStates.frontRight) + moduleStateToTranslation2d(
+				rotationModuleStates.frontRight)
 		val frontLeftCombined: Translation2d =
 			moduleStateToTranslation2d(velocityModuleStates.frontLeft) + moduleStateToTranslation2d(rotationModuleStates.frontLeft)
 		val backLeftCombined: Translation2d =
@@ -79,8 +81,9 @@ object SwerveKinematics {
 				max(moduleStates.backRight.speedMetersPerSecond,
 					moduleStates.backLeft.speedMetersPerSecond)) > maxSpeedMPS && maxSpeedMPS != 0.0
 		) {
-			val highestModuleSpeed = max(max(moduleStates.frontRight.speedMetersPerSecond, moduleStates.frontLeft.speedMetersPerSecond),
-				max(moduleStates.backRight.speedMetersPerSecond, moduleStates.backLeft.speedMetersPerSecond))
+			val highestModuleSpeed =
+				max(max(moduleStates.frontRight.speedMetersPerSecond, moduleStates.frontLeft.speedMetersPerSecond),
+					max(moduleStates.backRight.speedMetersPerSecond, moduleStates.backLeft.speedMetersPerSecond))
 			val factor = maxSpeedMPS / highestModuleSpeed
 
 			moduleStates.frontRight.speedMetersPerSecond *= factor
