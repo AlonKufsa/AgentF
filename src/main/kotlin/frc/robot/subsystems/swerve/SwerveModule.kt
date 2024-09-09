@@ -91,7 +91,7 @@ class SwerveModule(
 	 * Speed is in meters per second, in the direction the wheel is facing.
 	 */
 	fun setModuleState(swerveModuleState: SwerveModuleState) {
-		setModuleRotation(swerveModuleState.angle)
+		if (swerveModuleState.speedMetersPerSecond != 0.0) setModuleRotation(swerveModuleState.angle)
 		setModuleSpeed(swerveModuleState.speedMetersPerSecond)
 	}
 
