@@ -40,8 +40,25 @@ class RobotRelativeSwerveDrive(val lJoyY: () -> Double, val lJoyX: () -> Double,
 
 		SwerveSubsystem.setModuleStates(moduleStates)
 	}
+
+	override fun end(interrupted: Boolean) {
+		SwerveSubsystem.setRotation(Rotation2d(0.0))
+		SwerveSubsystem.setSpeed(0.0)
+	}
 }
 
 fun SwerveSubsystem.povDriveCommand(pov: String): Command {
 	return run({ povDrive(pov) }) finallyDo ({ setSpeed(0.0) })
+}
+
+class SwerveTestCommand() : Command() {
+	init {
+		name = "Swerve test command"
+		addRequirements(SwerveSubsystem)
+	}
+
+	override fun execute() {
+		SwerveSubsystem.setRotation(Rotation2d.fromDegrees(180.0))
+		SwerveSubsystem.setSpeed(0.5)
+	}
 }
