@@ -46,16 +46,6 @@ object RobotContainer {
 
 		mainController.L3()
 			.toggleOnTrue(ManualShootingAngleControl({ mainController.leftX }, { mainController.leftY }))
-
-		// Testing
-//		mainController.povUp().onTrue(SwerveSubsystem.setSwerveRotation { Rotation2d.fromDegrees(0.0) })
-//		mainController.povLeft().onTrue(SwerveSubsystem.setSwerveRotation { Rotation2d.fromDegrees(90.0) })
-//		mainController.povDown().onTrue(SwerveSubsystem.setSwerveRotation { Rotation2d.fromDegrees(180.0) })
-//		mainController.povRight().onTrue(SwerveSubsystem.setSwerveRotation { Rotation2d.fromDegrees(-90.0) })
-//		mainController.povUp().whileTrue(SwerveSubsystem.povDriveCommand("Up"))
-//		mainController.povLeft().whileTrue(SwerveSubsystem.povDriveCommand("Left"))
-//		mainController.povDown().whileTrue(SwerveSubsystem.povDriveCommand("Down"))
-//		mainController.povRight().whileTrue(SwerveSubsystem.povDriveCommand("Right"))
 	}
 
 	private fun setDefaultCommands() {
@@ -63,8 +53,6 @@ object RobotContainer {
 		LoaderSubsystem.defaultCommand = DefaultLoaderCommand()
 		SwerveSubsystem.defaultCommand =
 			RobotRelativeSwerveDrive({ -mainController.leftY }, { mainController.leftX }, { -mainController.rightX })
-		//SwerveSubsystem.defaultCommand = SwerveSubsystem.setSwerveSpeedMPS { mainController.leftY * 3.0 }
-		//SwerveSubsystem.defaultCommand = SwerveSubsystem.setSwerveDriveVoltage { mainController.leftY * 6.0 }
 		ShooterSubsystem.defaultCommand = DefaultShooterCommand()
 //		ClimbingSubsystem.defaultCommand =
 //			DefaultClimbingCommand({ mainController.leftY }, { mainController.rightX })

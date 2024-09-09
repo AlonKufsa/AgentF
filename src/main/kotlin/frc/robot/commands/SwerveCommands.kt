@@ -1,7 +1,5 @@
 package frc.robot.commands
 
-import com.hamosad1657.lib.commands.*
-import com.hamosad1657.lib.units.Volts
 import edu.wpi.first.math.geometry.Rotation2d
 import edu.wpi.first.math.kinematics.ChassisSpeeds
 import edu.wpi.first.wpilibj2.command.Command
@@ -11,10 +9,6 @@ import frc.robot.subsystems.swerve.SwerveSubsystem
 
 fun SwerveSubsystem.setSwerveRotation(rotation: () -> Rotation2d): Command {
 	return run { setRotation(rotation()) }
-}
-
-fun SwerveSubsystem.setSwerveDriveVoltage(voltage: () -> Volts): Command {
-	return run { setDriveVoltage(voltage()) } finallyDo { setDriveVoltage(0.0) }
 }
 
 fun SwerveSubsystem.setSwerveSpeedMPS(speed: () -> Double): Command {
@@ -44,21 +38,5 @@ class RobotRelativeSwerveDrive(val lJoyY: () -> Double, val lJoyX: () -> Double,
 	override fun end(interrupted: Boolean) {
 		SwerveSubsystem.setRotation(Rotation2d(0.0))
 		SwerveSubsystem.setSpeed(0.0)
-	}
-}
-
-fun SwerveSubsystem.povDriveCommand(pov: String): Command {
-	return run({ povDrive(pov) }) finallyDo ({ setSpeed(0.0) })
-}
-
-class SwerveTestCommand() : Command() {
-	init {
-		name = "Swerve test command"
-		addRequirements(SwerveSubsystem)
-	}
-
-	override fun execute() {
-		SwerveSubsystem.setRotation(Rotation2d.fromDegrees(180.0))
-		SwerveSubsystem.setSpeed(0.5)
 	}
 }
