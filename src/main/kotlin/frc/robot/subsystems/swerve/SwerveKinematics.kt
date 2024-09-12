@@ -76,6 +76,36 @@ object SwerveKinematics {
 		return factorModuleStates(maxSpeedMPS, moduleStates)
 	}
 
+	fun fieldRelativeChassisSpeedsToModuleStates(
+		chassisSpeeds: ChassisSpeeds,
+		maxSpeedMPS: Double,
+		heading: Rotation2d,
+	): ModuleStates {
+		val velocity = Translation2d(chassisSpeeds.vxMetersPerSecond, chassisSpeeds.vyMetersPerSecond)
+
+		val velocityModuleStates = robotRelativeVelocityToModuleStates(velocity.rotateBy(heading))
+		val rotationModuleStates =
+			angularVelocityToModuleStates(AngularVelocity.fromRadPs(chassisSpeeds.omegaRadiansPerSecond))
+
+		val frontRightCombined: Translation2d =
+			moduleStateToTranslation2d(velocityModuleStates.frontRight) + moduleStateToTranslation2d(
+				rotationModuleStates.frontRight)
+		val frontLeftCombined: Translation2d =
+			moduleStateToTranslation2d(velocityModuleStates.frontLeft) + moduleStateToTranslation2d(rotationModuleStates.frontLeft)
+		val backLeftCombined: Translation2d =
+			moduleStateToTranslation2d(velocityModuleStates.backLeft) + moduleStateToTranslation2d(rotationModuleStates.backLeft)
+		val backRightCombined: Translation2d =
+			moduleStateToTranslation2d(velocityModuleStates.backRight) + moduleStateToTranslation2d(rotationModuleStates.backRight)
+
+		val moduleStates = ModuleStates(
+			SwerveModuleState(frontRightCombined.norm, frontRightCombined.angle),
+			SwerveModuleState(frontLeftCombined.norm, frontLeftCombined.angle),
+			SwerveModuleState(backLeftCombined.norm, backLeftCombined.angle),
+			SwerveModuleState(backRightCombined.norm, backRightCombined.angle),
+		)
+		return factorModuleStates(maxSpeedMPS, moduleStates)
+	}
+
 	fun factorModuleStates(maxSpeedMPS: Double, moduleStates: ModuleStates): ModuleStates {
 		if (max(max(moduleStates.frontRight.speedMetersPerSecond, moduleStates.frontLeft.speedMetersPerSecond),
 				max(moduleStates.backRight.speedMetersPerSecond,

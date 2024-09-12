@@ -1,5 +1,6 @@
 package frc.robot.subsystems.swerve
 
+import com.ctre.phoenix.sensors.PigeonIMUConfiguration
 import com.ctre.phoenix6.configs.CANcoderConfiguration
 import com.ctre.phoenix6.configs.TalonFXConfiguration
 import com.ctre.phoenix6.signals.AbsoluteSensorRangeValue.Signed_PlusMinusHalf
@@ -29,9 +30,6 @@ class ModuleStates() {
 		setStates(state, state, state, state)
 	}
 
-	/** The maximum speed modules are allowed to receive. */
-	var maxAllowedModuleSpeed = SwerveConstants.MAX_SPEED_MPS
-
 	var frontRight: SwerveModuleState = SwerveModuleState()
 	var frontLeft: SwerveModuleState = SwerveModuleState()
 	var backLeft: SwerveModuleState = SwerveModuleState()
@@ -56,19 +54,19 @@ object SwerveConstants {
 
 	// TODO: Tune PID
 	// Drive pid and ff values
-	val DRIVE_PID_GAINS = PIDGains(0.0)
+	val DRIVE_PID_GAINS = PIDGains(kP = 0.0)
 	const val DRIVE_KA = 0.0
-	const val DRIVE_KV = 0.0//2.1942
+	const val DRIVE_KV = 0.12//2.1942
 	const val DRIVE_KS = 0.0//0.338964
 
-	const val DRIVE_MOTION_MAGIC_ACCELERATION = 30.0
-	const val DRIVE_MOTION_MAGIC_CRUISE_VELOCITY = 30.0
+	const val DRIVE_MOTION_MAGIC_ACCELERATION = 100.0
+	const val DRIVE_MOTION_MAGIC_CRUISE_VELOCITY = 100.0
 
 	// Steer pid and ff values
-	val STEER_PID_GAINS = PIDGains(50.0)
-	const val STEER_KA = 0.0
-	const val STEER_KV = 0.0
-	const val STEER_KS = 0.0
+	private val STEER_PID_GAINS = PIDGains(kP = 40.0)
+	private const val STEER_KA = 0.0
+	private const val STEER_KV = 0.0
+	private const val STEER_KS = 0.0
 
 	const val STEER_MOTION_MAGIC_ACCELERATION = 100.0
 	const val STEER_MOTION_MAGIC_CRUISE_VELOCITY = 100.0
@@ -169,5 +167,7 @@ object SwerveConstants {
 			AbsoluteSensorRange = Signed_PlusMinusHalf
 		}
 	}
+
+	val pigeonConfigs: PigeonIMUConfiguration = PigeonIMUConfiguration()
 
 }

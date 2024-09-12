@@ -46,13 +46,15 @@ object RobotContainer {
 
 		mainController.L3()
 			.toggleOnTrue(ManualShootingAngleControl({ mainController.leftX }, { mainController.leftY }))
+
+		mainController.options().whileTrue(resetGyro())
 	}
 
 	private fun setDefaultCommands() {
 		IntakeSubsystem.defaultCommand = DefaultIntakeCommand()
 		LoaderSubsystem.defaultCommand = DefaultLoaderCommand()
 		SwerveSubsystem.defaultCommand =
-			RobotRelativeSwerveDrive({ -mainController.leftY }, { mainController.leftX }, { -mainController.rightX })
+			FieldRelativeDrive({ -mainController.leftY }, { mainController.leftX }, { -mainController.rightX })
 		ShooterSubsystem.defaultCommand = DefaultShooterCommand()
 //		ClimbingSubsystem.defaultCommand =
 //			DefaultClimbingCommand({ mainController.leftY }, { mainController.rightX })

@@ -55,5 +55,7 @@ object RobotMap {
 			const val STEER_MOTOR_ID = 11
 			const val CANCODER_ID = 12
 		}
+
+		const val PIGEON_2_ID = 2
 	}
 }

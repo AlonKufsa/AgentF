@@ -1,12 +1,15 @@
 package frc.robot.subsystems.swerve
 
+import com.ctre.phoenix6.hardware.Pigeon2
 import com.hamosad1657.lib.units.Volts
 import edu.wpi.first.math.geometry.Rotation2d
 import edu.wpi.first.math.geometry.Translation2d
+import edu.wpi.first.math.kinematics.ChassisSpeeds
 import edu.wpi.first.math.kinematics.SwerveModuleState
 import edu.wpi.first.util.sendable.SendableBuilder
 import edu.wpi.first.wpilibj2.command.SubsystemBase
 import frc.robot.RobotMap.SwerveMap
+import frc.robot.subsystems.swerve.SwerveConstants as Constants
 
 object SwerveSubsystem : SubsystemBase("Swerve subsystem") {
 	private val frontRight = SwerveModule(
@@ -65,12 +68,33 @@ object SwerveSubsystem : SubsystemBase("Swerve subsystem") {
 		}
 	}
 
-//	fun robotRelativeDrive(chassisSpeeds: ChassisSpeeds) {
-//		val moduleStates =
-//			SwerveKinematics.robotRelativeChassisSpeedsToModuleStates(chassisSpeeds, Constants.MAX_SPEED_MPS)
-//
-//		setModuleStates(moduleStates)
-//	}
+	fun robotRelativeDrive(chassisSpeeds: ChassisSpeeds) {
+		val moduleStates =
+			SwerveKinematics.robotRelativeChassisSpeedsToModuleStates(chassisSpeeds, Constants.MAX_SPEED_MPS)
+
+		setModuleStates(moduleStates)
+	}
+
+	// Gyro
+
+	private val pigeon = Pigeon2(SwerveMap.PIGEON_2_ID, Constants.SWERVE_CANBUS)
+
+	fun resetPigeon() {
+		pigeon.reset()
+	}
+
+
+	fun fieldRelativeDrive(chassisSpeeds: ChassisSpeeds) {
+		val moduleStates =
+			SwerveKinematics.fieldRelativeChassisSpeedsToModuleStates(chassisSpeeds,
+				Constants.MAX_SPEED_MPS,
+				Rotation2d.fromDegrees(pigeon.angle))
+
+		setModuleStates(moduleStates)
+	}
+
+
+	// Testing
 
 	fun setSteerVoltage(voltage: Volts) {
 		for (module in modules) {
@@ -104,5 +128,6 @@ object SwerveSubsystem : SubsystemBase("Swerve subsystem") {
 		for (module in modules) {
 			module.addModuleInfo(builder)
 		}
+		builder.addDoubleProperty("Robot yaw deg", { pigeon.angle }, null)
 	}
 }
