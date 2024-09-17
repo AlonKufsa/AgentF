@@ -54,7 +54,7 @@ object SwerveConstants {
 
 	// TODO: Tune PID
 	// Drive pid and ff values
-	val DRIVE_PID_GAINS = PIDGains(kP = 0.0)
+	val DRIVE_PID_GAINS = PIDGains(kP = 0.09)
 	const val DRIVE_KA = 0.0
 	const val DRIVE_KV = 0.12//2.1942
 	const val DRIVE_KS = 0.0//0.338964

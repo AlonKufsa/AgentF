@@ -43,12 +43,16 @@ object SwerveKinematics {
 
 	/** Converts between chassis speeds and module states.
 	 * Positive chassis speeds omega results in counterclockwise rotation.*/
-	fun robotRelativeChassisSpeedsToModuleStates(chassisSpeeds: ChassisSpeeds, maxSpeedMPS: Double): ModuleStates {
-		val velocity = Translation2d(chassisSpeeds.vxMetersPerSecond, chassisSpeeds.vyMetersPerSecond)
+	fun robotRelativeChassisSpeedsToModuleStates(
+		chassisSpeeds: ChassisSpeeds, maxSpeedMPS: Double,
+	): ModuleStates {
+		val discreteChassisSpeeds = ChassisSpeeds.discretize(chassisSpeeds, 0.02)
+
+		val velocity = Translation2d(discreteChassisSpeeds.vxMetersPerSecond, discreteChassisSpeeds.vyMetersPerSecond)
 
 		val velocityModuleStates = robotRelativeVelocityToModuleStates(velocity)
 		val rotationModuleStates =
-			angularVelocityToModuleStates(AngularVelocity.fromRadPs(chassisSpeeds.omegaRadiansPerSecond))
+			angularVelocityToModuleStates(AngularVelocity.fromRadPs(discreteChassisSpeeds.omegaRadiansPerSecond))
 
 		val frontRightCombined: Translation2d =
 			moduleStateToTranslation2d(velocityModuleStates.frontRight) + moduleStateToTranslation2d(
@@ -81,11 +85,13 @@ object SwerveKinematics {
 		maxSpeedMPS: Double,
 		heading: Rotation2d,
 	): ModuleStates {
-		val velocity = Translation2d(chassisSpeeds.vxMetersPerSecond, chassisSpeeds.vyMetersPerSecond)
+		val discreteChassisSpeeds = ChassisSpeeds.discretize(chassisSpeeds, 0.02)
+
+		val velocity = Translation2d(discreteChassisSpeeds.vxMetersPerSecond, discreteChassisSpeeds.vyMetersPerSecond)
 
 		val velocityModuleStates = robotRelativeVelocityToModuleStates(velocity.rotateBy(heading))
 		val rotationModuleStates =
-			angularVelocityToModuleStates(AngularVelocity.fromRadPs(chassisSpeeds.omegaRadiansPerSecond))
+			angularVelocityToModuleStates(AngularVelocity.fromRadPs(discreteChassisSpeeds.omegaRadiansPerSecond))
 
 		val frontRightCombined: Translation2d =
 			moduleStateToTranslation2d(velocityModuleStates.frontRight) + moduleStateToTranslation2d(
