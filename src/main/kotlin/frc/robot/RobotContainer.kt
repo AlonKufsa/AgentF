@@ -11,7 +11,7 @@ import frc.robot.subsystems.loader.LoaderSubsystem
 import frc.robot.subsystems.shooter.ShooterState
 import frc.robot.subsystems.shooter.ShooterSubsystem
 import frc.robot.subsystems.swerve.SwerveSubsystem
-import frc.robot.subsystems.vision.noteVision
+import frc.robot.subsystems.vision.NoteVision
 
 /**
  * This class is where the bulk of the robot should be declared. Since Command-based is a
@@ -67,7 +67,7 @@ object RobotContainer {
 		SmartDashboard.putData(IntakeSubsystem)
 		SmartDashboard.putData(LedSubsystem)
 		SmartDashboard.putData(SwerveSubsystem)
-		SmartDashboard.putData(noteVision)
+		SmartDashboard.putData(NoteVision)
 	}
 
 	fun getAutonomousCommand(): Command? {
