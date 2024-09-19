@@ -1,6 +1,7 @@
 package frc.robot.subsystems.swerve
 
 import com.ctre.phoenix6.hardware.Pigeon2
+import com.hamosad1657.lib.units.AngularVelocity
 import com.hamosad1657.lib.units.Volts
 import edu.wpi.first.math.geometry.Rotation2d
 import edu.wpi.first.math.geometry.Translation2d
@@ -66,6 +67,13 @@ object SwerveSubsystem : SubsystemBase("Swerve subsystem") {
 		for (module in modules) {
 			module.setModuleSpeed(speedMPS)
 		}
+	}
+
+	fun spinCounterClockwise(velocity: AngularVelocity) {
+		val moduleStates =
+			SwerveKinematics.angularVelocityToModuleStates(velocity)
+
+		setModuleStates(moduleStates)
 	}
 
 	fun robotRelativeDrive(chassisSpeeds: ChassisSpeeds) {

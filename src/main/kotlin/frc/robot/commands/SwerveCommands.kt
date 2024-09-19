@@ -1,10 +1,13 @@
 package frc.robot.commands
 
+import edu.wpi.first.math.controller.PIDController
 import edu.wpi.first.math.geometry.Rotation2d
 import edu.wpi.first.math.kinematics.ChassisSpeeds
 import edu.wpi.first.wpilibj2.command.Command
 import frc.robot.subsystems.swerve.SwerveConstants
 import frc.robot.subsystems.swerve.SwerveSubsystem
+import frc.robot.subsystems.vision.NoteVision
+import frc.robot.subsystems.vision.VisionConstants
 import kotlin.math.sign
 
 fun SwerveSubsystem.setSwerveRotation(rotation: () -> Rotation2d): Command {
@@ -69,5 +72,26 @@ class FieldRelativeDrive(val lJoyY: () -> Double, val lJoyX: () -> Double, val r
 	override fun end(interrupted: Boolean) {
 		SwerveSubsystem.setRotation(Rotation2d(0.0))
 		SwerveSubsystem.setSpeed(0.0)
+	}
+}
+
+class AssistedIntake(val r2: () -> Double, val l2: () -> Double) : Command() {
+	init {
+		name = "Assisted intake"
+		addRequirements(SwerveSubsystem)
+	}
+
+	val pidController = PIDController(
+		VisionConstants.assistedIntakePIDGains.kP,
+		VisionConstants.assistedIntakePIDGains.kI,
+		VisionConstants.assistedIntakePIDGains.kD)
+
+	override fun execute() {
+		if (NoteVision.hasTargets) {
+			val target = NoteVision.lastResult.bestTarget
+			val output = pidController.calculate(target.bestCameraToTarget.y)
+
+
+		}
 	}
 }
