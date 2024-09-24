@@ -5,6 +5,7 @@ import edu.wpi.first.math.geometry.Rotation2d
 import edu.wpi.first.math.kinematics.ChassisSpeeds
 import edu.wpi.first.wpilibj2.command.Command
 import frc.robot.subsystems.swerve.SwerveConstants
+import frc.robot.subsystems.swerve.SwerveKinematics
 import frc.robot.subsystems.swerve.SwerveSubsystem
 import frc.robot.subsystems.vision.NoteVision
 import frc.robot.subsystems.vision.VisionConstants
@@ -89,9 +90,20 @@ class AssistedIntake(val r2: () -> Double, val l2: () -> Double) : Command() {
 	override fun execute() {
 		if (NoteVision.hasTargets) {
 			val target = NoteVision.lastResult.bestTarget
-			val output = pidController.calculate(target.bestCameraToTarget.y)
+			val output = pidController.calculate(-target.yaw)
 
+			val moduleStates = SwerveKinematics.robotRelativeChassisSpeedsToModuleStates(
+				if (r2() < -0.5 && l2() < -0.5) ChassisSpeeds(0.0, 0.0, output)
+				else if (r2() > -0.5 && l2() < -0.5) ChassisSpeeds(0.0, r2() + 0.5, output)
+				else if (l2() > -0.5 && r2() < -0.5) ChassisSpeeds(0.0, -l2() - 0.5, output)
+				else ChassisSpeeds(0.0, 0.0, output),
+				SwerveConstants.MAX_SPEED_MPS
+			)
 
+			SwerveSubsystem.setModuleStates(moduleStates)
+		} else {
+			pidController.reset()
+			SwerveSubsystem.resetAllModules()
 		}
 	}
 }
