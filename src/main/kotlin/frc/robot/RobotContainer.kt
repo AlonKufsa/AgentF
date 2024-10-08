@@ -49,6 +49,8 @@ object RobotContainer {
 			.toggleOnTrue(ManualShootingAngleControl({ mainController.leftX }, { mainController.leftY }))
 
 		mainController.options().whileTrue(resetGyro())
+
+		mainController.share().whileTrue(AssistedIntake({ mainController.r2Axis }, { mainController.l2Axis }))
 	}
 
 	private fun setDefaultCommands() {
