@@ -3,12 +3,14 @@ package frc.robot.commands
 import edu.wpi.first.math.controller.PIDController
 import edu.wpi.first.math.geometry.Rotation2d
 import edu.wpi.first.math.kinematics.ChassisSpeeds
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard
 import edu.wpi.first.wpilibj2.command.Command
 import frc.robot.subsystems.swerve.SwerveConstants
 import frc.robot.subsystems.swerve.SwerveKinematics
 import frc.robot.subsystems.swerve.SwerveSubsystem
 import frc.robot.subsystems.vision.NoteVision
 import frc.robot.subsystems.vision.VisionConstants
+import org.photonvision.targeting.PhotonTrackedTarget
 import kotlin.math.sign
 
 fun SwerveSubsystem.setSwerveRotation(rotation: () -> Rotation2d): Command {
@@ -88,19 +90,23 @@ class AssistedIntake(val r2: () -> Double, val l2: () -> Double) : Command() {
 		VisionConstants.assistedIntakePIDGains.kD)
 
 	override fun execute() {
+		SmartDashboard.putNumber("rx", r2())
 		if (NoteVision.hasTargets) {
-			val target = NoteVision.lastResult.bestTarget
-			val output = pidController.calculate(-target.yaw)
+			val target: PhotonTrackedTarget? = NoteVision.lastResult.bestTarget
+			if (target != null) {
+				val output = pidController.calculate(target.yaw)
 
-			val moduleStates = SwerveKinematics.robotRelativeChassisSpeedsToModuleStates(
-				if (r2() < -0.5 && l2() < -0.5) ChassisSpeeds(0.0, 0.0, output)
-				else if (r2() > -0.5 && l2() < -0.5) ChassisSpeeds(0.0, r2() + 0.5, output)
-				else if (l2() > -0.5 && r2() < -0.5) ChassisSpeeds(0.0, -l2() - 0.5, output)
-				else ChassisSpeeds(0.0, 0.0, output),
-				SwerveConstants.MAX_SPEED_MPS
-			)
-
-			SwerveSubsystem.setModuleStates(moduleStates)
+				val inRange = target.yaw !in -3.0..3.0
+				
+				val moduleStates = SwerveKinematics.robotRelativeChassisSpeedsToModuleStates(
+					if (r2() < -0.5 && l2() < -0.5) ChassisSpeeds(0.0, 0.0, if (inRange) output else 0.0)
+					else if (r2() > -0.5 && l2() < -0.5) ChassisSpeeds(0.0, r2() + 0.5, if (inRange) output else 0.0)
+					else if (l2() > -0.5 && r2() < -0.5) ChassisSpeeds(0.0, -l2() - 0.5, if (inRange) output else 0.0)
+					else ChassisSpeeds(0.0, 0.0, output),
+					SwerveConstants.MAX_SPEED_MPS
+				)
+				SwerveSubsystem.setModuleStates(moduleStates)
+			}
 		} else {
 			pidController.reset()
 			SwerveSubsystem.resetAllModules()
