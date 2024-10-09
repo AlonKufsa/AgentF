@@ -50,7 +50,7 @@ object RobotContainer {
 
 		mainController.options().whileTrue(resetGyro())
 
-		mainController.share().whileTrue(AssistedIntake({ mainController.r2Axis }, { mainController.l2Axis }))
+		mainController.share().whileTrue(AssistedIntake({ mainController.leftY }, { mainController.leftX }))
 	}
 
 	private fun setDefaultCommands() {

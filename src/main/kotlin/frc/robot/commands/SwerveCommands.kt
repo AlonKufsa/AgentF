@@ -3,7 +3,6 @@ package frc.robot.commands
 import edu.wpi.first.math.controller.PIDController
 import edu.wpi.first.math.geometry.Rotation2d
 import edu.wpi.first.math.kinematics.ChassisSpeeds
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard
 import edu.wpi.first.wpilibj2.command.Command
 import frc.robot.subsystems.swerve.SwerveConstants
 import frc.robot.subsystems.swerve.SwerveKinematics
@@ -78,7 +77,8 @@ class FieldRelativeDrive(val lJoyY: () -> Double, val lJoyX: () -> Double, val r
 	}
 }
 
-class AssistedIntake(val r2: () -> Double, val l2: () -> Double) : Command() {
+class AssistedIntake(val lJoyY: () -> Double) :
+	Command() {
 	init {
 		name = "Assisted intake"
 		addRequirements(SwerveSubsystem)
@@ -90,21 +90,18 @@ class AssistedIntake(val r2: () -> Double, val l2: () -> Double) : Command() {
 		VisionConstants.assistedIntakePIDGains.kD)
 
 	override fun execute() {
-		SmartDashboard.putNumber("rx", r2())
 		if (NoteVision.hasTargets) {
 			val target: PhotonTrackedTarget? = NoteVision.lastResult.bestTarget
 			if (target != null) {
 				val output = pidController.calculate(target.yaw)
 
-				val inRange = target.yaw !in -3.0..3.0
-				
-				val moduleStates = SwerveKinematics.robotRelativeChassisSpeedsToModuleStates(
-					if (r2() < -0.5 && l2() < -0.5) ChassisSpeeds(0.0, 0.0, if (inRange) output else 0.0)
-					else if (r2() > -0.5 && l2() < -0.5) ChassisSpeeds(0.0, r2() + 0.5, if (inRange) output else 0.0)
-					else if (l2() > -0.5 && r2() < -0.5) ChassisSpeeds(0.0, -l2() - 0.5, if (inRange) output else 0.0)
-					else ChassisSpeeds(0.0, 0.0, output),
-					SwerveConstants.MAX_SPEED_MPS
-				)
+				val inRange = target.yaw in -3.0..3.0
+
+				val moduleStates =
+					SwerveKinematics.robotRelativeChassisSpeedsToModuleStates(
+						ChassisSpeeds(0.0, -lJoyY(), if (inRange) 0.0 else output),
+						SwerveConstants.MAX_SPEED_MPS
+					)
 				SwerveSubsystem.setModuleStates(moduleStates)
 			}
 		} else {
