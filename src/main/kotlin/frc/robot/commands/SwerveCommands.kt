@@ -85,9 +85,9 @@ class AssistedIntake(val lJoyY: () -> Double) :
 	}
 
 	val pidController = PIDController(
-		VisionConstants.assistedIntakePIDGains.kP,
-		VisionConstants.assistedIntakePIDGains.kI,
-		VisionConstants.assistedIntakePIDGains.kD)
+		VisionConstants.rotateSwerveWithYawPIDGains.kP,
+		VisionConstants.rotateSwerveWithYawPIDGains.kI,
+		VisionConstants.rotateSwerveWithYawPIDGains.kD)
 
 	override fun execute() {
 		if (NoteVision.hasTargets) {
