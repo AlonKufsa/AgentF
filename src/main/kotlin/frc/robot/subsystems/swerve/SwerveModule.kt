@@ -9,6 +9,7 @@ import com.hamosad1657.lib.units.Volts
 import com.revrobotics.CANSparkBase.IdleMode
 import com.revrobotics.CANSparkBase.IdleMode.kBrake
 import edu.wpi.first.math.geometry.Rotation2d
+import edu.wpi.first.math.kinematics.SwerveModulePosition
 import edu.wpi.first.math.kinematics.SwerveModuleState
 import edu.wpi.first.util.sendable.SendableBuilder
 import frc.robot.subsystems.swerve.SwerveConstants.DRIVE_GEAR_RATIO
@@ -108,6 +109,10 @@ class SwerveModule(
 
 	// *Logging and module statistics*
 
+	val position: SwerveModulePosition
+		get() {
+			return SwerveModulePosition()
+		}
 
 	/** Current rotation of the module in WPLib standards */
 	val currentRotation: Rotation2d

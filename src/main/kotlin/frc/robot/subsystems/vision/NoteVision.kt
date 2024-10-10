@@ -8,7 +8,8 @@ object NoteVision : Sendable {
 	private val camera: PhotonCamera = PhotonCamera("NOTE-Cam")
 	val lastResult
 		get() = camera.latestResult
-	val hasTargets = lastResult.hasTargets()
+	val hasTargets
+		get() = lastResult.hasTargets()
 
 
 	override fun initSendable(builder: SendableBuilder) {

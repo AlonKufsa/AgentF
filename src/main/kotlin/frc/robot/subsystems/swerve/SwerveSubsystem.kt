@@ -6,6 +6,9 @@ import com.hamosad1657.lib.units.Volts
 import edu.wpi.first.math.geometry.Rotation2d
 import edu.wpi.first.math.geometry.Translation2d
 import edu.wpi.first.math.kinematics.ChassisSpeeds
+import edu.wpi.first.math.kinematics.SwerveDriveKinematics
+import edu.wpi.first.math.kinematics.SwerveDriveOdometry
+import edu.wpi.first.math.kinematics.SwerveModulePosition
 import edu.wpi.first.math.kinematics.SwerveModuleState
 import edu.wpi.first.util.sendable.SendableBuilder
 import edu.wpi.first.wpilibj2.command.SubsystemBase
@@ -101,6 +104,23 @@ object SwerveSubsystem : SubsystemBase("Swerve subsystem") {
 		setModuleStates(moduleStates)
 	}
 
+	// Odometry
+	// FR, FL, BL, BR
+	val swerveDriveKinematics = SwerveDriveKinematics(
+		Translation2d(Constants.MODULE_OFFSET, Constants.MODULE_OFFSET),
+		Translation2d(-Constants.MODULE_OFFSET, Constants.MODULE_OFFSET),
+		Translation2d(-Constants.MODULE_OFFSET, -Constants.MODULE_OFFSET),
+		Translation2d(Constants.MODULE_OFFSET, -Constants.MODULE_OFFSET)
+	)
+	val swerveDriveOdometry = SwerveDriveOdometry(
+		swerveDriveKinematics,
+		Rotation2d.fromDegrees(pigeon.angle),
+		arrayOf(SwerveModulePosition(), SwerveModulePosition(), SwerveModulePosition(), SwerveModulePosition()),
+	)
+
+	override fun periodic() {
+		//swerveDriveOdometry.update(Rotation2d.fromDegrees(pigeon.angle))
+	}
 
 	// Testing
 

@@ -12,6 +12,7 @@ import com.hamosad1657.lib.units.rps
 import edu.wpi.first.math.geometry.Rotation2d
 import edu.wpi.first.math.kinematics.SwerveModuleState
 import edu.wpi.first.wpilibj.DriverStation
+import kotlin.math.sqrt
 
 class ModuleStates() {
 
@@ -81,6 +82,7 @@ object SwerveConstants {
 
 	/** The distance from the center of the chassis to a center of a module. */
 	val DRIVEBASE_RADIUS = 0.417405.meters
+	val MODULE_OFFSET = (DRIVEBASE_RADIUS.asMeters / sqrt(2.0))
 
 	/** The amount of rotations the motor does for every rotation of the wheel */
 	const val DRIVE_GEAR_RATIO = 6.746031746031747
