@@ -12,6 +12,8 @@ import edu.wpi.first.math.kinematics.SwerveDriveOdometry
 import edu.wpi.first.math.kinematics.SwerveModulePosition
 import edu.wpi.first.math.kinematics.SwerveModuleState
 import edu.wpi.first.util.sendable.SendableBuilder
+import edu.wpi.first.wpilibj.smartdashboard.Field2d
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard
 import edu.wpi.first.wpilibj2.command.SubsystemBase
 import frc.robot.RobotMap.SwerveMap
 import frc.robot.subsystems.swerve.SwerveConstants as Constants
@@ -88,12 +90,12 @@ object SwerveSubsystem : SubsystemBase("Swerve subsystem") {
 	}
 
 
-	// Gyro
+	// Gyro and IMU
 
 	private val pigeon = Pigeon2(SwerveMap.PIGEON_2_ID, Constants.SWERVE_CANBUS)
 
 	private val angle: Rotation2d
-		get() = Rotation2d.fromDegrees(pigeon.angle)
+		get() = pigeon.rotation2d
 
 	fun resetPigeon() {
 		pigeon.reset()
@@ -113,9 +115,10 @@ object SwerveSubsystem : SubsystemBase("Swerve subsystem") {
 	// Odometry
 
 	var pose = Pose2d()
+		private set
 
 	// FR, FL, BL, BR
-	fun getCurrentSwervePositionsArray(): Array<SwerveModulePosition> {
+	private fun getCurrentSwervePositionsArray(): Array<SwerveModulePosition> {
 		return arrayOf(
 			frontRight.position,
 			frontLeft.position,
@@ -142,10 +145,14 @@ object SwerveSubsystem : SubsystemBase("Swerve subsystem") {
 	}
 
 
+	// Pathplanner and autonomous
+
+
 	// Periodic method
 
 	override fun periodic() {
 		pose = swerveDriveOdometry.update(angle, getCurrentSwervePositionsArray())
+		field.robotPose = pose
 	}
 
 
@@ -175,5 +182,11 @@ object SwerveSubsystem : SubsystemBase("Swerve subsystem") {
 			module.addModuleInfo(builder)
 		}
 		builder.addDoubleProperty("Robot yaw deg", { pigeon.angle }, null)
+	}
+
+	val field = Field2d()
+
+	init {
+		SmartDashboard.putData("Robot pose", field)
 	}
 }

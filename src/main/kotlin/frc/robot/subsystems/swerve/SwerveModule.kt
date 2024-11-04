@@ -109,7 +109,7 @@ class SwerveModule(
 
 	// *Logging and module statistics*
 	private fun convertDriveMotorRotationsToPosition(rotations: Double): Double {
-		return rotations * WHEEL_CIRCUMFERENCE_METERS
+		return rotations / DRIVE_GEAR_RATIO * WHEEL_CIRCUMFERENCE_METERS
 	}
 
 	val position: SwerveModulePosition
