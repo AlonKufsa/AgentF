@@ -99,7 +99,7 @@ class SwerveModule(
 	/** Set only the speed of the module, in MPS*/
 	fun setModuleSpeed(speedMPS: Double) {
 		driveMotorAngularVelocitySetpoint = AngularVelocity.fromRps(
-			(speedMPS / Constants.WHEEL_CIRCUMFERENCE_METERS) * Constants.DRIVE_GEAR_RATIO)
+			(speedMPS / WHEEL_CIRCUMFERENCE_METERS) * DRIVE_GEAR_RATIO)
 	}
 
 	/** Set only the angle the module will be in, using WPILib standards for swerve */
@@ -108,10 +108,14 @@ class SwerveModule(
 	}
 
 	// *Logging and module statistics*
+	private fun convertDriveMotorRotationsToPosition(rotations: Double): Double {
+		return rotations * WHEEL_CIRCUMFERENCE_METERS
+	}
 
 	val position: SwerveModulePosition
 		get() {
-			return SwerveModulePosition()
+			return SwerveModulePosition(convertDriveMotorRotationsToPosition(driveMotor.position.value),
+				currentRotation)
 		}
 
 	/** Current rotation of the module in WPLib standards */

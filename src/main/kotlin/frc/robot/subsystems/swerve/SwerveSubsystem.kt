@@ -3,6 +3,7 @@ package frc.robot.subsystems.swerve
 import com.ctre.phoenix6.hardware.Pigeon2
 import com.hamosad1657.lib.units.AngularVelocity
 import com.hamosad1657.lib.units.Volts
+import edu.wpi.first.math.geometry.Pose2d
 import edu.wpi.first.math.geometry.Rotation2d
 import edu.wpi.first.math.geometry.Translation2d
 import edu.wpi.first.math.kinematics.ChassisSpeeds
@@ -86,9 +87,13 @@ object SwerveSubsystem : SubsystemBase("Swerve subsystem") {
 		setModuleStates(moduleStates)
 	}
 
+
 	// Gyro
 
 	private val pigeon = Pigeon2(SwerveMap.PIGEON_2_ID, Constants.SWERVE_CANBUS)
+
+	private val angle: Rotation2d
+		get() = Rotation2d.fromDegrees(pigeon.angle)
 
 	fun resetPigeon() {
 		pigeon.reset()
@@ -99,28 +104,50 @@ object SwerveSubsystem : SubsystemBase("Swerve subsystem") {
 		val moduleStates =
 			SwerveKinematics.fieldRelativeChassisSpeedsToModuleStates(chassisSpeeds,
 				Constants.MAX_SPEED_MPS,
-				Rotation2d.fromDegrees(pigeon.angle))
+				angle)
 
 		setModuleStates(moduleStates)
 	}
 
+
 	// Odometry
+
+	var pose = Pose2d()
+
 	// FR, FL, BL, BR
-	val swerveDriveKinematics = SwerveDriveKinematics(
+	fun getCurrentSwervePositionsArray(): Array<SwerveModulePosition> {
+		return arrayOf(
+			frontRight.position,
+			frontLeft.position,
+			backLeft.position,
+			backRight.position
+		)
+	}
+
+
+	private val swerveDriveKinematics = SwerveDriveKinematics(
 		Translation2d(Constants.MODULE_OFFSET, Constants.MODULE_OFFSET),
 		Translation2d(-Constants.MODULE_OFFSET, Constants.MODULE_OFFSET),
 		Translation2d(-Constants.MODULE_OFFSET, -Constants.MODULE_OFFSET),
 		Translation2d(Constants.MODULE_OFFSET, -Constants.MODULE_OFFSET)
 	)
-	val swerveDriveOdometry = SwerveDriveOdometry(
+	private val swerveDriveOdometry = SwerveDriveOdometry(
 		swerveDriveKinematics,
-		Rotation2d.fromDegrees(pigeon.angle),
-		arrayOf(SwerveModulePosition(), SwerveModulePosition(), SwerveModulePosition(), SwerveModulePosition()),
+		angle,
+		getCurrentSwervePositionsArray(),
 	)
 
-	override fun periodic() {
-		//swerveDriveOdometry.update(Rotation2d.fromDegrees(pigeon.angle))
+	fun resetOdometry(newPose: Pose2d) {
+		swerveDriveOdometry.resetPosition(angle, getCurrentSwervePositionsArray(), newPose)
 	}
+
+
+	// Periodic method
+
+	override fun periodic() {
+		pose = swerveDriveOdometry.update(angle, getCurrentSwervePositionsArray())
+	}
+
 
 	// Testing
 
@@ -139,15 +166,6 @@ object SwerveSubsystem : SubsystemBase("Swerve subsystem") {
 	fun resetAllModules() {
 		for (module in modules) {
 			module.setModuleState(SwerveModuleState(0.0, Rotation2d(0.0)))
-		}
-	}
-
-	fun povDrive(pov: String) {
-		when (pov) {
-			"Up" -> setModuleStates(SwerveKinematics.robotRelativeVelocityToModuleStates(Translation2d(0.0, 1.0)))
-			"Down" -> setModuleStates(SwerveKinematics.robotRelativeVelocityToModuleStates(Translation2d(0.0, -1.0)))
-			"Right" -> setModuleStates(SwerveKinematics.robotRelativeVelocityToModuleStates(Translation2d(1.0, 0.0)))
-			"Left" -> setModuleStates(SwerveKinematics.robotRelativeVelocityToModuleStates(Translation2d(-1.0, 0.0)))
 		}
 	}
 
