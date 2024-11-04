@@ -1,7 +1,7 @@
 package com.hamosad1657.lib.vision
 
 import com.hamosad1657.lib.Alert
-import com.hamosad1657.lib.Alert.AlertType.ERROR
+import com.hamosad1657.lib.Alert.AlertType.WARNING
 import com.hamosad1657.lib.units.Length
 import edu.wpi.first.apriltag.AprilTagFields
 import edu.wpi.first.math.Matrix
@@ -46,7 +46,7 @@ abstract class AprilTagCamera(val cameraName: String) {
 				_poseEstimator = it
 			}
 
-	private val disconnectedAlert = Alert("$cameraName disconnected", ERROR)
+	private val disconnectedAlert = Alert("$cameraName disconnected", WARNING)
 
 	val isConnected
 		get() = camera.isConnected

@@ -9,7 +9,6 @@ import edu.wpi.first.math.geometry.Rotation2d
 import edu.wpi.first.math.geometry.Translation2d
 import edu.wpi.first.math.kinematics.ChassisSpeeds
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics
-import edu.wpi.first.math.kinematics.SwerveDriveOdometry
 import edu.wpi.first.math.kinematics.SwerveModulePosition
 import edu.wpi.first.math.kinematics.SwerveModuleState
 import edu.wpi.first.util.sendable.SendableBuilder
@@ -17,6 +16,7 @@ import edu.wpi.first.wpilibj.smartdashboard.Field2d
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard
 import edu.wpi.first.wpilibj2.command.SubsystemBase
 import frc.robot.RobotMap.SwerveMap
+import frc.robot.vision.AprilTagVision
 import frc.robot.subsystems.swerve.SwerveConstants as Constants
 
 object SwerveSubsystem : SubsystemBase("Swerve subsystem") {
@@ -132,15 +132,6 @@ object SwerveSubsystem : SubsystemBase("Swerve subsystem") {
 		Translation2d(-Constants.MODULE_OFFSET, -Constants.MODULE_OFFSET),
 		Translation2d(Constants.MODULE_OFFSET, -Constants.MODULE_OFFSET)
 	)
-	private val swerveDriveOdometry = SwerveDriveOdometry(
-		swerveDriveKinematics,
-		angle,
-		getCurrentSwervePositionsArray(),
-	)
-
-	fun resetOdometry(newPose: Pose2d) {
-		swerveDriveOdometry.resetPosition(angle, getCurrentSwervePositionsArray(), newPose)
-	}
 
 
 	// Pose estimation
@@ -151,12 +142,24 @@ object SwerveSubsystem : SubsystemBase("Swerve subsystem") {
 	private val poseEstimator =
 		SwerveDrivePoseEstimator(swerveDriveKinematics, angle, getCurrentSwervePositionsArray(), Pose2d())
 
+	private fun applyVisionMeasurement() {
+		val pose = AprilTagVision.estimatedGlobalPose
+		if (pose != null) {
+			val pose2d = pose.estimatedPose.toPose2d()
+			poseEstimator.addVisionMeasurement(pose2d, pose.timestampSeconds, AprilTagVision.poseEstimationStdDevs)
+		}
+	}
+
 
 	// Periodic method
 
 	override fun periodic() {
 		pose = poseEstimator.update(angle, getCurrentSwervePositionsArray())
 		field.robotPose = pose
+
+		if (AprilTagVision.isConnected) {
+			applyVisionMeasurement()
+		}
 	}
 
 

@@ -7,8 +7,8 @@ import edu.wpi.first.wpilibj2.command.Command
 import frc.robot.subsystems.swerve.SwerveConstants
 import frc.robot.subsystems.swerve.SwerveKinematics
 import frc.robot.subsystems.swerve.SwerveSubsystem
-import frc.robot.subsystems.vision.NoteVision
-import frc.robot.subsystems.vision.VisionConstants
+import frc.robot.vision.NoteVision
+import frc.robot.vision.VisionConstants
 import org.photonvision.targeting.PhotonTrackedTarget
 import kotlin.math.sign
 

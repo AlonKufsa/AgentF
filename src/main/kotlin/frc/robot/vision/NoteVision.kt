@@ -1,4 +1,4 @@
-package frc.robot.subsystems.vision
+package frc.robot.vision
 
 import edu.wpi.first.util.sendable.Sendable
 import edu.wpi.first.util.sendable.SendableBuilder
