@@ -3,6 +3,7 @@ package frc.robot.subsystems.swerve
 import com.ctre.phoenix6.hardware.Pigeon2
 import com.hamosad1657.lib.units.AngularVelocity
 import com.hamosad1657.lib.units.Volts
+import edu.wpi.first.math.estimator.SwerveDrivePoseEstimator
 import edu.wpi.first.math.geometry.Pose2d
 import edu.wpi.first.math.geometry.Rotation2d
 import edu.wpi.first.math.geometry.Translation2d
@@ -114,9 +115,6 @@ object SwerveSubsystem : SubsystemBase("Swerve subsystem") {
 
 	// Odometry
 
-	var pose = Pose2d()
-		private set
-
 	// FR, FL, BL, BR
 	private fun getCurrentSwervePositionsArray(): Array<SwerveModulePosition> {
 		return arrayOf(
@@ -145,13 +143,19 @@ object SwerveSubsystem : SubsystemBase("Swerve subsystem") {
 	}
 
 
-	// Pathplanner and autonomous
+	// Pose estimation
+	var pose = Pose2d()
+		private set
+
+
+	private val poseEstimator =
+		SwerveDrivePoseEstimator(swerveDriveKinematics, angle, getCurrentSwervePositionsArray(), Pose2d())
 
 
 	// Periodic method
 
 	override fun periodic() {
-		pose = swerveDriveOdometry.update(angle, getCurrentSwervePositionsArray())
+		pose = poseEstimator.update(angle, getCurrentSwervePositionsArray())
 		field.robotPose = pose
 	}
 
