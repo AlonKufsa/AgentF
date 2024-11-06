@@ -98,8 +98,16 @@ object SwerveSubsystem : SubsystemBase("Swerve subsystem") {
 	private val angle: Rotation2d
 		get() = pigeon.rotation2d
 
-	fun resetPigeon() {
+	fun resetGyro() {
 		pigeon.reset()
+		poseEstimator.resetPosition(Rotation2d(),
+			currentSwervePositionsArray,
+			Pose2d(pose.x, pose.y, Rotation2d(0.0)))
+	}
+
+	fun setGyro(newAngle: Rotation2d) {
+		pigeon.setYaw(newAngle.degrees)
+		poseEstimator.resetPosition(newAngle, currentSwervePositionsArray, Pose2d(pose.x, pose.y, newAngle))
 	}
 
 
@@ -107,7 +115,7 @@ object SwerveSubsystem : SubsystemBase("Swerve subsystem") {
 		val moduleStates =
 			SwerveKinematics.fieldRelativeChassisSpeedsToModuleStates(chassisSpeeds,
 				Constants.MAX_SPEED_MPS,
-				angle)
+				-angle)
 
 		setModuleStates(moduleStates)
 	}
@@ -116,14 +124,15 @@ object SwerveSubsystem : SubsystemBase("Swerve subsystem") {
 	// Odometry
 
 	// FR, FL, BL, BR
-	private fun getCurrentSwervePositionsArray(): Array<SwerveModulePosition> {
-		return arrayOf(
-			frontRight.position,
-			frontLeft.position,
-			backLeft.position,
-			backRight.position
-		)
-	}
+	private val currentSwervePositionsArray: Array<SwerveModulePosition>
+		get() {
+			return arrayOf(
+				frontRight.position,
+				frontLeft.position,
+				backLeft.position,
+				backRight.position
+			)
+		}
 
 
 	private val swerveDriveKinematics = SwerveDriveKinematics(
@@ -133,6 +142,10 @@ object SwerveSubsystem : SubsystemBase("Swerve subsystem") {
 		Translation2d(Constants.MODULE_OFFSET, -Constants.MODULE_OFFSET)
 	)
 
+	private fun resetOdometry(pose2d: Pose2d) {
+		poseEstimator.resetPosition(angle, currentSwervePositionsArray, pose2d)
+	}
+
 
 	// Pose estimation
 	var pose = Pose2d()
@@ -140,11 +153,14 @@ object SwerveSubsystem : SubsystemBase("Swerve subsystem") {
 
 
 	private val poseEstimator =
-		SwerveDrivePoseEstimator(swerveDriveKinematics, angle, getCurrentSwervePositionsArray(), Pose2d())
+		SwerveDrivePoseEstimator(swerveDriveKinematics,
+			angle,
+			currentSwervePositionsArray,
+			Pose2d())
 
 	private fun applyVisionMeasurement() {
 		val pose = AprilTagVision.estimatedGlobalPose
-		if (pose != null) {
+		if (pose != null && AprilTagVision.isInRange) {
 			val pose2d = pose.estimatedPose.toPose2d()
 			poseEstimator.addVisionMeasurement(pose2d, pose.timestampSeconds, AprilTagVision.poseEstimationStdDevs)
 		}
@@ -154,12 +170,13 @@ object SwerveSubsystem : SubsystemBase("Swerve subsystem") {
 	// Periodic method
 
 	override fun periodic() {
-		pose = poseEstimator.update(angle, getCurrentSwervePositionsArray())
-		field.robotPose = pose
-
 		if (AprilTagVision.isConnected) {
 			applyVisionMeasurement()
 		}
+		pose = poseEstimator.update(angle, currentSwervePositionsArray)
+		field.robotPose = pose
+		val visionPose = AprilTagVision.estimatedGlobalPose
+		if (visionPose != null) field.getObject("vision-pose").pose = visionPose.estimatedPose.toPose2d()
 	}
 
 

@@ -50,7 +50,7 @@ class resetGyro() : Command() {
 	}
 
 	override fun initialize() {
-		SwerveSubsystem.resetPigeon()
+		SwerveSubsystem.resetGyro()
 
 	}
 }
