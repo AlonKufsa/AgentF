@@ -9,10 +9,10 @@ import com.ctre.phoenix6.signals.SensorDirectionValue.CounterClockwise_Positive
 import com.hamosad1657.lib.math.PIDGains
 import com.hamosad1657.lib.units.meters
 import com.hamosad1657.lib.units.rps
-import edu.wpi.first.math.geometry.Pose2d
 import edu.wpi.first.math.geometry.Rotation2d
 import edu.wpi.first.math.kinematics.SwerveModuleState
 import edu.wpi.first.wpilibj.DriverStation
+import frc.robot.FIELD_2024
 import kotlin.math.sqrt
 
 class ModuleStates() {
@@ -174,6 +174,6 @@ object SwerveConstants {
 
 	val pigeonConfigs: PigeonIMUConfiguration = PigeonIMUConfiguration()
 
-	val startingPosition = Pose2d()
+	val startingPos = FIELD_2024.POSES.BLUE_AT_SPEAKER
 
 }

@@ -107,18 +107,20 @@ class SwerveModule(
 		angleSetpoint = rotation
 	}
 
-	// *Logging and module statistics*
+	/**Logging and module statistics*/
 	private fun convertDriveMotorRotationsToPosition(rotations: Double): Double {
 		return rotations / DRIVE_GEAR_RATIO * WHEEL_CIRCUMFERENCE_METERS
 	}
 
+	/** Position *FOR ODOMETRY ONLY*
+	 * This utilizes a different rotation standard to what is used everywhere else in the code */
 	val position: SwerveModulePosition
 		get() {
 			return SwerveModulePosition(convertDriveMotorRotationsToPosition(driveMotor.position.value),
-				currentRotation)
+				currentRotation.rotateBy(Rotation2d.fromDegrees(-90.0)))
 		}
 
-	/** Current rotation of the module in WPLib standards */
+	/** Current rotation of the module counterclockwise positive, signed plus-minus half, with 0 at the right x axis */
 	val currentRotation: Rotation2d
 		get() = Rotation2d.fromRotations(canCoder.absolutePosition.value)
 
