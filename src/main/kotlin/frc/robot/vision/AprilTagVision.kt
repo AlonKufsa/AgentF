@@ -6,6 +6,7 @@ import edu.wpi.first.wpilibj.DriverStation
 import frc.robot.vision.VisionConstants as Constants
 
 object AprilTagVision : AprilTagCamera("AprilTag-Cam") {
+	// Superclass definitions
 	override val maxTagTrustingDistance = Constants.MAX_TRUSTING_DISTANCE
 
 	override val stdDevs: AprilTagsStdDevs

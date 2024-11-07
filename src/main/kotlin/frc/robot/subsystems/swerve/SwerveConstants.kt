@@ -9,6 +9,7 @@ import com.ctre.phoenix6.signals.SensorDirectionValue.CounterClockwise_Positive
 import com.hamosad1657.lib.math.PIDGains
 import com.hamosad1657.lib.units.meters
 import com.hamosad1657.lib.units.rps
+import edu.wpi.first.math.geometry.Pose2d
 import edu.wpi.first.math.geometry.Rotation2d
 import edu.wpi.first.math.kinematics.SwerveModuleState
 import edu.wpi.first.wpilibj.DriverStation
@@ -36,6 +37,8 @@ class ModuleStates() {
 	var backLeft: SwerveModuleState = SwerveModuleState()
 	var backRight: SwerveModuleState = SwerveModuleState()
 
+	val array: Array<SwerveModuleState> get() = arrayOf(frontRight, frontLeft, backLeft, backRight)
+
 	fun setStates(
 		frontRightState: SwerveModuleState,
 		frontLeftState: SwerveModuleState,
@@ -53,7 +56,6 @@ object SwerveConstants {
 	// Canbus network swerve is connected to
 	const val SWERVE_CANBUS = "SwerveBus"
 
-	// TODO: Tune PID
 	// Drive pid and ff values
 	val DRIVE_PID_GAINS = PIDGains(kP = 0.09)
 	const val DRIVE_KA = 0.0
@@ -75,7 +77,7 @@ object SwerveConstants {
 	const val WHEEL_CIRCUMFERENCE_METERS = 0.31818645
 
 	/** Theoretical free speed (m/s) at 12v applied output. */
-	const val MAX_SPEED_MPS = 5.0 // 9.46 according to CTRE ?
+	const val MAX_SPEED_MPS = 5.0
 
 	/** Theoretical free rotation speed (rotations/s) at 12v applied output. (how fast it can steer) */
 	val MAX_ANGULAR_VELOCITY = 2.0.rps
@@ -171,5 +173,7 @@ object SwerveConstants {
 	}
 
 	val pigeonConfigs: PigeonIMUConfiguration = PigeonIMUConfiguration()
+
+	val startingPosition = Pose2d()
 
 }

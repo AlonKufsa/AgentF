@@ -52,16 +52,31 @@ object SwerveSubsystem : SubsystemBase("Swerve subsystem") {
 		invertedDrive = true,
 		invertedSteer = false
 	)
+	private val pigeon = Pigeon2(SwerveMap.PIGEON_2_ID, Constants.SWERVE_CANBUS)
 
 	/** FR, FL, BL, BR*/
-	private val modules = listOf(frontRight, frontLeft, backLeft, backRight)
+	private val modules = arrayOf(frontRight, frontLeft, backLeft, backRight)
+
+	private val angle: Rotation2d
+		get() = pigeon.rotation2d
+	private val currentSwervePositionsArray: Array<SwerveModulePosition>
+		get() {
+			return arrayOf(
+				frontRight.position,
+				frontLeft.position,
+				backLeft.position,
+				backRight.position
+			)
+		}
+	var pose = Pose2d()
+		private set
+	val field = Field2d()
 
 	/** Use externally only for testing */
 	fun setModuleStates(moduleStates: ModuleStates) {
-		frontRight.setModuleState(moduleStates.frontRight)
-		frontLeft.setModuleState(moduleStates.frontLeft)
-		backLeft.setModuleState(moduleStates.backLeft)
-		backRight.setModuleState(moduleStates.backRight)
+		for (i in 0..3) {
+			modules[i].setModuleState(moduleStates.array[i])
+		}
 	}
 
 	fun setRotation(rotation: Rotation2d) {
@@ -91,13 +106,7 @@ object SwerveSubsystem : SubsystemBase("Swerve subsystem") {
 	}
 
 
-	// Gyro and IMU
-
-	private val pigeon = Pigeon2(SwerveMap.PIGEON_2_ID, Constants.SWERVE_CANBUS)
-
-	private val angle: Rotation2d
-		get() = pigeon.rotation2d
-
+	// Gyro
 	fun resetGyro() {
 		pigeon.reset()
 		poseEstimator.resetPosition(Rotation2d(),
@@ -120,21 +129,8 @@ object SwerveSubsystem : SubsystemBase("Swerve subsystem") {
 		setModuleStates(moduleStates)
 	}
 
-
 	// Odometry
-
 	// FR, FL, BL, BR
-	private val currentSwervePositionsArray: Array<SwerveModulePosition>
-		get() {
-			return arrayOf(
-				frontRight.position,
-				frontLeft.position,
-				backLeft.position,
-				backRight.position
-			)
-		}
-
-
 	private val swerveDriveKinematics = SwerveDriveKinematics(
 		Translation2d(Constants.MODULE_OFFSET, Constants.MODULE_OFFSET),
 		Translation2d(-Constants.MODULE_OFFSET, Constants.MODULE_OFFSET),
@@ -148,15 +144,12 @@ object SwerveSubsystem : SubsystemBase("Swerve subsystem") {
 
 
 	// Pose estimation
-	var pose = Pose2d()
-		private set
-
-
 	private val poseEstimator =
 		SwerveDrivePoseEstimator(swerveDriveKinematics,
 			angle,
 			currentSwervePositionsArray,
-			Pose2d())
+			Pose2d()
+		)
 
 	private fun applyVisionMeasurement() {
 		val pose = AprilTagVision.estimatedGlobalPose
@@ -168,7 +161,6 @@ object SwerveSubsystem : SubsystemBase("Swerve subsystem") {
 
 
 	// Periodic method
-
 	override fun periodic() {
 		if (AprilTagVision.isConnected) {
 			applyVisionMeasurement()
@@ -176,12 +168,13 @@ object SwerveSubsystem : SubsystemBase("Swerve subsystem") {
 		pose = poseEstimator.update(angle, currentSwervePositionsArray)
 		field.robotPose = pose
 		val visionPose = AprilTagVision.estimatedGlobalPose
+
+		// Logging
 		if (visionPose != null) field.getObject("vision-pose").pose = visionPose.estimatedPose.toPose2d()
 	}
 
 
 	// Testing
-
 	fun setSteerVoltage(voltage: Volts) {
 		for (module in modules) {
 			module.setSteerVoltage(voltage)
@@ -207,8 +200,6 @@ object SwerveSubsystem : SubsystemBase("Swerve subsystem") {
 		}
 		builder.addDoubleProperty("Robot yaw deg", { pigeon.angle }, null)
 	}
-
-	val field = Field2d()
 
 	init {
 		SmartDashboard.putData("Robot pose", field)
