@@ -3,6 +3,7 @@ package frc.robot.subsystems.swerve
 import com.ctre.phoenix6.hardware.Pigeon2
 import com.hamosad1657.lib.units.AngularVelocity
 import com.hamosad1657.lib.units.Volts
+import com.pathplanner.lib.auto.AutoBuilder
 import edu.wpi.first.math.estimator.SwerveDrivePoseEstimator
 import edu.wpi.first.math.geometry.Pose2d
 import edu.wpi.first.math.geometry.Rotation2d
@@ -12,9 +13,11 @@ import edu.wpi.first.math.kinematics.SwerveDriveKinematics
 import edu.wpi.first.math.kinematics.SwerveModulePosition
 import edu.wpi.first.math.kinematics.SwerveModuleState
 import edu.wpi.first.util.sendable.SendableBuilder
+import edu.wpi.first.wpilibj.DriverStation.Alliance
 import edu.wpi.first.wpilibj.smartdashboard.Field2d
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard
 import edu.wpi.first.wpilibj2.command.SubsystemBase
+import frc.robot.Robot
 import frc.robot.RobotMap.SwerveMap
 import frc.robot.vision.AprilTagVision
 import frc.robot.subsystems.swerve.SwerveConstants as Constants
@@ -68,7 +71,7 @@ object SwerveSubsystem : SubsystemBase("Swerve subsystem") {
 		SwerveDrivePoseEstimator(swerveDriveKinematics,
 			angle,
 			currentSwervePositionsArray,
-			Constants.startingPos
+			Constants.STARTING_POS
 		)
 
 	private val angle: Rotation2d
@@ -82,9 +85,14 @@ object SwerveSubsystem : SubsystemBase("Swerve subsystem") {
 				backRight.position
 			)
 		}
-	var pose = Pose2d()
-		private set
-	val field = Field2d()
+	private val field = Field2d()
+
+	private fun getRobotRelativeSpeeds() = SwerveKinematics.currentRobotRelativeChassisSpeeds
+	private fun getFieldRelativeSpeeds() = SwerveKinematics.currentFieldRelativeChassisSpeeds
+	private fun getEstimatedPose() = poseEstimator.estimatedPosition
+
+	var useVisionPoseEstimation = false
+
 
 	// Driving methods
 	/** Use externally only for testing */
@@ -131,6 +139,7 @@ object SwerveSubsystem : SubsystemBase("Swerve subsystem") {
 
 	// Gyro
 	fun resetGyro() {
+		val pose = getEstimatedPose()
 		pigeon.reset()
 		poseEstimator.resetPosition(Rotation2d(),
 			currentSwervePositionsArray,
@@ -138,6 +147,7 @@ object SwerveSubsystem : SubsystemBase("Swerve subsystem") {
 	}
 
 	fun setGyro(newAngle: Rotation2d) {
+		val pose = getEstimatedPose()
 		pigeon.setYaw(newAngle.degrees)
 		poseEstimator.resetPosition(newAngle, currentSwervePositionsArray, Pose2d(pose.x, pose.y, newAngle))
 	}
@@ -151,11 +161,13 @@ object SwerveSubsystem : SubsystemBase("Swerve subsystem") {
 
 	// Pose estimation
 	private fun applyVisionMeasurement() {
-		val pose = AprilTagVision.estimatedGlobalPose
-		field.getObject("vision-pos").pose = pose?.estimatedPose?.toPose2d()
-		if (pose != null && AprilTagVision.isInRange) {
-			val pose2d = pose.estimatedPose.toPose2d().let { Pose2d(it.x, it.y, angle) }
-			poseEstimator.addVisionMeasurement(pose2d, pose.timestampSeconds, AprilTagVision.poseEstimationStdDevs)
+		if (useVisionPoseEstimation) {
+			val pose = AprilTagVision.estimatedGlobalPose
+			field.getObject("vision-pos").pose = pose?.estimatedPose?.toPose2d()
+			if (pose != null && AprilTagVision.isInRange) {
+				val pose2d = pose.estimatedPose.toPose2d().let { Pose2d(it.x, it.y, angle) }
+				poseEstimator.addVisionMeasurement(pose2d, pose.timestampSeconds, AprilTagVision.poseEstimationStdDevs)
+			}
 		}
 	}
 
@@ -165,13 +177,24 @@ object SwerveSubsystem : SubsystemBase("Swerve subsystem") {
 		if (AprilTagVision.isConnected) {
 			applyVisionMeasurement()
 		}
-		pose = poseEstimator.update(angle, currentSwervePositionsArray)
-		field.robotPose = pose
+		field.robotPose = poseEstimator.update(angle, currentSwervePositionsArray)
 		val visionPose = AprilTagVision.estimatedGlobalPose
 	}
 
 	// Autonomous
-
+	init {
+		AutoBuilder.configureHolonomic(
+			this::getEstimatedPose,
+			this::resetOdometry,
+			this::getRobotRelativeSpeeds,
+			this::robotRelativeDrive,
+			Constants.PP_CONFIGS,
+			{
+				Robot.getAlliance() == Alliance.Red
+			},
+			this
+		)
+	}
 
 	// Testing
 	fun setSteerVoltage(voltage: Volts) {

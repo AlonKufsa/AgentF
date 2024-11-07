@@ -9,6 +9,9 @@ import com.ctre.phoenix6.signals.SensorDirectionValue.CounterClockwise_Positive
 import com.hamosad1657.lib.math.PIDGains
 import com.hamosad1657.lib.units.meters
 import com.hamosad1657.lib.units.rps
+import com.pathplanner.lib.util.HolonomicPathFollowerConfig
+import com.pathplanner.lib.util.PIDConstants
+import com.pathplanner.lib.util.ReplanningConfig
 import edu.wpi.first.math.geometry.Rotation2d
 import edu.wpi.first.math.kinematics.SwerveModuleState
 import edu.wpi.first.wpilibj.DriverStation
@@ -174,6 +177,15 @@ object SwerveConstants {
 
 	val pigeonConfigs: PigeonIMUConfiguration = PigeonIMUConfiguration()
 
-	val startingPos = FIELD_2024.POSES.BLUE_AT_SPEAKER
+	val STARTING_POS = FIELD_2024.POSES.BLUE_AT_SPEAKER
+
+	val TRANSLATION_PID = PIDConstants(250.0, 0.0, 0.0)
+	val ROTATION_PID = PIDConstants(50.0, 0.0, 0.0)
+	val PP_CONFIGS = HolonomicPathFollowerConfig(TRANSLATION_PID,
+		ROTATION_PID,
+		MAX_SPEED_MPS,
+		DRIVEBASE_RADIUS.asMeters,
+		ReplanningConfig()
+	)
 
 }

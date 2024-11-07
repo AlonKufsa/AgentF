@@ -3,6 +3,8 @@ package frc.robot
 import edu.wpi.first.hal.FRCNetComm.tInstances
 import edu.wpi.first.hal.FRCNetComm.tResourceType
 import edu.wpi.first.hal.HAL
+import edu.wpi.first.wpilibj.DriverStation
+import edu.wpi.first.wpilibj.DriverStation.Alliance
 import edu.wpi.first.wpilibj.TimedRobot
 import edu.wpi.first.wpilibj.util.WPILibVersion
 import edu.wpi.first.wpilibj2.command.CommandScheduler
@@ -75,5 +77,12 @@ object Robot : TimedRobot() {
 
 	override fun simulationPeriodic() {
 
+	}
+
+	fun getAlliance(): Alliance {
+		val driverStationAllianceOptional = DriverStation.getAlliance()
+		if (driverStationAllianceOptional.isPresent) {
+			return driverStationAllianceOptional.get()
+		} else return Alliance.Blue.also { DriverStation.reportError("No alliance chosen!", false) }
 	}
 }

@@ -12,6 +12,9 @@ import frc.robot.subsystems.swerve.SwerveConstants as Constants
 
 object SwerveKinematics {
 
+	var currentRobotRelativeChassisSpeeds = ChassisSpeeds()
+	var currentFieldRelativeChassisSpeeds = ChassisSpeeds()
+
 	/**
 	 * Converts between angular velocity of the robot to the module states needed to achieve it.
 	 * Positive angular velocity is counterclockwise, negative is clockwise.
@@ -47,6 +50,7 @@ object SwerveKinematics {
 		chassisSpeeds: ChassisSpeeds, maxSpeedMPS: Double,
 	): ModuleStates {
 		val discreteChassisSpeeds = ChassisSpeeds.discretize(chassisSpeeds, 0.02)
+		currentRobotRelativeChassisSpeeds = discreteChassisSpeeds
 
 		val velocity = Translation2d(discreteChassisSpeeds.vxMetersPerSecond, discreteChassisSpeeds.vyMetersPerSecond)
 
@@ -86,31 +90,34 @@ object SwerveKinematics {
 		heading: Rotation2d,
 	): ModuleStates {
 		val discreteChassisSpeeds = ChassisSpeeds.discretize(chassisSpeeds, 0.02)
+		currentFieldRelativeChassisSpeeds = discreteChassisSpeeds
 
 		val velocity = Translation2d(discreteChassisSpeeds.vxMetersPerSecond, discreteChassisSpeeds.vyMetersPerSecond)
+		val robotRelativeSpeeds = ChassisSpeeds(velocity.x, velocity.y, discreteChassisSpeeds.omegaRadiansPerSecond)
+		return robotRelativeChassisSpeedsToModuleStates(robotRelativeSpeeds, maxSpeedMPS)
 
-		val velocityModuleStates =
-			robotRelativeVelocityToModuleStates(velocity.rotateBy(heading))
-		val rotationModuleStates =
-			angularVelocityToModuleStates(AngularVelocity.fromRadPs(discreteChassisSpeeds.omegaRadiansPerSecond))
-
-		val frontRightCombined: Translation2d =
-			moduleStateToTranslation2d(velocityModuleStates.frontRight) + moduleStateToTranslation2d(
-				rotationModuleStates.frontRight)
-		val frontLeftCombined: Translation2d =
-			moduleStateToTranslation2d(velocityModuleStates.frontLeft) + moduleStateToTranslation2d(rotationModuleStates.frontLeft)
-		val backLeftCombined: Translation2d =
-			moduleStateToTranslation2d(velocityModuleStates.backLeft) + moduleStateToTranslation2d(rotationModuleStates.backLeft)
-		val backRightCombined: Translation2d =
-			moduleStateToTranslation2d(velocityModuleStates.backRight) + moduleStateToTranslation2d(rotationModuleStates.backRight)
-
-		val moduleStates = ModuleStates(
-			SwerveModuleState(frontRightCombined.norm, frontRightCombined.angle),
-			SwerveModuleState(frontLeftCombined.norm, frontLeftCombined.angle),
-			SwerveModuleState(backLeftCombined.norm, backLeftCombined.angle),
-			SwerveModuleState(backRightCombined.norm, backRightCombined.angle),
-		)
-		return factorModuleStates(maxSpeedMPS, moduleStates)
+//		val velocityModuleStates =
+//			robotRelativeVelocityToModuleStates(velocity.rotateBy(heading))
+//		val rotationModuleStates =
+//			angularVelocityToModuleStates(AngularVelocity.fromRadPs(discreteChassisSpeeds.omegaRadiansPerSecond))
+//
+//		val frontRightCombined: Translation2d =
+//			moduleStateToTranslation2d(velocityModuleStates.frontRight) + moduleStateToTranslation2d(
+//				rotationModuleStates.frontRight)
+//		val frontLeftCombined: Translation2d =
+//			moduleStateToTranslation2d(velocityModuleStates.frontLeft) + moduleStateToTranslation2d(rotationModuleStates.frontLeft)
+//		val backLeftCombined: Translation2d =
+//			moduleStateToTranslation2d(velocityModuleStates.backLeft) + moduleStateToTranslation2d(rotationModuleStates.backLeft)
+//		val backRightCombined: Translation2d =
+//			moduleStateToTranslation2d(velocityModuleStates.backRight) + moduleStateToTranslation2d(rotationModuleStates.backRight)
+//
+//		val moduleStates = ModuleStates(
+//			SwerveModuleState(frontRightCombined.norm, frontRightCombined.angle),
+//			SwerveModuleState(frontLeftCombined.norm, frontLeftCombined.angle),
+//			SwerveModuleState(backLeftCombined.norm, backLeftCombined.angle),
+//			SwerveModuleState(backRightCombined.norm, backRightCombined.angle),
+//		)
+//		return factorModuleStates(maxSpeedMPS, moduleStates)
 	}
 
 	fun factorModuleStates(maxSpeedMPS: Double, moduleStates: ModuleStates): ModuleStates {
