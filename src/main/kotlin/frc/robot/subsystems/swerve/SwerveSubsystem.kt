@@ -20,6 +20,7 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase
 import frc.robot.Robot
 import frc.robot.RobotMap.SwerveMap
 import frc.robot.vision.AprilTagVision
+import frc.robot.vision.VisionConstants
 import frc.robot.subsystems.swerve.SwerveConstants as Constants
 
 object SwerveSubsystem : SubsystemBase("Swerve subsystem") {
@@ -91,8 +92,6 @@ object SwerveSubsystem : SubsystemBase("Swerve subsystem") {
 	private fun getFieldRelativeSpeeds() = SwerveKinematics.currentFieldRelativeChassisSpeeds
 	private fun getEstimatedPose() = poseEstimator.estimatedPosition
 
-	var useVisionPoseEstimation = false
-
 
 	// Driving methods
 	/** Use externally only for testing */
@@ -161,7 +160,7 @@ object SwerveSubsystem : SubsystemBase("Swerve subsystem") {
 
 	// Pose estimation
 	private fun applyVisionMeasurement() {
-		if (useVisionPoseEstimation) {
+		if (VisionConstants.useVisionPoseEstimation) {
 			val pose = AprilTagVision.estimatedGlobalPose
 			field.getObject("vision-pos").pose = pose?.estimatedPose?.toPose2d()
 			if (pose != null && AprilTagVision.isInRange) {

@@ -21,4 +21,6 @@ object VisionConstants {
 		twoTagsAuto = RobotPoseStdDevs(0.9, 0.9, 9999.0),//(0.5, 0.5, 0.95),
 		twoTagsTeleop = RobotPoseStdDevs(0.9, 0.9, 9999.0)//(0.35, 0.35, 0.95)
 	)
+
+	const val useVisionPoseEstimation = false
 }
