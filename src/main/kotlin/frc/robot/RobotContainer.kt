@@ -1,5 +1,6 @@
 package frc.robot
 
+import com.pathplanner.lib.auto.AutoBuilder
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard
 import edu.wpi.first.wpilibj2.command.Command
 import edu.wpi.first.wpilibj2.command.button.CommandPS4Controller
@@ -72,7 +73,13 @@ object RobotContainer {
 		SmartDashboard.putData(NoteVision)
 	}
 
-	fun getAutonomousCommand(): Command? {
-		return null
+	val autoChooser = AutoBuilder.buildAutoChooser("TestAuto")
+
+	init {
+		SmartDashboard.putData("Auto chooser", autoChooser)
+	}
+
+	fun getAutonomousCommand(): Command {
+		return autoChooser.selected
 	}
 }

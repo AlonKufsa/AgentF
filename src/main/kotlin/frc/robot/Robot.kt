@@ -7,6 +7,7 @@ import edu.wpi.first.wpilibj.DriverStation
 import edu.wpi.first.wpilibj.DriverStation.Alliance
 import edu.wpi.first.wpilibj.TimedRobot
 import edu.wpi.first.wpilibj.util.WPILibVersion
+import edu.wpi.first.wpilibj2.command.Command
 import edu.wpi.first.wpilibj2.command.CommandScheduler
 import frc.robot.subsystems.leds.LedMode.DEFAULT
 import frc.robot.subsystems.leds.LedSubsystem
@@ -22,7 +23,7 @@ import frc.robot.subsystems.leds.LedSubsystem
  * object or package, it will get changed everywhere.)
  */
 object Robot : TimedRobot() {
-
+	private var autonomousCommand: Command? = null
 
 	override fun robotInit() {
 		// Report the use of the Kotlin Language for "FRC Usage Report" statistics
@@ -46,7 +47,8 @@ object Robot : TimedRobot() {
 	}
 
 	override fun autonomousInit() {
-
+		autonomousCommand = RobotContainer.getAutonomousCommand()
+		autonomousCommand?.schedule()
 	}
 
 	override fun autonomousPeriodic() {
