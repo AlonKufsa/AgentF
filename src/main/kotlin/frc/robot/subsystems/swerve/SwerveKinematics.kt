@@ -92,32 +92,11 @@ object SwerveKinematics {
 		val discreteChassisSpeeds = ChassisSpeeds.discretize(chassisSpeeds, 0.02)
 		currentFieldRelativeChassisSpeeds = discreteChassisSpeeds
 
-		val velocity = Translation2d(discreteChassisSpeeds.vxMetersPerSecond, discreteChassisSpeeds.vyMetersPerSecond)
+		val velocity =
+			Translation2d(discreteChassisSpeeds.vxMetersPerSecond, discreteChassisSpeeds.vyMetersPerSecond).rotateBy(
+				heading)
 		val robotRelativeSpeeds = ChassisSpeeds(velocity.x, velocity.y, discreteChassisSpeeds.omegaRadiansPerSecond)
 		return robotRelativeChassisSpeedsToModuleStates(robotRelativeSpeeds, maxSpeedMPS)
-
-//		val velocityModuleStates =
-//			robotRelativeVelocityToModuleStates(velocity.rotateBy(heading))
-//		val rotationModuleStates =
-//			angularVelocityToModuleStates(AngularVelocity.fromRadPs(discreteChassisSpeeds.omegaRadiansPerSecond))
-//
-//		val frontRightCombined: Translation2d =
-//			moduleStateToTranslation2d(velocityModuleStates.frontRight) + moduleStateToTranslation2d(
-//				rotationModuleStates.frontRight)
-//		val frontLeftCombined: Translation2d =
-//			moduleStateToTranslation2d(velocityModuleStates.frontLeft) + moduleStateToTranslation2d(rotationModuleStates.frontLeft)
-//		val backLeftCombined: Translation2d =
-//			moduleStateToTranslation2d(velocityModuleStates.backLeft) + moduleStateToTranslation2d(rotationModuleStates.backLeft)
-//		val backRightCombined: Translation2d =
-//			moduleStateToTranslation2d(velocityModuleStates.backRight) + moduleStateToTranslation2d(rotationModuleStates.backRight)
-//
-//		val moduleStates = ModuleStates(
-//			SwerveModuleState(frontRightCombined.norm, frontRightCombined.angle),
-//			SwerveModuleState(frontLeftCombined.norm, frontLeftCombined.angle),
-//			SwerveModuleState(backLeftCombined.norm, backLeftCombined.angle),
-//			SwerveModuleState(backRightCombined.norm, backRightCombined.angle),
-//		)
-//		return factorModuleStates(maxSpeedMPS, moduleStates)
 	}
 
 	fun factorModuleStates(maxSpeedMPS: Double, moduleStates: ModuleStates): ModuleStates {
