@@ -73,7 +73,7 @@ object RobotContainer {
 		SmartDashboard.putData(NoteVision)
 	}
 
-	val autoChooser = AutoBuilder.buildAutoChooser("TestAuto")
+	private val autoChooser = AutoBuilder.buildAutoChooser("TestAuto")
 
 	init {
 		SmartDashboard.putData("Auto chooser", autoChooser)

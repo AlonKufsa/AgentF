@@ -176,7 +176,8 @@ object SwerveSubsystem : SubsystemBase("Swerve subsystem") {
 		if (AprilTagVision.isConnected) {
 			applyVisionMeasurement()
 		}
-		field.robotPose = poseEstimator.update(angle, currentSwervePositionsArray)
+		poseEstimator.update(angle, currentSwervePositionsArray)
+		field.robotPose = poseEstimator.estimatedPosition
 		val visionPose = AprilTagVision.estimatedGlobalPose
 	}
 

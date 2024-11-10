@@ -20,7 +20,7 @@ fun SwerveSubsystem.setSwerveSpeedMPS(speed: () -> Double): Command {
 	return run { setSpeed(speed()) }
 }
 
-class RobotRelativeSwerveDrive(val lJoyY: () -> Double, val lJoyX: () -> Double, val rJoyX: () -> Double) :
+class RobotRelativeDrive(val lJoyY: () -> Double, val lJoyX: () -> Double, val rJoyX: () -> Double) :
 	Command() {
 	init {
 		name = "Robot relative swerve drive"
