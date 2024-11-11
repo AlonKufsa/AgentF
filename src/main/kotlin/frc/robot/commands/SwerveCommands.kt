@@ -12,15 +12,15 @@ import frc.robot.vision.VisionConstants
 import org.photonvision.targeting.PhotonTrackedTarget
 import kotlin.math.sign
 
-fun SwerveSubsystem.setSwerveRotation(rotation: () -> Rotation2d): Command {
+fun SwerveSubsystem.setSwerveRotationCommand(rotation: () -> Rotation2d): Command {
 	return run { setRotation(rotation()) }
 }
 
-fun SwerveSubsystem.setSwerveSpeedMPS(speed: () -> Double): Command {
+fun SwerveSubsystem.setSwerveSpeedMPSCommand(speed: () -> Double): Command {
 	return run { setSpeed(speed()) }
 }
 
-class RobotRelativeDrive(val lJoyY: () -> Double, val lJoyX: () -> Double, val rJoyX: () -> Double) :
+class RobotRelativeDriveCommand(val lJoyY: () -> Double, val lJoyX: () -> Double, val rJoyX: () -> Double) :
 	Command() {
 	init {
 		name = "Robot relative swerve drive"
@@ -44,7 +44,7 @@ class RobotRelativeDrive(val lJoyY: () -> Double, val lJoyX: () -> Double, val r
 	}
 }
 
-class resetGyro() : Command() {
+class resetGyroCommand() : Command() {
 	init {
 		name = "Reset gyro"
 	}
@@ -55,7 +55,7 @@ class resetGyro() : Command() {
 	}
 }
 
-class FieldRelativeDrive(val lJoyY: () -> Double, val lJoyX: () -> Double, val rJoyX: () -> Double) : Command() {
+class FieldRelativeDriveCommand(val lJoyY: () -> Double, val lJoyX: () -> Double, val rJoyX: () -> Double) : Command() {
 	init {
 		addRequirements(SwerveSubsystem)
 		name = "Field relative drive"
@@ -77,7 +77,7 @@ class FieldRelativeDrive(val lJoyY: () -> Double, val lJoyX: () -> Double, val r
 	}
 }
 
-class AssistedIntake(val lJoyY: () -> Double) :
+class AssistedIntakeCommand(val lJoyY: () -> Double) :
 	Command() {
 	init {
 		name = "Assisted intake"

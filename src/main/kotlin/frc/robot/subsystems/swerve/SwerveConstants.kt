@@ -179,8 +179,8 @@ object SwerveConstants {
 
 	val STARTING_POS = FIELD_2024.POSES.BLUE_AT_SPEAKER
 
-	val TRANSLATION_PID = PIDConstants(0.001, 0.0, 0.0)
-	val ROTATION_PID = PIDConstants(0.001, 0.0, 0.0)
+	val TRANSLATION_PID = PIDConstants(0.1, 0.0, 0.0)
+	val ROTATION_PID = PIDConstants(0.1, 0.0, 0.0)
 	val PP_CONFIGS = HolonomicPathFollowerConfig(TRANSLATION_PID,
 		ROTATION_PID,
 		MAX_SPEED_MPS,
