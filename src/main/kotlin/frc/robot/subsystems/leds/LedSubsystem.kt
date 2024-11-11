@@ -78,7 +78,7 @@ object LedSubsystem : SubsystemBase("Led subsystem") {
 	}
 
 	private fun shooting() {
-		if (!(ShooterSubsystem.isWithinShootingTolerance && ShooterSubsystem.isWithinAngleTolerance)) {
+		if (!(ShooterSubsystem.isAtShooterState)) {
 			setColor(RGBColor.YELLOW)
 		} else {
 			setColor(RGBColor.GREEN)

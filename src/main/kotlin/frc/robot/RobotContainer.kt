@@ -42,23 +42,25 @@ object RobotContainer {
 
 		mainController.cross().toggleOnTrue(CollectAndLoadCommand())
 		mainController.square()
-			.toggleOnTrue(TransferToShooterCommand().withTimeout(LoaderConstants.TRANSFER_TO_SHOOTER_DURATION))
+			.toggleOnTrue(TransferToShooterCommand(false).withTimeout(LoaderConstants.TRANSFER_TO_SHOOTER_DURATION))
 		mainController.triangle()
 			.toggleOnTrue(LoaderEjectToAmpCommand().withTimeout(LoaderConstants.AMP_EJECT_DURATION))
 
 		mainController.L3()
-			.toggleOnTrue(ManualShootingAngleControl({ mainController.leftX }, { mainController.leftY }))
+			.toggleOnTrue(ManualShootingAngleControlCommand({ mainController.leftX }, { mainController.leftY }))
 
-		mainController.options().whileTrue(resetGyro())
+		mainController.options().whileTrue(resetGyroCommand())
 
-		mainController.circle().whileTrue(AssistedIntake({ mainController.leftY }))
+		mainController.share().onTrue(ShootLoadedNoteCommand(ShooterState.AT_SPEAKER))
+
+		mainController.circle().whileTrue(AssistedIntakeCommand({ mainController.leftY }))
 	}
 
 	private fun setDefaultCommands() {
 		IntakeSubsystem.defaultCommand = DefaultIntakeCommand()
 		LoaderSubsystem.defaultCommand = DefaultLoaderCommand()
 		SwerveSubsystem.defaultCommand =
-			FieldRelativeDrive({ -mainController.leftY }, { mainController.leftX }, { -mainController.rightX })
+			FieldRelativeDriveCommand({ -mainController.leftY }, { mainController.leftX }, { -mainController.rightX })
 		ShooterSubsystem.defaultCommand = DefaultShooterCommand()
 //		ClimbingSubsystem.defaultCommand =
 //			DefaultClimbingCommand({ mainController.leftY }, { mainController.rightX })

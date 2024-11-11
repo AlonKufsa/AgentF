@@ -48,11 +48,14 @@ object ShooterConstants {
 	val MIN_ANGLE = 0.0.degrees
 	val MAX_ANGLE = 295.0.degrees
 
+	// TODO: TUNE!!!!!
 	val ANGLE_PID_GAINS = PIDGains(12.0, 0.5)
-	val SHOOTING_PID_GAINS = PIDGains(0.0001, 0.0, 0.0)
+	val SHOOTING_PID_GAINS = PIDGains(0.00003, 0.0000002, 0.0)
+	val SHOOTING_KV = 0.00001
 
-	val ANGLE_TOLERANCE = 5.degrees
-	val VELOCITY_TOLERANCE = 50.rpm
+	// TODO: Change after tuning PID
+	val ANGLE_TOLERANCE = 10.degrees
+	val VELOCITY_TOLERANCE = 150.rpm
 
 	val ANGLE_FEEDBACK_CONFIGS = FeedbackConfigs().apply {
 		FeedbackSensorSource = RemoteCANcoder

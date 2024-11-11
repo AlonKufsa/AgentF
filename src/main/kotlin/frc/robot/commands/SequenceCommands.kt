@@ -13,3 +13,13 @@ class CollectAndLoadCommand : ParallelRaceGroup() {
 		)
 	}
 }
+
+class ShootLoadedNoteCommand(state: ShooterState) : ParallelRaceGroup() {
+	init {
+		name = "Shoot loaded note"
+		addCommands(
+			MaintainShooterStateCommand(state, true),
+			TransferToShooterCommand(true)
+		)
+	}
+}

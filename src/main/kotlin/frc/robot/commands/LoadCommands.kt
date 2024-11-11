@@ -1,11 +1,13 @@
 package frc.robot.commands
 
+import edu.wpi.first.wpilibj.Timer
 import edu.wpi.first.wpilibj2.command.Command
 import frc.robot.subsystems.leds.LedMode.ACTION_FINISHED_SUCCESSFULLY
 import frc.robot.subsystems.leds.LedMode.DEFAULT
 import frc.robot.subsystems.leds.LedSubsystem
 import frc.robot.subsystems.loader.LoaderConstants
 import frc.robot.subsystems.loader.LoaderSubsystem
+import frc.robot.subsystems.shooter.ShooterSubsystem
 
 class DefaultLoaderCommand : Command() {
 	init {
@@ -19,15 +21,30 @@ class DefaultLoaderCommand : Command() {
 	}
 }
 
-class TransferToShooterCommand : Command() {
+class TransferToShooterCommand(val automatic: Boolean) : Command() {
 	//Use with a 2 second timeout and make sure shooter is actually moving and in the right position
 	init {
 		name = "Transfer to shooter"
 		addRequirements(LoaderSubsystem)
 	}
 
+	private val timer = Timer()
+	private val timeoutTime = 1.0 // seconds
+	private val isTimeout get() = timer.hasElapsed(timeoutTime)
+
 	override fun execute() {
-		LoaderSubsystem.runMotor(LoaderConstants.LOADING_VOLTAGE)
+		if (automatic && ShooterSubsystem.isAtShooterState) {
+			timer.start()
+			LoaderSubsystem.runMotor(LoaderConstants.LOADING_VOLTAGE)
+		} else {
+			timer.reset()
+			LoaderSubsystem.stopMotor()
+		}
+	}
+
+	override fun isFinished(): Boolean {
+		// TODO: implement better
+		return if (automatic) (!LoaderSubsystem.isNoteDetected) && isTimeout else false
 	}
 
 	override fun end(interrupted: Boolean) {

@@ -90,6 +90,8 @@ object ShooterSubsystem : SubsystemBase("Shooter") {
 		private set
 
 	val isWithinAngleTolerance: Boolean get() = angleError.degrees.absoluteValue <= Constants.ANGLE_TOLERANCE.degrees
+	val isWithinVelocityTolerance: Boolean get() = velocityError <= Constants.VELOCITY_TOLERANCE
+	val isAtShooterState: Boolean get() = isWithinVelocityTolerance //&& isWithinAngleTolerance
 
 	/*
 	* * F U N C T I O N  S U M M A R Y * *
@@ -97,7 +99,7 @@ object ShooterSubsystem : SubsystemBase("Shooter") {
 	Purpose:
 	1. Allow the user to choose to update the setpoint.
 	2. Update the FF, and stop the motor when it is at it's movement limits.
-	3. Generally be a command that runs in loops and takes care of all the motor control and safety needed.
+	3. Generally be a function that runs in loops and takes care of all the motor control and safety needed.
 
 	How:
 	   The function takes an optional new setpoint, clamps it in case it is outside the motion range,
@@ -148,22 +150,24 @@ object ShooterSubsystem : SubsystemBase("Shooter") {
 	//**Shooting motors code**
 	private var velocitySetpoint: AngularVelocity = AngularVelocity.fromRpm(0.0)
 
-	val isWithinShootingTolerance: Boolean
-		get() = shootingPIDController.atSetpoint()
-
 	fun shooterMotorTest(output: Volts) = mainShootingMotor.setVoltage(output)
 	fun stopShootingMotors() = mainShootingMotor.stopMotor()
 
 	private var prevVoltage = 0.0
 
-	//Updates the shooter motor PID controller and runs the PID control loop
+
+	private fun calculateShootingFF(currentVelocity: AngularVelocity): Volts {
+		return (Constants.SHOOTING_KV * currentVelocity.asRps)
+	}
+
+	/** Updates the shooter motor PID controller and runs the PID control loop */
 	private fun updateShootingControl(newVelocitySetpoint: AngularVelocity = velocitySetpoint) {
 		velocitySetpoint = newVelocitySetpoint
 		val pidOutput = shootingPIDController.calculate(shootingEncoder.velocity, velocitySetpoint.asRpm)
 		if (velocitySetpoint.asRpm == 0.0)
 			mainShootingMotor.stopMotor()
 		else
-			mainShootingMotor.setVoltage(pidOutput + prevVoltage)
+			mainShootingMotor.setVoltage(pidOutput + prevVoltage + calculateShootingFF(currentVelocity))
 
 		prevVoltage += pidOutput
 	}

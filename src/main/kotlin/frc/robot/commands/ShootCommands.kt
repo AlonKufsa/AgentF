@@ -26,7 +26,7 @@ class DefaultShooterCommand : Command() {
 	}
 }
 
-class MaintainShooterStateCommand(val shooterState: ShooterState, val useLeds: Boolean) : Command() {
+class MaintainShooterStateCommand(private val shooterState: ShooterState, private val useLeds: Boolean) : Command() {
 	//To stop this command, you must interrupt it, or manually stop it
 	init {
 		name = "Maintain shooter state"
@@ -51,7 +51,7 @@ class MaintainShooterStateCommand(val shooterState: ShooterState, val useLeds: B
 	}
 }
 
-class ManualShootingAngleControl(val xPos: () -> Double, val yPos: () -> Double) : Command() {
+class ManualShootingAngleControlCommand(val xPos: () -> Double, val yPos: () -> Double) : Command() {
 	init {
 		name = "Manual shooting angle control"
 		addRequirements(ShooterSubsystem, LedSubsystem)
