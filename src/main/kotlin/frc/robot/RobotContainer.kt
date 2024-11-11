@@ -1,7 +1,7 @@
 package frc.robot
 
-import com.pathplanner.lib.auto.AutoBuilder
 import com.pathplanner.lib.auto.NamedCommands
+import com.pathplanner.lib.commands.PathPlannerAuto
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard
 import edu.wpi.first.wpilibj2.command.Command
 import edu.wpi.first.wpilibj2.command.button.CommandPS4Controller
@@ -76,19 +76,17 @@ object RobotContainer {
 		SmartDashboard.putData(NoteVision)
 	}
 
-	private val autoChooser = AutoBuilder.buildAutoChooser("TestAuto")
-
-	init {
-		SmartDashboard.putData("Auto chooser", autoChooser)
-	}
-
 	// Autonomous
+
 	init {
 		NamedCommands.registerCommand("Shoot", ShootLoadedNoteCommand(ShooterState.AT_SPEAKER))
 		NamedCommands.registerCommand("Intake", CollectAndLoadCommand())
+
+		//val autoChooser = AutoBuilder.buildAutoChooser("TestAuto")
+		//SmartDashboard.putData("Auto chooser", autoChooser)
 	}
 
 	fun getAutonomousCommand(): Command {
-		return autoChooser.selected
+		return PathPlannerAuto("TestAuto")
 	}
 }
