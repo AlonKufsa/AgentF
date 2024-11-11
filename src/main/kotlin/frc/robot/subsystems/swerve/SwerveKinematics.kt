@@ -52,7 +52,7 @@ object SwerveKinematics {
 		val discreteChassisSpeeds = ChassisSpeeds.discretize(chassisSpeeds, 0.02)
 		currentRobotRelativeChassisSpeeds = discreteChassisSpeeds
 
-		val velocity = Translation2d(discreteChassisSpeeds.vxMetersPerSecond, discreteChassisSpeeds.vyMetersPerSecond)
+		val velocity = Translation2d(discreteChassisSpeeds.vyMetersPerSecond, discreteChassisSpeeds.vxMetersPerSecond)
 
 		val velocityModuleStates = robotRelativeVelocityToModuleStates(velocity)
 		val rotationModuleStates =
@@ -62,11 +62,14 @@ object SwerveKinematics {
 			moduleStateToTranslation2d(velocityModuleStates.frontRight) + moduleStateToTranslation2d(
 				rotationModuleStates.frontRight)
 		val frontLeftCombined: Translation2d =
-			moduleStateToTranslation2d(velocityModuleStates.frontLeft) + moduleStateToTranslation2d(rotationModuleStates.frontLeft)
+			moduleStateToTranslation2d(velocityModuleStates.frontLeft) + moduleStateToTranslation2d(
+				rotationModuleStates.frontLeft)
 		val backLeftCombined: Translation2d =
-			moduleStateToTranslation2d(velocityModuleStates.backLeft) + moduleStateToTranslation2d(rotationModuleStates.backLeft)
+			moduleStateToTranslation2d(velocityModuleStates.backLeft) + moduleStateToTranslation2d(
+				rotationModuleStates.backLeft)
 		val backRightCombined: Translation2d =
-			moduleStateToTranslation2d(velocityModuleStates.backRight) + moduleStateToTranslation2d(rotationModuleStates.backRight)
+			moduleStateToTranslation2d(velocityModuleStates.backRight) + moduleStateToTranslation2d(
+				rotationModuleStates.backRight)
 
 		SmartDashboard.putNumberArray("Wanted module states", arrayOf(
 			frontRightCombined.angle.degrees, frontRightCombined.norm,

@@ -66,8 +66,8 @@ class FieldRelativeDriveCommand(val lJoyY: () -> Double, val lJoyX: () -> Double
 		val lX = if (lJoyX() in -0.02..0.02) 0.0 else lJoyX()
 		val rX = if (rJoyX() in -0.02..0.02) 0.0 else rJoyX()
 
-		SwerveSubsystem.fieldRelativeDrive(ChassisSpeeds(lX * lX * lX.sign * SwerveConstants.MAX_SPEED_MPS,
-			lY * lY * lY.sign * SwerveConstants.MAX_SPEED_MPS,
+		SwerveSubsystem.fieldRelativeDrive(ChassisSpeeds(lY * lY * lY.sign * SwerveConstants.MAX_SPEED_MPS,
+			lX * lX * lX.sign * SwerveConstants.MAX_SPEED_MPS,
 			rX * rX * rX.sign * Math.PI))
 	}
 

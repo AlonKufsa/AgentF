@@ -131,7 +131,7 @@ object SwerveSubsystem : SubsystemBase("Swerve subsystem") {
 		val moduleStates =
 			SwerveKinematics.fieldRelativeChassisSpeedsToModuleStates(chassisSpeeds,
 				Constants.MAX_SPEED_MPS,
-				-angle)
+				angle)
 
 		setModuleStates(moduleStates)
 	}
