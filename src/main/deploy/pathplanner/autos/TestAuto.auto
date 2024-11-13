@@ -30,29 +30,16 @@
               {
                 "type": "path",
                 "data": {
-                  "pathName": "ToNote"
+                  "pathName": "ToNote1"
                 }
               }
             ]
           }
         },
         {
-          "type": "parallel",
+          "type": "path",
           "data": {
-            "commands": [
-              {
-                "type": "named",
-                "data": {
-                  "name": "Intake"
-                }
-              },
-              {
-                "type": "path",
-                "data": {
-                  "pathName": "FromNote"
-                }
-              }
-            ]
+            "pathName": "FromNote1"
           }
         },
         {
