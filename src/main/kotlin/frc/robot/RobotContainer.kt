@@ -62,7 +62,7 @@ object RobotContainer {
 		IntakeSubsystem.defaultCommand = DefaultIntakeCommand()
 		LoaderSubsystem.defaultCommand = DefaultLoaderCommand()
 		SwerveSubsystem.defaultCommand =
-			FieldRelativeDriveCommand({ mainController.leftY }, { -mainController.leftX }, { -mainController.rightX })
+			FieldRelativeDriveCommand({ mainController.leftY }, { mainController.leftX }, { -mainController.rightX })
 		ShooterSubsystem.defaultCommand = DefaultShooterCommand()
 //		ClimbingSubsystem.defaultCommand =
 //			DefaultClimbingCommand({ mainController.leftY }, { mainController.rightX })

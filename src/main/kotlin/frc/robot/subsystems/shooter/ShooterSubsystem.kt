@@ -61,8 +61,6 @@ object ShooterSubsystem : SubsystemBase("Shooter") {
 	private val shootingEncoder = mainShootingMotor.encoder
 
 	private val canCoder = CANcoder(RobotMap.ShooterMap.CANCODER_ID).apply {
-		//Makes the CANCoder measure in a range between 0 and 1, gives it the correct offset
-		//and defines it's rotation direction as counterclockwise (which is flipped due to how the robot is built)
 		configurator.apply(Constants.CANCODER_CONFIGS)
 	}
 	private val minAngleSwitch = DigitalInput(RobotMap.ShooterMap.MIN_SWITCH_CHANNEL)
@@ -177,7 +175,15 @@ object ShooterSubsystem : SubsystemBase("Shooter") {
 		updateAngleControl(shooterState.angle)
 	}
 
-	fun maintainShooterState() {
+	fun setShootingVelocity(velocity: AngularVelocity) {
+		updateShootingControl(velocity)
+	}
+
+	fun setAngle(angle: Rotation2d) {
+		updateAngleControl(angle)
+	}
+
+	private fun maintainShooterState() {
 		updateShootingControl()
 		updateAngleControl()
 	}
@@ -187,6 +193,10 @@ object ShooterSubsystem : SubsystemBase("Shooter") {
 	fun stopMotors() {
 		stopAngleMotor()
 		stopShootingMotors()
+	}
+
+	override fun periodic() {
+		maintainShooterState()
 	}
 
 	//Adds values and readings to the glass dashboard, attached to the shooter subsystem.
