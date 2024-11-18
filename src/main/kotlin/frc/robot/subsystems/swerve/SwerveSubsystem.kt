@@ -94,6 +94,7 @@ object SwerveSubsystem : SubsystemBase("Swerve subsystem") {
 
 
 	// Driving methods
+
 	/** Use externally only for testing */
 	fun setModuleStates(moduleStates: ModuleStates) {
 		for (i in 0..3) {
@@ -152,7 +153,7 @@ object SwerveSubsystem : SubsystemBase("Swerve subsystem") {
 	}
 
 	// Odometry
-	// FR, FL, BL, BR
+
 	private fun resetOdometry(pose2d: Pose2d) {
 		poseEstimator.resetPosition(angle, currentSwervePositionsArray, pose2d)
 	}
